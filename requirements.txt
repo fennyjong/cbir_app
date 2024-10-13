@@ -1,0 +1,10 @@
+Flask 
+Flask-SQLAlchemy 
+Flask-Migrate 
+psycopg2-binary
+flask_bcrypt
+flask_uploads
+Pillow 
+numpy 
+tensorflow
+

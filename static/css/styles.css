@@ -1,0 +1,81 @@
+:root {
+    --primary-color: #3498db;
+    --text-color: #333333;
+    --background-color: #f5f7fa;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+.container {
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+    padding: 20px;
+}
+h1 {
+    font-size: 16px;
+    margin-bottom: 24px;
+    line-height: 1.5;
+    font-weight: normal;
+}
+.login-box {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: var(--box-shadow);
+}
+h2 {
+    font-size: 20px;
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-weight: bold;
+}
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+input {
+    width: 100%;
+    padding: 12px 40px 12px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+.icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 18px;
+}
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+button:hover {
+    background-color: #2980b9;
+}
