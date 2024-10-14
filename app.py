@@ -52,14 +52,13 @@ def login():
             return redirect(url_for('dashboard_admin'))
         
         user = User.query.filter_by(username=username).first()
-        if user:
-            if user.check_password(password):
-                login_user(user)
-                session['user_role'] = 'user'
-                flash('Login berhasil!', 'success')
-                return redirect(url_for('dashboard_user'))
-        else:
-            flash('Username belum terdaftar!', 'danger')
+        if user and user.check_password(password):
+            login_user(user)
+            session['user_role'] = 'user'
+            flash('Login berhasil!', 'success')
+            return redirect(url_for('dashboard_user'))
+        
+        flash('Username atau password tidak valid!', 'danger')
     return render_template('login.html')
 
 @app.route('/reset_password', methods=['POST'])
@@ -83,11 +82,6 @@ def dashboard_admin():
         return redirect(url_for('login'))
     return render_template('dashboard_admin.html')
 
-@app.route('/dashboard_user')
-@login_required
-def dashboard_user():
-    return render_template('dashboard_user.html')
-
 @app.route('/logout')
 @login_required
 def logout():
@@ -106,7 +100,7 @@ def upload():
     fabric_name = request.form['fabric_name']
     image = request.files['image']
     
-    if image:
+    if image and allowed_file(image.filename):  # Pastikan ini memeriksa jenis file
         filename = secure_filename(image.filename)
         save_dir = os.path.join(app.config['UPLOAD_FOLDER'])
         
@@ -121,9 +115,12 @@ def upload():
         
         flash('Dataset berhasil ditambahkan!', 'success')
     else:
-        flash('Gambar tidak ditemukan!', 'danger')
+        flash('Gambar tidak ditemukan atau tipe file tidak valid!', 'danger')
     
     return redirect(url_for('dashboard_admin'))
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
 
 if __name__ == '__main__':
     with app.app_context():

@@ -4,335 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin CBIR</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #3498db;
-            --secondary-color: #2ecc71;
-            --background-color: #ecf0f1;
-            --text-color: #34495e;
-            --border-color: #bdc3c7;
-            --sidebar-width: 250px;
-            --header-height: 60px;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-
-        .wrapper {
-            display: flex;
-        }
-
-        .sidebar {
-            width: var(--sidebar-width);
-            height: 100vh;
-            background-color: #34495e;
-            padding: 2rem 0;
-            position: fixed;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .sidebar.hidden {
-            transform: translateX(calc(var(--sidebar-width) * -1));
-        }
-
-        .sidebar h2 {
-            color: #fff;
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: 1.5rem;
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .sidebar ul li {
-            padding: 0.5rem 1rem;
-        }
-
-        .sidebar ul li a {
-            color: #fff;
-            text-decoration: none;
-            display: block;
-            padding: 0.5rem;
-            transition: background-color 0.3s;
-            border-radius: 5px;
-        }
-
-        .sidebar ul li a:hover {
-            background-color: #2c3e50;
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: var(--sidebar-width);
-            padding: 2rem;
-            transition: all 0.3s ease;
-            padding-top: calc(var(--header-height) + 3rem);
-        }
-
-        .main-content.full-width {
-            margin-left: 0;
-        }
-
-        header {
-            background-color: #34495e;
-            height: var(--header-height);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 2rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: fixed;
-            top: 0;
-            left: var(--sidebar-width);
-            right: 0;
-            z-index: 900;
-            transition: all 0.3s ease;
-            color: #fff;
-        }
-
-        header.full-width {
-            left: 0;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            margin-right: 1rem;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #2ecc71;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 0.5rem;
-        }
-
-        .user-name {
-            font-weight: bold;
-        }
-
-        .logout-btn {
-            background-color: #e74c3c;
-            color: #fff;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            text-decoration: none;
-        }
-
-        .logout-btn:hover {
-            background-color: #c0392b;
-        }
-
-        h1 {
-            color: #fff;
-            margin: 0;
-            font-size: 1.5rem;
-        }
-
-        .dashboard-card {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        input[type="text"],
-        input[type="file"],
-        select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        input[type="text"]:focus,
-        input[type="file"]:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        select {
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 12px;
-        }
-
-        .image-preview-container {
-            width: 100%;
-            height: 500px;
-            border: 2px dashed var(--border-color);
-            border-radius: 4px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .image-preview {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .image-preview img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        .btn {
-            background-color: var(--primary-color);
-            color: #fff;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-right: 1rem;
-            display: inline-block;
-        }
-
-        .btn:hover {
-            background-color: #2980b9;
-        }
-
-        .credit {
-            text-align: center;
-            margin-top: 3rem;
-            font-size: 0.9rem;
-            color: #7f8c8d;
-        }
-
-        .credit p {
-            margin: 0;
-        }
-
-        .welcome-message {
-            color: var(--primary-color);
-            text-align: center;
-            font-size: 1.5rem;
-            margin-top: 1rem;
-        }
-
-        .hamburger {
-            font-size: 1.5rem;
-            cursor: pointer;
-            background-color: transparent;
-            border: none;
-            color: #fff;
-            padding: 0.5rem;
-            border-radius: 4px;
-            transition: color 0.3s ease;
-            margin-right: 1rem;
-        }
-
-        .hamburger:hover {
-            color: var(--primary-color);
-        }
-
-        .augment-group {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            flex-direction: row;
-        }
-
-        .augment-group label {
-            margin-left: 10px;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        .augment-group input[type="checkbox"] {
-            vertical-align: middle;
-        }
-
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                transform: translateX(calc(var(--sidebar-width) * -1));
-            }
-
-            .sidebar.hidden {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding-top: calc(var(--header-height) + 2rem);
-            }
-
-            header {
-                left: 0;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="wrapper">
         <aside class="sidebar" id="sidebar">
             <h2>Menu</h2>
             <ul>
-                <li><a href="#beranda"><i class="fas fa-home"></i> Beranda</a></li>
-                <li><a href="#dataset"><i class="fas fa-database"></i> Kelola Dataset</a></li>
-                <li><a href="#pencarian"><i class="fas fa-search"></i> Pencarian Dataset</a></li>
+                <li><a href="#" id="home-link"><i class="fas fa-home"></i> Beranda</a></li>
+                <li><a href="#" id="dataset-link"><i class="fas fa-database"></i> Kelola Dataset</a></li>
+                <li><a href="#" id="search-link"><i class="fas fa-search"></i> Pencarian Dataset</a></li>
             </ul>
         </aside>
 
@@ -356,36 +39,71 @@
                     </a>
                 </div>
             </header>
-            <p>Selamat datang di dashboard admin. Silakan kelola dataset dan lakukan pengaturan yang diperlukan.</p>
-            <div class="dashboard-card">
-                <form action="/upload" method="POST" enctype="multipart/form-data" id="upload-form">
-                    <div class="form-grid">
-                        <div>
-                            <div class="form-group">
-                                <label for="image">Unggah Gambar</label>
-                                <input type="file" id="image-input" name="image" accept="image/*" required>
-                            </div>
-                            <div class="image-preview-container">
-                                <div class="image-preview">
-                                    <img src="" alt="Pratinjau Gambar" id="image-preview">
+            <div class="welcome-message" id="welcome-message">
+                Selamat Datang Administrator
+            </div>
+            <div class="dashboard-card" id="content" style="display: none;"></div>
+            <div class="credit">
+                <p>&copy; 2024 Fenny Jong. All rights reserved.</p>
+            </div>
+        </main>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const homeLink = document.getElementById('home-link');
+            const datasetLink = document.getElementById('dataset-link');
+            const searchLink = document.getElementById('search-link');
+            const content = document.getElementById('content');
+            const welcomeMessage = document.getElementById('welcome-message');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const header = document.getElementById('header');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const overlay = document.getElementById('overlay');
+
+            let cropper;
+
+            function showHome() {
+                content.style.display = 'none';
+                welcomeMessage.style.display = 'block';
+            }
+
+            function showDatasetManagement() {
+                welcomeMessage.style.display = 'none';
+                content.innerHTML = `
+                    <h2>Penambahan Dataset</h2>
+                    <form action="/upload" method="POST" enctype="multipart/form-data" id="upload-form">
+                        <div class="form-grid">
+                            <div>
+                                <div class="form-group">
+                                    <label for="image">Unggah Gambar</label>
+                                    <input type="file" id="image-input" name="image" accept="image/*" required>
+                                </div>
+                                <div class="image-preview-container">
+                                    <div class="image-preview">
+                                        <img src="" alt="Pratinjau Gambar" id="image-preview">
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div>
+                            <div>
                                 <div class="form-group">
                                     <label for="region">Daerah Asal</label>
-                                    <select id="region" name="region" required onchange="toggleInput(this)">
+                                    <select id="region" name="region" required>
                                         <option value="">Pilih Daerah Asal</option>
                                         <option value="Kalimantan">Kalimantan</option>
                                         <option value="Riau">Riau</option>
                                         <option value="Lombok">Lombok</option>
                                         <option value="lainnya">Lainnya</option>
                                     </select>
-                                    <input type="text" id="custom-region" name="custom-region" placeholder="Masukkan Daerah Lain" style="display: none; width: 96%; padding: 0.75rem 0.75rem; border: 1px solid #ced4da; border-radius: 0.25rem;" />
+                                    <input type="text" id="custom-region" name="custom-region" placeholder="Masukkan Daerah Lain" style="display: none; width: 96%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 0.25rem;" />
                                 </div>
                                 <div class="form-group">
                                     <label for="fabric_name">Nama Kain</label>
-                                    <select id="fabric_name" name="fabric_name" required onchange="toggleFabricInput(this)">
+                                    <select id="fabric_name" name="fabric_name" required>
                                         <option value="">Pilih Nama Kain</option>
                                         <option value="Batik">Batik</option>
                                         <option value="Songket">Songket</option>
@@ -399,128 +117,111 @@
                                     </select>
                                     <input type="text" id="custom-nama" name="custom-nama" placeholder="Masukkan Nama Lain" style="display: none; width: 96%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 0.25rem;" />
                                 </div>
-                            <div class="form-group">
-                                <label>Penerapan Augmentasi:</label>
-                                <div class="augment-group">
-                                    <input type="checkbox" id="augment1" name="augment1" value="rotate">
-                                    <label for="augment1">Rotasi</label>
-                                    <input type="checkbox" id="augment2" name="augment2" value="flip">
-                                    <label for="augment2">Flip</label>
-                                    <input type="checkbox" id="augment3" name="augment3" value="crop">
-                                    <label for="augment3">Crop</label>
+                                <div class="form-group">
+                                    <label>Penerapan Augmentasi:</label>
+                                    <div class="augment-group">
+                                        <input type="checkbox" id="augment1" name="augment1" value="rotate">
+                                        <label for="augment1">Rotasi</label>
+                                        <input type="checkbox" id="augment2" name="augment2" value="flip">
+                                        <label for="augment2">Flip</label>
+                                        <input type="checkbox" id="augment3" name="augment3" value="crop">
+                                        <label for="augment3">Crop</label>
+                                    </div>
                                 </div>
+                                <button type="submit" class="btn">Unggah Dataset</button>
                             </div>
-                            <button type="submit" class="btn">Unggah Dataset</button>
                         </div>
-                    </div>
-                </form>
-            </div>
-            <div class="credit">
-                <p>&copy; 2024 Fenny Jong. All rights reserved.</p>
-            </div>
-        </main>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    <script>
-        const imageInput = document.getElementById('image-input');
-        const imagePreview = document.getElementById('image-preview');
-        const uploadForm = document.getElementById('upload-form');
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('main-content');
-        const header = document.getElementById('header');
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-
-        let cropper;
-        let uploadCount = 0;
-
-        imageInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                    initCropper();
-                };
-                reader.readAsDataURL(file);
+                    </form>
+                `;
+                content.style.display = 'block';
+                initializeDatasetManagement();
             }
-        });
-        function toggleInput(select) {
-        var input = document.getElementById('custom-region');
-        if (select.value === 'lainnya') {
-            input.style.display = 'block';
-            input.required = true; // Mengharuskan input jika 'lainnya' dipilih
-        } else {
-            input.style.display = 'none';
-            input.value = ''; // Mengosongkan input jika bukan 'lainnya'
-            input.required = false; // Menghapus keharusan input
-        }
-    }
 
-    function toggleFabricInput(select) {
-        var input = document.getElementById('custom-nama');
-        if (select.value === 'lainnya') {
-            input.style.display = 'block';
-            input.required = true; // Mengharuskan input jika 'lainnya' dipilih
-        } else {
-            input.style.display = 'none';
-            input.value = ''; // Mengosongkan input jika bukan 'lainnya'
-            input.required = false; // Menghapus keharusan input
-        }
-    }
-        function initCropper() {
-            if (cropper) {
-                cropper.destroy();
+            function showSearch() {
+                welcomeMessage.style.display = 'none';
+                content.innerHTML = `
+                    <h2>Pencarian Dataset</h2>
+                    <p>Silakan masukkan kriteria pencarian Anda di sini.</p>
+                    <input type="text" placeholder="Kriteria pencarian" required>
+                    <button>Cari</button>
+                `;
+                content.style.display = 'block';
             }
-            cropper = new Cropper(imagePreview, {
-                aspectRatio: 1,
-                viewMode: 1,
-                minCropBoxWidth: 225,
-                minCropBoxHeight: 225,
-                cropBoxResizable: false,
-                data: { 
-                    width: 300,
-                    height: 300
-                }
-            });
-        }
 
-        uploadForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-            if (cropper) {
-                const canvas = cropper.getCroppedCanvas({
-                    width: 300,
-                    height: 300
+            function initializeDatasetManagement() {
+                const imageInput = document.getElementById('image-input');
+                const imagePreview = document.getElementById('image-preview');
+                const regionSelect = document.getElementById('region');
+                const customRegion = document.getElementById('custom-region');
+                const fabricNameSelect = document.getElementById('fabric_name');
+                const customNama = document.getElementById('custom-nama');
+
+                imageInput.addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            imagePreview.src = e.target.result;
+                            initCropper();
+                        };
+                        reader.readAsDataURL(file);
+                    }
                 });
-                const fabricName = document.getElementById('fabric_name').value;
-                uploadCount++;
-                const fileName = `${fabricName}_${uploadCount}.jpg`;
 
-                canvas.toBlob(function(blob) {
-                    const formData = new FormData(uploadForm);
-                    formData.set('image', blob, fileName);
+                regionSelect.addEventListener('change', function() {
+                    customRegion.style.display = this.value === 'lainnya' ? 'block' : 'none';
+                    customRegion.required = this.value === 'lainnya';
+                });
 
-                    fetch('/upload', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log('Success:', data);
-                        // Handle successful upload (e.g., show success message, reset form)
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
-                        // Handle errors (e.g., show error message)
-                    });
-                }, 'image/jpeg');
+                fabricNameSelect.addEventListener('change', function() {
+                    customNama.style.display = this.value === 'lainnya' ? 'block' : 'none';
+                    customNama.required = this.value === 'lainnya';
+                });
             }
-        });
 
-        sidebarToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('hidden');
-            mainContent.classList.toggle('full-width');
-            header.classList.toggle('full-width');
+            function initCropper() {
+                if (cropper) {
+                    cropper.destroy();
+                }
+                const imagePreview = document.getElementById('image-preview');
+                cropper = new Cropper(imagePreview, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    minCropBoxWidth: 225,
+                    minCropBoxHeight: 225,
+                    crop: function(event) {
+                        if (event.detail.width < 225 || event.detail.height < 225) {
+                            cropper.setCropBoxData({
+                                width: Math.max(225, event.detail.width),
+                                height: Math.max(225, event.detail.height)
+                            });
+                        }
+                    }
+                });
+            }
+
+            // Sidebar toggle functionality
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('hidden');
+                mainContent.classList.toggle('full-width');
+                header.classList.toggle('full-width');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', function() {
+                sidebar.classList.add('hidden');
+                mainContent.classList.add('full-width');
+                header.classList.add('full-width');
+                overlay.classList.remove('active');
+            });
+
+            // Menu item click handlers
+            homeLink.addEventListener('click', showHome);
+            datasetLink.addEventListener('click', showDatasetManagement);
+            searchLink.addEventListener('click', showSearch);
+
+            // Initial page load
+            showHome();
         });
     </script>
 </body>
