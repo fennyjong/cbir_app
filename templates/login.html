@@ -12,6 +12,49 @@
             font-weight: bold;
             margin-top: 10px;
         }
+        .overlay {
+            display: none; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+        .reset-password {
+            display: none; 
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+            animation: popIn 0.5s;
+            width: 400px;
+        }
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -45%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+        .close-btn {
+            cursor: pointer;
+            font-weight: bold;
+            float: right;
+            color: #333;
+        }
+        .icon {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -25,15 +68,43 @@
                     <span class="icon"><i class="fas fa-user"></i></span>
                 </div>
                 <div class="input-group">
-                    <input type="password" name="password" placeholder="Password" required>
-                    <span class="icon"><i class="fas fa-lock"></i></span>
+                    <input type="password" name="password" id="password" placeholder="Password" required>
+                    <span class="icon" onclick="togglePasswordVisibility('password', this)">
+                        <i class="fas fa-lock" id="passwordIcon"></i>
+                    </span>
                 </div>
                 <button type="submit">Login</button>
             </form>
-            <!-- Area untuk pesan peringatan -->
             <p id="error-msg" class="warning-message"></p>
             <p>Belum punya akun? <a href="{{ url_for('register') }}">Daftar di sini</a></p>
+            <p><a href="#" onclick="showResetPassword()">Lupa password?</a></p>
         </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="hideResetPassword()"></div>
+    <div class="reset-password" id="resetPasswordForm">
+        <span class="close-btn" onclick="hideResetPassword()">✖</span>
+        <h2>Reset Password</h2>
+        <form id="resetForm" onsubmit="return validateResetForm()">
+            <div class="input-group">
+                <input type="text" id="resetUsername" placeholder="Username" required>
+                <span class="icon"><i class="fas fa-user"></i></span>
+            </div>
+            <div class="input-group">
+                <input type="password" id="newPassword" placeholder="Password Baru" required>
+                <span class="icon" onclick="togglePasswordVisibility('newPassword', this)">
+                    <i class="fas fa-lock" id="newPasswordIcon"></i>
+                </span>
+            </div>
+            <div class="input-group">
+                <input type="password" id="confirmPassword" placeholder="Konfirmasi Password" required>
+                <span class="icon" onclick="togglePasswordVisibility('confirmPassword', this)">
+                    <i class="fas fa-lock" id="confirmPasswordIcon"></i>
+                </span>
+            </div>
+            <p id="reset-error-msg" class="warning-message"></p>
+            <button type="submit">Reset Password</button>
+        </form>
     </div>
 
     <script>
@@ -42,27 +113,91 @@
             const password = document.forms["loginForm"]["password"].value;
             const errorElement = document.getElementById("error-msg");
 
-            // Reset pesan peringatan sebelumnya
             errorElement.innerHTML = "";
 
-            // Validasi username dan password
             if (username === "") {
                 errorElement.innerHTML = "Username harus diisi.";
-                return false; // Mencegah pengiriman form
+                return false;
+            }
+
+            const usernameRegex = /^[a-zA-Z0-9]+$/;
+            if (!usernameRegex.test(username)) {
+                errorElement.innerHTML = "Username hanya boleh mengandung huruf dan angka.";
+                return false;
             }
 
             if (password === "") {
                 errorElement.innerHTML = "Password harus diisi.";
-                return false; // Mencegah pengiriman form
+                return false;
             }
 
-            // Jika username bukan "admin", validasi panjang password
             if (username !== "admin" && password.length < 8) {
                 errorElement.innerHTML = "Password harus minimal 8 karakter";
-                return false; // Mencegah pengiriman form
+                return false;
             }
 
-            return true; // Melanjutkan pengiriman form jika validasi lolos
+            return true; 
+        }
+
+        function showResetPassword() {
+            document.getElementById("resetPasswordForm").style.display = "block";
+            document.getElementById("overlay").style.display = "block";
+        }
+
+        function hideResetPassword() {
+            document.getElementById("resetPasswordForm").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        function togglePasswordVisibility(inputId, icon) {
+            const input = document.getElementById(inputId);
+            const iconElement = icon.querySelector('i');
+            
+            if (input.type === "password") {
+                input.type = "text";
+                iconElement.classList.remove('fa-lock');
+                iconElement.classList.add('fa-lock-open');
+            } else {
+                input.type = "password";
+                iconElement.classList.remove('fa-lock-open');
+                iconElement.classList.add('fa-lock');
+            }
+        }
+
+        function validateResetForm() {
+            const resetUsername = document.getElementById("resetUsername").value;
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const resetErrorElement = document.getElementById("reset-error-msg");
+
+            resetErrorElement.innerHTML = "";
+
+            const existingUsers = ["fenny02", "user2", "admin"];
+            if (!existingUsers.includes(resetUsername)) {
+                resetErrorElement.innerHTML = "Username tidak tersedia.";
+                return false;
+            }
+
+            if (newPassword.length < 8) {
+                resetErrorElement.innerHTML = "Password baru harus minimal 8 karakter.";
+                return false;
+            }
+
+            const upperCaseRegex = /[A-Z]/;
+            const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/; 
+            if (!upperCaseRegex.test(newPassword) || !specialCharRegex.test(newPassword)) {
+                resetErrorElement.innerHTML = "Password harus mengandung minimal 1 huruf besar dan 1 karakter unik.";
+                return false;
+            }
+
+            if (newPassword !== confirmPassword) {
+                resetErrorElement.innerHTML = "Password baru dan konfirmasi password harus sama.";
+                return false;
+            }
+
+            alert("Password berhasil direset. Silakan login dengan password baru Anda.");
+            hideResetPassword();
+            return true; 
         }
     </script>
 </body>

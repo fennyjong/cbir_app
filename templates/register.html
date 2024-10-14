@@ -12,6 +12,9 @@
             font-weight: bold;
             margin-top: 10px;
         }
+        .icon {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -26,57 +29,66 @@
                 </div>
                 <div class="input-group">
                     <input type="password" name="password" id="password" placeholder="Password" required>
-                    <span class="icon"><i class="fas fa-lock"></i></span>
+                    <span class="icon" onclick="togglePasswordVisibility('password', this)">
+                        <i class="fas fa-lock" id="passwordIcon"></i>
+                    </span>
                 </div>
                 <button type="submit">Registrasi</button>
             </form>
-            <!-- Area untuk pesan peringatan -->
             <p id="error-msg" class="warning-message"></p>
             <p>Sudah memiliki akun? <a href="{{ url_for('login') }}">Login di sini</a></p>
         </div>
     </div>
 
     <script>
-        // Simulasi daftar username yang sudah terdaftar
-        const registeredUsernames = ["user1", "admin"]; // Tambahkan username yang sudah terdaftar di sini
+        const registeredUsernames = ["user1", "admin"]; // Simulasi daftar username yang sudah terdaftar
 
         function validateForm() {
-            const username = document.getElementById("username").value.trim(); // Menghapus spasi
+            const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value;
             const errorElement = document.getElementById("error-msg");
 
-            // Reset pesan peringatan sebelumnya
             errorElement.innerHTML = "";
 
-            // Validasi username (tidak boleh mengandung karakter khusus)
-            const usernamePattern = /^[a-zA-Z0-9]+$/; // Hanya huruf dan angka
+            const usernamePattern = /^[a-zA-Z0-9]+$/;
             if (!usernamePattern.test(username)) {
                 errorElement.innerHTML = "Username tidak boleh mengandung karakter khusus.";
-                return false; // Mencegah pengiriman form jika tidak valid
+                return false;
             }
 
-            // Cek jika username sudah terdaftar
             if (registeredUsernames.includes(username)) {
                 errorElement.innerHTML = "Username sudah terdaftar. Silakan pilih username lain.";
-                return false; // Mencegah pengiriman form jika tidak valid
+                return false;
             }
 
-            // Validasi panjang password (minimal 8 karakter)
             if (password.length < 8) {
                 errorElement.innerHTML = "Password harus lebih dari 8 karakter.";
-                return false; // Mencegah pengiriman form jika tidak valid
+                return false;
             }
 
-            // Validasi password (harus ada huruf besar dan karakter unik)
-            const uppercasePattern = /[A-Z]/; // Setidaknya satu huruf besar
-            const specialCharPattern = /[_!@#$%^&*(),.?":{}|<>]/; // Setidaknya satu karakter unik
+            const uppercasePattern = /[A-Z]/;
+            const specialCharPattern = /[_!@#$%^&*(),.?":{}|<>]/;
             if (!uppercasePattern.test(password) || !specialCharPattern.test(password)) {
                 errorElement.innerHTML = "Password harus mengandung setidaknya satu huruf besar dan satu karakter unik.";
-                return false; // Mencegah pengiriman form jika tidak valid
+                return false;
             }
 
-            // Jika validasi lolos, form akan dikirim
             return true;
+        }
+
+        function togglePasswordVisibility(inputId, icon) {
+            const input = document.getElementById(inputId);
+            const iconElement = icon.querySelector('i');
+            
+            if (input.type === "password") {
+                input.type = "text";
+                iconElement.classList.remove('fa-lock');
+                iconElement.classList.add('fa-lock-open');
+            } else {
+                input.type = "password";
+                iconElement.classList.remove('fa-lock-open');
+                iconElement.classList.add('fa-lock');
+            }
         }
     </script>
 </body>
