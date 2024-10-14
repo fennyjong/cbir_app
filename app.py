@@ -49,7 +49,6 @@ def login():
         
         if username == 'admin' and password == 'admin':
             session['user_role'] = 'admin'
-            flash('Login admin berhasil!', 'success')
             return redirect(url_for('dashboard_admin'))
         
         user = User.query.filter_by(username=username).first()
@@ -59,11 +58,8 @@ def login():
                 session['user_role'] = 'user'
                 flash('Login berhasil!', 'success')
                 return redirect(url_for('dashboard_user'))
-            else:
-                flash('Password salah!', 'danger')
         else:
             flash('Username belum terdaftar!', 'danger')
-    
     return render_template('login.html')
 
 @app.route('/reset_password', methods=['POST'])
