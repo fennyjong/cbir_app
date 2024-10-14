@@ -1,17 +1,37 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from config import Config
-from models import db, User, SongketDataset
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 import os
 
 app = Flask(__name__)
-app.config.from_object(Config)
-db.init_app(app)
+app.config['SECRET_KEY'] = 'your_secret_key_here'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cbir_system.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = 'uploads'
 
+db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(120), nullable=False)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+class SongketDataset(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    region = db.Column(db.String(100), nullable=False)
+    fabric_name = db.Column(db.String(100), nullable=False)
+    image_filename = db.Column(db.String(200), nullable=False)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -32,7 +52,8 @@ def register():
             flash('Username sudah terdaftar!', 'danger')
             return redirect(url_for('register'))
         
-        new_user = User(username=username, password=password)
+        new_user = User(username=username)
+        new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
         flash('Registrasi berhasil! Silakan login.', 'success')
@@ -46,12 +67,13 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
-        user = User.query.filter_by(username=username).first()
-        
         if username == 'admin' and password == 'admin':
             session['user_role'] = 'admin'
+            flash('Login admin berhasil!', 'success')
             return redirect(url_for('dashboard_admin'))
-        elif user and user.check_password(password):
+        
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
             login_user(user)
             session['user_role'] = 'user'
             flash('Login berhasil!', 'success')
@@ -60,7 +82,6 @@ def login():
             flash('Username atau password salah!', 'danger')
     
     return render_template('login.html')
-
 
 @app.route('/reset_password', methods=['POST'])
 def reset_password():
@@ -75,7 +96,6 @@ def reset_password():
         return jsonify({"success": True, "message": "Password berhasil direset."}), 200
     else:
         return jsonify({"success": False, "message": "Username tidak ditemukan."}), 404
-
 
 @app.route('/dashboard_admin')
 def dashboard_admin():
@@ -109,7 +129,7 @@ def upload():
     
     if image:
         filename = secure_filename(image.filename)
-        save_dir = os.path.join(os.getcwd(), 'uploads')
+        save_dir = os.path.join(app.config['UPLOAD_FOLDER'])
         
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
