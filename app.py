@@ -1,22 +1,21 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
-from models import db, User, SongketDataset 
-from config import Config  # Import your configuration
+from config import Config
+from models import db, User, SongketDataset
 
 app = Flask(__name__)
-app.config.from_object(Config)  # Load configuration from config.py
+app.config.from_object(Config)
 
-db.init_app(app)  # Initialize the database with the app
+db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))  # Load user based on user ID
+    return User.query.get(int(user_id))
 
 @app.route('/')
 def home():
@@ -33,7 +32,8 @@ def register():
             flash('Username sudah terdaftar!', 'danger')
             return redirect(url_for('register'))
         
-        new_user = User(username=username, password=password)  # Pass password to the constructor
+        new_user = User(username=username)
+        new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
         flash('Registrasi berhasil! Silakan login.', 'success')
@@ -47,21 +47,22 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
-        # Admin login check
         if username == 'admin' and password == 'admin':
             session['user_role'] = 'admin'
             flash('Login admin berhasil!', 'success')
             return redirect(url_for('dashboard_admin'))
         
-        # User login check
         user = User.query.filter_by(username=username).first()
-        if user and user.check_password(password):
-            login_user(user)
-            session['user_role'] = 'user'
-            flash('Login berhasil!', 'success')
-            return redirect(url_for('dashboard_user'))
+        if user:
+            if user.check_password(password):
+                login_user(user)
+                session['user_role'] = 'user'
+                flash('Login berhasil!', 'success')
+                return redirect(url_for('dashboard_user'))
+            else:
+                flash('Password salah!', 'danger')
         else:
-            flash('Username atau password salah!', 'danger')
+            flash('Username belum terdaftar!', 'danger')
     
     return render_template('login.html')
 
@@ -73,7 +74,7 @@ def reset_password():
 
     user = User.query.filter_by(username=username).first()
     if user:
-        user.set_password(new_password)  # Use set_password method
+        user.set_password(new_password)
         db.session.commit()
         return jsonify({"success": True, "message": "Password berhasil direset."}), 200
     else:
@@ -107,7 +108,7 @@ def upload():
     
     region = request.form['region']
     fabric_name = request.form['fabric_name']
-    image = request.files.get('image')  # Use get to avoid KeyError
+    image = request.files['image']
     
     if image:
         filename = secure_filename(image.filename)
@@ -130,5 +131,5 @@ def upload():
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Create database tables
-    app.run(debug=True)  # Run the app in debug mode
+        db.create_all()
+    app.run(debug=True)
