@@ -372,31 +372,33 @@
                             </div>
                         </div>
                         <div>
-                            <div class="form-group">
-                                <label for="region">Daerah Asal</label>
-                                <select id="region" name="region" required onchange="toggleInput(this)">
-                                    <option value="">Pilih Daerah Asal</option>
-                                    <option value="Kalimantan">Kalimantan</option>
-                                    <option value="Sulawesi">Riau</option>
-                                    <option value="Bali">Lombok</option>
-                                    <option value="lainnya">Lainnya</option>
-                                </select>
-                                <input type="text" id="custom-region" name="custom-region" placeholder="Masukkan Daerah Lain" style="display: none; width: 96%; padding: 0.75rem 0.75rem; border: 1px solid #ced4da; border-radius: 0.25rem;" />
-                            </div>
-                            <div class="form-group">
-                                <label for="fabric_name">Nama Kain</label>
-                                <select id="fabric_name" name="fabric_name" required>
-                                    <option value="">Pilih Nama Kain</option>
-                                    <option value="Batik">Batik</option>
-                                    <option value="Songket">Songket</option>
-                                    <option value="Tenun Ikat">Tenun Ikat</option>
-                                    <option value="Ulos">Ulos</option>
-                                    <option value="Sasirangan">Sasirangan</option>
-                                    <option value="Tapis">Tapis</option>
-                                    <option value="Gringsing">Gringsing</option>
-                                    <option value="Endek">Endek</option>
-                                </select>
-                            </div>
+                                <div class="form-group">
+                                    <label for="region">Daerah Asal</label>
+                                    <select id="region" name="region" required onchange="toggleInput(this)">
+                                        <option value="">Pilih Daerah Asal</option>
+                                        <option value="Kalimantan">Kalimantan</option>
+                                        <option value="Riau">Riau</option>
+                                        <option value="Lombok">Lombok</option>
+                                        <option value="lainnya">Lainnya</option>
+                                    </select>
+                                    <input type="text" id="custom-region" name="custom-region" placeholder="Masukkan Daerah Lain" style="display: none; width: 96%; padding: 0.75rem 0.75rem; border: 1px solid #ced4da; border-radius: 0.25rem;" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="fabric_name">Nama Kain</label>
+                                    <select id="fabric_name" name="fabric_name" required onchange="toggleFabricInput(this)">
+                                        <option value="">Pilih Nama Kain</option>
+                                        <option value="Batik">Batik</option>
+                                        <option value="Songket">Songket</option>
+                                        <option value="Tenun Ikat">Tenun Ikat</option>
+                                        <option value="Ulos">Ulos</option>
+                                        <option value="Sasirangan">Sasirangan</option>
+                                        <option value="Tapis">Tapis</option>
+                                        <option value="Gringsing">Gringsing</option>
+                                        <option value="Endek">Endek</option>
+                                        <option value="lainnya">Lainnya</option>
+                                    </select>
+                                    <input type="text" id="custom-nama" name="custom-nama" placeholder="Masukkan Nama Lain" style="display: none; width: 96%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 0.25rem;" />
+                                </div>
                             <div class="form-group">
                                 <label>Penerapan Augmentasi:</label>
                                 <div class="augment-group">
@@ -445,6 +447,18 @@
         });
         function toggleInput(select) {
         var input = document.getElementById('custom-region');
+        if (select.value === 'lainnya') {
+            input.style.display = 'block';
+            input.required = true; // Mengharuskan input jika 'lainnya' dipilih
+        } else {
+            input.style.display = 'none';
+            input.value = ''; // Mengosongkan input jika bukan 'lainnya'
+            input.required = false; // Menghapus keharusan input
+        }
+    }
+
+    function toggleFabricInput(select) {
+        var input = document.getElementById('custom-nama');
         if (select.value === 'lainnya') {
             input.style.display = 'block';
             input.required = true; // Mengharuskan input jika 'lainnya' dipilih
