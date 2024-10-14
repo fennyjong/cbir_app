@@ -316,7 +316,32 @@ select {
 }
         .welcome-message {
             color: var(--primary-color);
-            text-align: center;
+            text-align: left;
             font-size: 1.5rem;
             margin-top: 1rem;
         }
+
+        .welcome-message i {
+            margin-right: 8px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fafafa;
+            border: 1px solid #ddd;
+            color: #333333;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .description {
+            font-size: 16px;
+            color: #333333;
+            border: 1px solid #ddd;
+            padding: 12px;
+            border-radius: 4px;
+            background-color: #fafafa;
+        }
+        

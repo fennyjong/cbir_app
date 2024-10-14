@@ -40,7 +40,12 @@
                 </div>
             </header>
             <div class="welcome-message" id="welcome-message">
-                Selamat Datang Administrator
+                <div class="container">
+                <i class="fas fa-chalkboard-teacher"></i>Selamat Datang Administrator
+                <div class="description">
+                    Pengembangan Sistem CBIR dalam Pengenalan Kain Songket Indonesia Menggunakan CNN untuk Feature Extraction dan Cosine Similarity
+                </div>
+            </div>
             </div>
             <div class="dashboard-card" id="content" style="display: none;"></div>
             <div class="credit">
@@ -118,14 +123,9 @@
                                     <input type="text" id="custom-nama" name="custom-nama" placeholder="Masukkan Nama Lain" style="display: none; width: 96%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 0.25rem;" />
                                 </div>
                                 <div class="form-group">
-                                    <label>Penerapan Augmentasi:</label>
                                     <div class="augment-group">
                                         <input type="checkbox" id="augment1" name="augment1" value="rotate">
-                                        <label for="augment1">Rotasi</label>
-                                        <input type="checkbox" id="augment2" name="augment2" value="flip">
-                                        <label for="augment2">Flip</label>
-                                        <input type="checkbox" id="augment3" name="augment3" value="crop">
-                                        <label for="augment3">Crop</label>
+                                        <label for="augment1">Augmentasi Gambar</label>
                                     </div>
                                 </div>
                                 <button type="submit" class="btn">Unggah Dataset</button>
