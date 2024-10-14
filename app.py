@@ -7,6 +7,11 @@ from models import db, User, SongketDataset
 
 app = Flask(__name__)
 app.config.from_object(Config)
+app.config['UPLOAD_FOLDER'] = 'uploads'
+
+# Memastikan folder upload ada
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 db.init_app(app)
 login_manager = LoginManager()
