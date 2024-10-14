@@ -33,8 +33,7 @@ def register():
             flash('Username sudah terdaftar!', 'danger')
             return redirect(url_for('register'))
         
-        new_user = User(username=username)
-        new_user.set_password(password)
+        new_user = User(username=username, password=password)  # Pass password to the constructor
         db.session.add(new_user)
         db.session.commit()
         flash('Registrasi berhasil! Silakan login.', 'success')
@@ -48,11 +47,13 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
+        # Admin login check
         if username == 'admin' and password == 'admin':
             session['user_role'] = 'admin'
             flash('Login admin berhasil!', 'success')
             return redirect(url_for('dashboard_admin'))
         
+        # User login check
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user)
@@ -72,7 +73,7 @@ def reset_password():
 
     user = User.query.filter_by(username=username).first()
     if user:
-        user.set_password(new_password)
+        user.set_password(new_password)  # Use set_password method
         db.session.commit()
         return jsonify({"success": True, "message": "Password berhasil direset."}), 200
     else:
@@ -106,7 +107,7 @@ def upload():
     
     region = request.form['region']
     fabric_name = request.form['fabric_name']
-    image = request.files['image']
+    image = request.files.get('image')  # Use get to avoid KeyError
     
     if image:
         filename = secure_filename(image.filename)
@@ -129,5 +130,5 @@ def upload():
 
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()
+        db.create_all()  # Create database tables
     app.run(debug=True)  # Run the app in debug mode
