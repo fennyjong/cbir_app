@@ -1,10 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_login import UserMixin
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True, nullable=False)
@@ -12,12 +13,14 @@ class User(db.Model):
 
     def __init__(self, username, password):
         self.username = username
+        self.set_password(password)
+
+    def set_password(self, password):
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
-
-# Model untuk dataset songket
+    
 class SongketDataset(db.Model):
     __tablename__ = 'songket_dataset'
     id = db.Column(db.Integer, primary_key=True)

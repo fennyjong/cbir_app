@@ -115,6 +115,7 @@
 
             errorElement.innerHTML = "";
 
+            // Validasi input
             if (username === "") {
                 errorElement.innerHTML = "Username harus diisi.";
                 return false;
@@ -133,6 +134,13 @@
 
             if (username !== "admin" && password.length < 8) {
                 errorElement.innerHTML = "Password harus minimal 8 karakter";
+                return false;
+            }
+
+            // Simulasi respons server
+            // Ganti dengan logika otentikasi yang sebenarnya
+            if (username !== "admin" || password !== "password123") { 
+                errorElement.innerHTML = "Username atau password salah.";
                 return false;
             }
 
@@ -172,12 +180,6 @@
 
             resetErrorElement.innerHTML = "";
 
-            const existingUsers = ["fenny02", "user2", "admin"];
-            if (!existingUsers.includes(resetUsername)) {
-                resetErrorElement.innerHTML = "Username tidak tersedia.";
-                return false;
-            }
-
             if (newPassword.length < 8) {
                 resetErrorElement.innerHTML = "Password baru harus minimal 8 karakter.";
                 return false;
@@ -195,9 +197,32 @@
                 return false;
             }
 
-            alert("Password berhasil direset. Silakan login dengan password baru Anda.");
-            hideResetPassword();
-            return true; 
+            // Kirim permintaan reset password ke server
+            fetch('/reset_password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: resetUsername,
+                    new_password: newPassword
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    hideResetPassword();
+                } else {
+                    resetErrorElement.innerHTML = data.message;
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                resetErrorElement.innerHTML = "Terjadi kesalahan. Silakan coba lagi.";
+            });
+
+            return false; // Prevent form from submitting
         }
     </script>
 </body>
