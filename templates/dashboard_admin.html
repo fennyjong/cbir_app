@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard CBIR</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 </head>
 <body class="bg-gray-100">
     <div class="flex h-screen">
@@ -53,12 +53,12 @@
                             <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-white">
                                 <i class="fas fa-user"></i>
                             </div>
-                            <span class="font-medium text-gray-700">Admin</span>
+                            <span class="font-medium text-gray-700">Administrator</span>
                         </div>
                         <button id="logoutBtn" class="text-gray-600 hover:text-gray-800">
-                            <i class="fas fa-sign-out-alt"></i>
+                            <i class="fas fa-sign-out-alt logout-icon"></i>
                             <span class="ml-2">Logout</span>
-                        </button>
+                        </button>                        
                     </div>
                 </div>
             </header>
@@ -145,29 +145,23 @@
                         </div>
                     </div>
                     
-                    <!-- Modal gambar penuh -->
-    <div id="imageModal" class="image-modal">
-        <span class="close">&times;</span>
-        <img id="fullImage" class="modal-content" src="" alt="Full size image">
-    </div>
+                    <!-- Full Image Modal -->
+                    <div id="imageModal" class="image-modal">
+                        <span class="close">&times;</span>
+                        <img id="fullImage" class="modal-content" src="" alt="Full size image">
+                    </div>
 
                 <!-- Kelola Label Section -->
                 <div id="kelola-label" class="content-section">
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-3xl font-light text-gray-600 tracking-wide">Pengelolaan Label</h2>
-                            <div class="flex items-center space-x-4">
-                                <button id="newLabelBtn" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors duration-200 flex items-center">
-                                    <i class="fas fa-plus mr-2"></i> New Label
-                                </button>
-                                <button id="deleteLabelMultipleBtn" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors duration-200 flex items-center">
-                                    <i class="fas fa-trash-alt mr-2"></i> Delete Selected
-                                </button>
-                                <button id="labelInfoBtn" class="info-button" aria-label="Label Information">
-                                    <i class="fas fa-info-circle info-icon"></i>
-                                    <span>Informasi Label</span>
-                                </button>
-                            </div>
+                            <h2 class="text-2xl font-semibold text-gray-800">Pengelolaan Label</h2>
+                            <button id="newLabelBtn" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors duration-200 flex items-center">
+                                <i class="fas fa-plus mr-2"></i> New Label
+                            </button>
+                            <button id="labelInfoBtn" class="text-gray-600 hover:text-gray-900">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
                         </div>
                         <div class="mb-4 flex justify-between items-center">
                             <div class="flex items-center">

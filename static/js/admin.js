@@ -15,6 +15,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const datasetInfoPopup = document.getElementById('datasetInfoPopup');
     const labelInfoPopup = document.getElementById('labelInfoPopup');
 
+    logoutBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '/login';  // Redirect to login page
+            } else {
+                alert('Logout failed. Please try again.');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    });
+    
      // Fungsi untuk menampilkan gambar dalam modal
      function showFullImage(imageSrc) {
         const modal = document.getElementById('imageModal');
@@ -160,14 +183,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     logoutBtn.addEventListener('click', () => {
-        if (confirm('Are you sure you want to log out?')) {
-            fetch('/logout', { method: 'POST' })
-                .then(response => {
-                    if (response.ok) {
                         window.location.href = '/login';
-                    }
-                });
-        }
+               
     });
 
     function loadDatasets() {

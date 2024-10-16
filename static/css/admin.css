@@ -3,13 +3,13 @@
     text-align: left;
     font-size: 1.5rem;
     margin-top: 1rem;
-}
-
-.welcome-message i {
+    }
+    
+    .welcome-message i {
     margin-right: 8px;
-}
-
-.container {
+    }
+    
+    .container {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
@@ -18,35 +18,35 @@
     color: #333333;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.description {
+    }
+    
+    .description {
     font-size: 16px;
     color: #333333;
     border: 1px solid #ddd;
     padding: 12px;
     border-radius: 4px;
     background-color: #fafafa;
-}
-
-  .sidebar {
-    transition: width 0.3s ease-in-out;
-}
-@media (max-width: 768px) {
+    }
+    
     .sidebar {
-        width: 5rem;
+    transition: width 0.3s ease-in-out;
+    }
+    @media (max-width: 768px) {
+    .sidebar {
+    width: 5rem;
     }
     .sidebar .sidebar-text {
-        display: none;
+    display: none;
     }
-}
-.button-container {
+    }
+    .button-container {
     display: flex;
     gap: 16px;
     padding: 20px;
     border-radius: 8px;
-}
-.button {
+    }
+    .button {
     display: inline-flex;
     align-items: center;
     padding: 10px 16px;
@@ -55,35 +55,35 @@
     font-size: 14px;
     cursor: pointer;
     transition: background-color 0.2s;
-}
-.button-primary {
+    }
+    .button-primary {
     background-color: #4a5568;
     color: white;
-}
-.button-primary:hover {
+    }
+    .button-primary:hover {
     background-color: #2d3748;
-}
-.button-icon {
+    }
+    .button-icon {
     background-color: transparent;
     color: #4a5568;
     padding: 10px;
-}
-.button-icon:hover {
+    }
+    .button-icon:hover {
     background-color: #e2e8f0;
-}
-.icon {
+    }
+    .icon {
     width: 16px;
     height: 16px;
     fill: currentColor;
-}
-
-.content-section {
+    }
+    
+    .content-section {
     display: none;
-}
-.content-section.active {
+    }
+    .content-section.active {
     display: block;
-}
-.modal {
+    }
+    .modal {
     display: none;
     position: fixed;
     z-index: 1000;
@@ -93,16 +93,16 @@
     height: 100%;
     overflow: auto;
     background-color: rgba(0,0,0,0.4);
-}
-.modal-content {
+    }
+    .modal-content {
     background-color: #fefefe;
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
     max-width: 500px;
-}
-.popup {
+    }
+    .popup {
     display: none;
     position: absolute;
     background-color: white;
@@ -112,8 +112,8 @@
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     z-index: 1000;
     max-width: 300px;
-}
-.info-icon {
+    }
+    .info-icon {
     background-color: white;
     color: #4a5568;
     border: 2px solid #4a5568;
@@ -125,22 +125,20 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-}
-.info-icon:hover {
+    }
+    .info-icon:hover {
     background-color: #4a5568;
     color: white;
-}
-.songket-image {
+    }
+    .songket-image {
     width: 150px;
     height: 150px;
     object-fit: cover;
     border-radius: 8px;
     cursor: pointer;
-}
-
-/* Modal (background) */
-.image-modal {
-    display: none;
+    }
+    .image-modal {
+        display: none;
     position: fixed;
     z-index: 1;
     padding-top: 100px;
@@ -151,34 +149,29 @@
     overflow: auto;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.9);
-}
-
-/* Modal Content (image) */
-.modal-content {
-    margin: auto;
-    display: block;
-    width: 80%;
-    max-width: 700px;
-}
-
-/* Tombol Tutup */
-.close {
-    position: absolute;
-    top: 15px;
-    right: 35px;
-    color: #f1f1f1;
-    font-size: 40px;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.close:hover,
-.close:focus {
-    color: #bbb;
-    text-decoration: none;
-    cursor: pointer;
-}
-.info-button {
+    }
+    .modal-content {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;
+    }
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .close:hover,
+    .close:focus {
+        color: #bbb;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .info-button {
     display: flex;
     align-items: center;
     background-color: transparent;
@@ -186,10 +179,15 @@
     border: none;
     cursor: pointer;
     transition: all 0.3s ease;
-}
-.info-button:hover {
+    }
+    .info-button:hover {
     color: #2d3748;
-}
-.info-icon {
+    }
+    .info-icon {
     margin-right: 5px;
-}
+    }
+    .logout-icon {
+        font-size: 28px;
+        line-height: 1;
+    }
+    

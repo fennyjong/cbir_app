@@ -61,7 +61,6 @@ def login():
             flash('Login successful!', 'success')
             return redirect(url_for('dashboard_user'))
         
-        flash('Invalid username or password!', 'danger')
     return render_template('login.html')
 
 @app.route('/reset_password', methods=['POST'])
@@ -85,12 +84,11 @@ def dashboard_admin():
         return redirect(url_for('login'))
     return render_template('dashboard_admin.html')
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
     logout_user()
     session.pop('user_role', None)
-    flash('You have been logged out successfully.', 'success')
-    return redirect(url_for('login'))
+    return jsonify({"success": True, "message": "You have been logged out successfully."})
 
 @app.route('/new_dataset')
 def new_dataset():

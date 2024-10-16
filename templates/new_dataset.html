@@ -72,6 +72,36 @@
             const fabricNameSelect = document.getElementById('fabric_name');
             const customNama = document.getElementById('custom-nama');
             let cropper;
+            function updateDropdowns() {
+        // Example fetching updated data; you need to replace this with your actual fetch logic
+        const regions = ['Kalimantan', 'Riau', 'Lombok', 'lainnya', 'New Region']; // Sample regions
+        const fabricNames = ['Batik', 'Songket', 'Tenun Ikat', 'Ulos', 'lainnya', 'New Fabric']; // Sample fabrics
+        
+        const regionSelect = document.getElementById('region');
+        const fabricNameSelect = document.getElementById('fabric_name');
+
+        // Clear current options
+        regionSelect.innerHTML = `<option value="">Pilih Daerah Asal</option>`;
+        fabricNameSelect.innerHTML = `<option value="">Pilih Nama Kain</option>`;
+
+        // Add new options
+        regions.forEach(region => {
+            const option = document.createElement('option');
+            option.value = region;
+            option.textContent = region;
+            regionSelect.appendChild(option);
+        });
+
+        fabricNames.forEach(fabric => {
+            const option = document.createElement('option');
+            option.value = fabric;
+            option.textContent = fabric;
+            fabricNameSelect.appendChild(option);
+        });
+    }
+
+    // Call this function to update the dropdowns whenever needed
+    updateDropdowns();
 
             imageInput.addEventListener('change', function(event) {
                 const file = event.target.files[0];
