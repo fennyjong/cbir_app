@@ -10,8 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const addLabelModal = document.getElementById('addLabelModal');
     const closeLabelModal = document.getElementById('closeLabelModal');
     const addLabelForm = document.getElementById('addLabelForm');
-    const datasetInfoBtn = document.getElementById('datasetInfoBtn');
-    const labelInfoBtn = document.getElementById('labelInfoBtn');
     const datasetInfoPopup = document.getElementById('datasetInfoPopup');
     const labelInfoPopup = document.getElementById('labelInfoPopup');
 
@@ -27,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                window.location.href = '/login';  // Redirect to login page
+                window.location.href = '/login';
             } else {
                 alert('Logout failed. Please try again.');
             }
@@ -64,36 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function loadDatasets() {
-        fetch('/get_datasets')
-            .then(response => response.json())
-            .then(data => {
-                const tableBody = document.getElementById('datasetTableBody');
-                tableBody.innerHTML = '';
-                data.forEach((dataset, index) => {
-                    const row = `
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">${index + 1}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <img class="songket-image cursor-pointer" src="/uploads/${dataset.image_filename}" alt="Songket Fabric" onclick="showFullImage('/uploads/${dataset.image_filename}')">
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap" id="class-${dataset.id}">${dataset.fabric_name}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">${dataset.region}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button onclick="editDataset(${dataset.id})" class="text-gray-600 hover:text-gray-900 mr-3">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button onclick="deleteDataset(${dataset.id})" class="text-red-600 hover:text-red-900">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    tableBody.innerHTML += row;
-                });
-            });
-    }
-
     addDatasetBtn.addEventListener('click', () => {
         window.location.href = '/new_dataset';
     });
@@ -127,43 +95,6 @@ document.addEventListener('DOMContentLoaded', function() {
         addLabelForm.reset();
     });
 
-    datasetInfoBtn.addEventListener('click', (e) => {
-        let infoContent = '<h3 class="font-bold">Fabric Name Totals:</h3><ul>';
-        for (let [fabric, count] of Object.entries(fabricData)) {
-            infoContent += `<li>${fabric}: ${count}</li>`;
-        }
-        infoContent += '</ul>';
-        
-        datasetInfoPopup.innerHTML = infoContent;
-        datasetInfoPopup.style.display = 'block';
-        datasetInfoPopup.style.left = `${e.pageX}px`;
-        datasetInfoPopup.style.top = `${e.pageY}px`;
-    });
-
-    function updateLabelInfo() {
-        let infoContent = '<h3 class="font-bold">Labels:</h3><ul>';
-        labels.forEach(label => {
-            infoContent += `<li>${label.name} (${label.region}): ${label.count}</li>`;
-        });
-        infoContent += '</ul>';
-        labelInfoPopup.innerHTML = infoContent;
-    }
-
-    labelInfoBtn.addEventListener('click', (e) => {
-        updateLabelInfo();
-        labelInfoPopup.style.display = 'block';
-        labelInfoPopup.style.left = `${e.pageX}px`;
-        labelInfoPopup.style.top = `${e.pageY}px`;
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('#datasetInfoBtn') && !e.target.closest('#datasetInfoPopup')) {
-            datasetInfoPopup.style.display = 'none';
-        }
-        if (!e.target.closest('#labelInfoBtn') && !e.target.closest('#labelInfoPopup')) {
-            labelInfoPopup.style.display = 'none';
-        }
-    });
 
     toggleSidebar.addEventListener('click', () => {
         sidebar.classList.toggle('w-64');
@@ -180,11 +111,6 @@ document.addEventListener('DOMContentLoaded', function() {
             item.classList.add('bg-gray-700');
             document.getElementById(sectionId).classList.add('active');
         });
-    });
-
-    logoutBtn.addEventListener('click', () => {
-                        window.location.href = '/login';
-               
     });
 
     function loadDatasets() {
@@ -215,13 +141,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     tableBody.innerHTML += row;
                 });
             });
-    }
-
-    function showFullImage(imageSrc) {
-        const modal = document.getElementById('imageModal');
-        const fullImage = document.getElementById('fullImage');
-        fullImage.src = imageSrc;
-        modal.style.display = 'block';
     }
 
     function editDataset(id) {
@@ -268,13 +187,96 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    const datasetEntriesSelect = document.getElementById('datasetEntriesSelect');
+    const datasetSearchInput = document.getElementById('datasetSearchInput');
+    const datasetPrevBtn = document.getElementById('datasetPrevBtn');
+    const datasetNextBtn = document.getElementById('datasetNextBtn');
+    const datasetCurrentPage = document.getElementById('datasetCurrentPage');
+    const datasetEntriesInfo = document.getElementById('datasetEntriesInfo');
+
+    let currentPage = 1;
+    let entriesPerPage = 10;
+    let datasets = []; // Store all datasets for pagination and search
+
+    datasetEntriesSelect.addEventListener('change', (e) => {
+        entriesPerPage = parseInt(e.target.value);
+        currentPage = 1; // Reset to first page
+        loadDatasets();
+    });
+
+    datasetSearchInput.addEventListener('input', (e) => {
+        currentPage = 1; // Reset to first page on new search
+        loadDatasets();
+    });
+
+    datasetPrevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            loadDatasets();
+        }
+    });
+
+    datasetNextBtn.addEventListener('click', () => {
+        const totalPages = Math.ceil(datasets.length / entriesPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            loadDatasets();
+        }
+    });
+
+    function loadDatasets() {
+        fetch('/get_datasets')
+            .then(response => response.json())
+            .then(data => {
+                datasets = data; // Store the fetched datasets
+                displayDatasets();
+            });
+    }
+
+    function displayDatasets() {
+        const tableBody = document.getElementById('datasetTableBody');
+        tableBody.innerHTML = '';
+
+        const searchQuery = datasetSearchInput.value.toLowerCase();
+        const filteredDatasets = datasets.filter(dataset =>
+            dataset.fabric_name.toLowerCase().includes(searchQuery)
+        );
+
+        const totalEntries = filteredDatasets.length;
+        const totalPages = Math.ceil(totalEntries / entriesPerPage);
+        const startIndex = (currentPage - 1) * entriesPerPage;
+        const endIndex = startIndex + entriesPerPage;
+        const paginatedDatasets = filteredDatasets.slice(startIndex, endIndex);
+        paginatedDatasets.forEach((dataset, index) => {
+            const row = `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">${startIndex + index + 1}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <img class="songket-image" src="/uploads/${dataset.image_filename}" alt="Songket Fabric" onclick="showFullImage('/uploads/${dataset.image_filename}')">
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap" id="class-${dataset.id}">${dataset.fabric_name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${dataset.region}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editDataset(${dataset.id})" class="text-gray-600 hover:text-gray-900 mr-3">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button onclick="deleteDataset(${dataset.id})" class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+
+        datasetEntriesInfo.textContent = `Showing ${startIndex + 1} to ${Math.min(startIndex + entriesPerPage, totalEntries)} of ${totalEntries} entries`;
+        datasetCurrentPage.textContent = currentPage;
+    }
+
     // Make functions global
     window.editDataset = editDataset;
     window.deleteDataset = deleteDataset;
     window.showFullImage = showFullImage;
-    window.showFullImage = showFullImage;
-    window.editDataset = editDataset;
-    window.deleteDataset = deleteDataset;
 
     // Load datasets when the page loads
     loadDatasets();
