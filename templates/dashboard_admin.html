@@ -1,228 +1,696 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin CBIR</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+    <title>Admin Dashboard CBIR</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+          .sidebar {
+            transition: width 0.3s ease-in-out;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 5rem;
+            }
+            .sidebar .sidebar-text {
+                display: none;
+            }
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+        .popup {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-width: 300px;
+        }
+        .info-icon {
+            background-color: white;
+            color: #4a5568;
+            border: 2px solid #4a5568;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .info-icon:hover {
+            background-color: #4a5568;
+            color: white;
+        }
+    </style>
 </head>
-<body>
-    <div class="wrapper">
-        <aside class="sidebar" id="sidebar">
-            <h2>Menu</h2>
-            <ul>
-                <li><a href="#" id="home-link"><i class="fas fa-home"></i> Beranda</a></li>
-                <li><a href="#" id="dataset-link"><i class="fas fa-database"></i> Kelola Dataset</a></li>
-                <li><a href="#" id="search-link"><i class="fas fa-search"></i> Pencarian Dataset</a></li>
-            </ul>
+<body class="bg-gray-100">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="bg-gray-800 text-gray-100 w-64 sidebar" id="sidebar">
+            <div class="p-4">
+                <button id="toggleSidebar" class="mt-4 p-2 rounded-full hover:bg-gray-700">
+                    <i class="fas fa-bars"></i>
+                    <span class="ml-2 sidebar-text">Menu</span>
+                </button>
+            </div>
+            <nav class="mt-8">
+                <ul>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center w-full p-3 hover:bg-gray-700" data-section="beranda">
+                            <i class="fas fa-home"></i>
+                            <span class="ml-4 sidebar-text">Beranda</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center w-full p-3 hover:bg-gray-700" data-section="kelola-dataset">
+                            <i class="fas fa-database"></i>
+                            <span class="ml-4 sidebar-text">Kelola Dataset</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center w-full p-3 hover:bg-gray-700" data-section="kelola-label">
+                            <i class="fas fa-tags"></i>
+                            <span class="ml-4 sidebar-text">Kelola Label</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </aside>
 
-        <main class="main-content" id="main-content">
-            <header id="header">
-                <div class="header-left">
-                    <button class="hamburger" id="sidebar-toggle">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <h1>Dashboard Admin CBIR</h1>
-                </div>
-                <div class="header-right">
-                    <div class="user-info">
-                        <div class="user-avatar">
-                            <i class="fas fa-user"></i>
+        <!-- Main content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white shadow-md">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <h1 class="text-2xl font-semibold text-gray-800">Dashboard Admin CBIR</h1>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-white">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <span class="font-medium text-gray-700">Admin</span>
                         </div>
-                        <span class="user-name">Admin</span>
+                        <button id="logoutBtn" class="text-gray-600 hover:text-gray-800">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span class="ml-2">Logout</span>
+                        </button>
                     </div>
-                    <a href="/logout" class="logout-btn">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </a>
                 </div>
             </header>
-            <div class="welcome-message" id="welcome-message">
-                <div class="container">
-                <i class="fas fa-chalkboard-teacher"></i>Selamat Datang Administrator
-                <div class="description">
-                    Pengembangan Sistem CBIR dalam Pengenalan Kain Songket Indonesia Menggunakan CNN untuk Feature Extraction dan Cosine Similarity
+
+            <!-- Main content area -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+                <!-- Beranda Section -->
+                <div id="beranda" class="content-section active">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Welcome to CBIR Admin Dashboard</h2>
+                        <p class="text-gray-600">This is the main dashboard page. You can add overview statistics, recent activities, or quick access links here.</p>
+                    </div>
                 </div>
-            </div>
-            </div>
-            <div class="dashboard-card" id="content" style="display: none;"></div>
-            <div class="credit">
-                <p>&copy; 2024 Fenny Jong. All rights reserved.</p>
-            </div>
-        </main>
-    </div>
 
-    <div class="overlay" id="overlay"></div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const homeLink = document.getElementById('home-link');
-            const datasetLink = document.getElementById('dataset-link');
-            const searchLink = document.getElementById('search-link');
-            const content = document.getElementById('content');
-            const welcomeMessage = document.getElementById('welcome-message');
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('main-content');
-            const header = document.getElementById('header');
-            const sidebarToggle = document.getElementById('sidebar-toggle');
-            const overlay = document.getElementById('overlay');
-
-            let cropper;
-
-            function showHome() {
-                content.style.display = 'none';
-                welcomeMessage.style.display = 'block';
-            }
-
-            function showDatasetManagement() {
-                welcomeMessage.style.display = 'none';
-                content.innerHTML = `
-                    <h2>Penambahan Dataset</h2>
-                    <form action="/upload" method="POST" enctype="multipart/form-data" id="upload-form">
-                        <div class="form-grid">
-                            <div>
-                                <div class="form-group">
-                                    <label for="image">Unggah Gambar</label>
-                                    <input type="file" id="image-input" name="image" accept="image/*" required>
-                                </div>
-                                <div class="image-preview-container">
-                                    <div class="image-preview">
-                                        <img src="" alt="Pratinjau Gambar" id="image-preview">
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="form-group">
-                                    <label for="region">Daerah Asal</label>
-                                    <select id="region" name="region" required>
-                                        <option value="">Pilih Daerah Asal</option>
-                                        <option value="Kalimantan">Kalimantan</option>
-                                        <option value="Riau">Riau</option>
-                                        <option value="Lombok">Lombok</option>
-                                        <option value="lainnya">Lainnya</option>
-                                    </select>
-                                    <input type="text" id="custom-region" name="custom-region" placeholder="Masukkan Daerah Lain" style="display: none; width: 96%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 0.25rem;" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="fabric_name">Nama Kain</label>
-                                    <select id="fabric_name" name="fabric_name" required>
-                                        <option value="">Pilih Nama Kain</option>
-                                        <option value="Batik">Batik</option>
-                                        <option value="Songket">Songket</option>
-                                        <option value="Tenun Ikat">Tenun Ikat</option>
-                                        <option value="Ulos">Ulos</option>
-                                        <option value="Sasirangan">Sasirangan</option>
-                                        <option value="Tapis">Tapis</option>
-                                        <option value="Gringsing">Gringsing</option>
-                                        <option value="Endek">Endek</option>
-                                        <option value="lainnya">Lainnya</option>
-                                    </select>
-                                    <input type="text" id="custom-nama" name="custom-nama" placeholder="Masukkan Nama Lain" style="display: none; width: 96%; padding: 0.75rem; border: 1px solid #ced4da; border-radius: 0.25rem;" />
-                                </div>
-                                <div class="form-group">
-                                    <div class="augment-group">
-                                        <input type="checkbox" id="augment1" name="augment1" value="rotate">
-                                        <label for="augment1">Augmentasi Gambar</label>
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn">Unggah Dataset</button>
+                <!-- Kelola Dataset Section -->
+                <div id="kelola-dataset" class="content-section">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-semibold text-gray-800">Dataset Management</h2>
+                            <div class="space-x-2">
+                                <button id="addDatasetBtn" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors duration-200 flex items-center">
+                                    <i class="fas fa-plus mr-2"></i> Add Dataset
+                                </button>
+                                <button id="datasetInfoBtn" class="text-gray-600 hover:text-gray-900">
+                                    <i class="fas fa-info-circle"></i>
+                                </button>
                             </div>
                         </div>
-                    </form>
-                `;
-                content.style.display = 'block';
-                initializeDatasetManagement();
-            }
+                        <div class="mb-4 flex justify-between items-center">
+                            <div class="flex items-center">
+                                <span class="mr-2">Show</span>
+                                <select id="entriesSelect" class="border rounded px-2 py-1">
+                                    <option>10</option>
+                                    <option>25</option>
+                                    <option>50</option>
+                                    <option>100</option>
+                                </select>
+                                <span class="ml-2">entries</span>
+                            </div>
+                            <div class="relative">
+                                <input
+                                    id="searchInput"
+                                    type="text"
+                                    placeholder="Search..."
+                                    class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                />
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table id="datasetTable" class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No.</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">1</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <img class="h-10 w-10 rounded-full" src="/api/placeholder/40/40" alt="Dataset">
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">Siku Awan</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <button class="text-gray-600 hover:text-gray-900 mr-3 edit-btn">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="text-red-600 hover:text-red-900 delete-btn">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="flex items-center justify-between mt-4">
+                            <div id="entriesInfo">Showing 1 to 1 of 1 entries</div>
+                            <div class="flex space-x-2">
+                                <button id="prevBtn" class="px-3 py-1 border rounded text-sm text-gray-600 hover:bg-gray-100">Prev</button>
+                                <button id="currentPage" class="px-3 py-1 border rounded text-sm bg-gray-600 text-white">1</button>
+                                <button id="nextBtn" class="px-3 py-1 border rounded text-sm text-gray-600 hover:bg-gray-100">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            function showSearch() {
-                welcomeMessage.style.display = 'none';
-                content.innerHTML = `
-                    <h2>Pencarian Dataset</h2>
-                    <p>Silakan masukkan kriteria pencarian Anda di sini.</p>
-                    <input type="text" placeholder="Kriteria pencarian" required>
-                    <button>Cari</button>
-                `;
-                content.style.display = 'block';
-            }
+                <!-- Kelola Label Section -->
+                <div id="kelola-label" class="content-section">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-semibold text-gray-800">Label Management</h2>
+                            <button id="newLabelBtn" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors duration-200 flex items-center">
+                                <i class="fas fa-plus mr-2"></i> New Label
+                            </button>
+                            <button id="labelInfoBtn" class="text-gray-600 hover:text-gray-900">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                        </div>
+                        <div class="mb-4 flex justify-between items-center">
+                            <div class="flex items-center">
+                                <span class="mr-2">Show</span>
+                                <select id="labelEntriesSelect" class="border rounded px-2 py-1">
+                                    <option>10</option>
+                                    <option>25</option>
+                                    <option>50</option>
+                                    <option>100</option>
+                                </select>
+                                <span class="ml-2">entries</span>
+                            </div>
+                            <div class="relative">
+                                <input
+                                    id="labelSearchInput"
+                                    type="text"
+                                    placeholder="Search..."
+                                    class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                />
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table id="labelTable" class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No.</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keterangan</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <!-- Label rows will be dynamically added here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="flex items-center justify-between mt-4">
+                            <div id="labelEntriesInfo">Showing 0 to 0 of 0 entries</div>
+                            <div class="flex space-x-2">
+                                <button id="labelPrevBtn" class="px-3 py-1 border rounded text-sm text-gray-600 hover:bg-gray-100">Prev</button>
+                                <button id="labelCurrentPage" class="px-3 py-1 border rounded text-sm bg-gray-600 text-white">1</button>
+                                <button id="labelNextBtn" class="px-3 py-1 border rounded text-sm text-gray-600 hover:bg-gray-100">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
 
-            function initializeDatasetManagement() {
-                const imageInput = document.getElementById('image-input');
-                const imagePreview = document.getElementById('image-preview');
-                const regionSelect = document.getElementById('region');
-                const customRegion = document.getElementById('custom-region');
-                const fabricNameSelect = document.getElementById('fabric_name');
-                const customNama = document.getElementById('custom-nama');
+            <!-- Footer -->
+            <footer class="bg-white border-t border-gray-200 p-4">
+                <p class="text-center text-gray-600 text-sm">&copy; 2024 Fenny Jong. All rights reserved.</p>
+            </footer>
+        </div>
+    </div>
 
-                imageInput.addEventListener('change', function(event) {
-                    const file = event.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            imagePreview.src = e.target.result;
-                            initCropper();
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
+    <!-- Add Label Modal -->
+    <div id="addLabelModal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Add New Label</h2>
+            <form id="addLabelForm">
+                <div class="mb-4">
+                    <label for="labelName" class="block text-gray-700 text-sm font-bold mb-2">Label Name:</label>
+                    <input type="text" id="labelName" name="labelName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label for="labelRegion" class="block text-gray-700 text-sm font-bold mb-2">Region:</label>
+                    <input type="text" id="labelRegion" name="labelRegion" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+                <div class="mb-4">
+                    <label for="labelDescription" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+                    <textarea id="labelDescription" name="labelDescription" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" rows="3" required></textarea>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors duration-200 flex items-center">
+                        <i class="fas fa-tag mr-2"></i> Add Label
+                    </button>
+                    <button type="button" id="closeLabelModal" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="datasetInfoPopup" class="popup"></div>
+    <div id="labelInfoPopup" class="popup"></div>
 
-                regionSelect.addEventListener('change', function() {
-                    customRegion.style.display = this.value === 'lainnya' ? 'block' : 'none';
-                    customRegion.required = this.value === 'lainnya';
-                });
+   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Get references to DOM elements
+    const sidebar = document.getElementById('sidebar');
+    const toggleSidebar = document.getElementById('toggleSidebar');
+    const navItems = document.querySelectorAll('nav a');
+    const contentSections = document.querySelectorAll('.content-section');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const addDatasetBtn = document.getElementById('addDatasetBtn');
+    const addLabelBtn = document.getElementById('addLabelBtn');
+    const addLabelModal = document.getElementById('addLabelModal');
+    const closeLabelModal = document.getElementById('closeLabelModal');
+    const addLabelForm = document.getElementById('addLabelForm');
+    const entriesSelect = document.getElementById('entriesSelect');
+    const searchInput = document.getElementById('searchInput');
+    const datasetTable = document.getElementById('datasetTable');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const currentPage = document.getElementById('currentPage');
+    const entriesInfo = document.getElementById('entriesInfo');
+    const newLabelBtn = document.getElementById('newLabelBtn');
+    const datasetInfoBtn = document.getElementById('datasetInfoBtn');
+    const labelInfoBtn = document.getElementById('labelInfoBtn');
+    const datasetInfoPopup = document.getElementById('datasetInfoPopup');
+    const labelInfoPopup = document.getElementById('labelInfoPopup');
 
-                fabricNameSelect.addEventListener('change', function() {
-                    customNama.style.display = this.value === 'lainnya' ? 'block' : 'none';
-                    customNama.required = this.value === 'lainnya';
-                });
-            }
+    let page = 1;
+    let entriesPerPage = 10;
 
-            function initCropper() {
-                if (cropper) {
-                    cropper.destroy();
-                }
-                const imagePreview = document.getElementById('image-preview');
-                cropper = new Cropper(imagePreview, {
-                    aspectRatio: 1,
-                    viewMode: 1,
-                    minCropBoxWidth: 225,
-                    minCropBoxHeight: 225,
-                    crop: function(event) {
-                        if (event.detail.width < 225 || event.detail.height < 225) {
-                            cropper.setCropBoxData({
-                                width: Math.max(225, event.detail.width),
-                                height: Math.max(225, event.detail.height)
-                            });
-                        }
-                    }
-                });
-            }
+    // Simulated data
+    let labels = [
+            { id: 1, name: 'Batik Kawung', region: 'Java', description: 'Traditional Javanese batik pattern', count: 15 },
+            { id: 2, name: 'Songket Palembang', region: 'Sumatra', description: 'Luxurious woven fabric from Palembang', count: 10 }
+        ];
 
-            // Sidebar toggle functionality
-            sidebarToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('hidden');
-                mainContent.classList.toggle('full-width');
-                header.classList.toggle('full-width');
-                overlay.classList.toggle('active');
-            });
+        let fabricData = {
+            'Batik': 25,
+            'Songket': 20,
+            'Tenun': 15
+        };
 
-            overlay.addEventListener('click', function() {
-                sidebar.classList.add('hidden');
-                mainContent.classList.add('full-width');
-                header.classList.add('full-width');
-                overlay.classList.remove('active');
-            });
-
-            // Menu item click handlers
-            homeLink.addEventListener('click', showHome);
-            datasetLink.addEventListener('click', showDatasetManagement);
-            searchLink.addEventListener('click', showSearch);
-
-            // Initial page load
-            showHome();
+        // New Label Modal functionality
+        newLabelBtn.addEventListener('click', () => {
+            addLabelModal.style.display = 'block';
         });
+
+        closeLabelModal.addEventListener('click', () => {
+            addLabelModal.style.display = 'none';
+        });
+
+        addLabelForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const labelName = document.getElementById('labelName').value;
+            const labelRegion = document.getElementById('labelRegion').value;
+            const labelDescription = document.getElementById('labelDescription').value;
+            
+            // Add new label to the labels array
+            const newLabel = {
+                id: labels.length + 1,
+                name: labelName,
+                region: labelRegion,
+                description: labelDescription,
+                count: 0
+            };
+            labels.push(newLabel);
+
+            // Update label info
+            updateLabelInfo();
+
+            alert(`Label "${labelName}" added successfully!`);
+            
+            addLabelModal.style.display = 'none';
+            addLabelForm.reset();
+        });
+
+        // Dataset Info Popup
+        datasetInfoBtn.addEventListener('click', (e) => {
+            let infoContent = '<h3 class="font-bold">Fabric Name Totals:</h3><ul>';
+            for (let [fabric, count] of Object.entries(fabricData)) {
+                infoContent += `<li>${fabric}: ${count}</li>`;
+            }
+            infoContent += '</ul>';
+            
+            datasetInfoPopup.innerHTML = infoContent;
+            datasetInfoPopup.style.display = 'block';
+            datasetInfoPopup.style.left = `${e.pageX}px`;
+            datasetInfoPopup.style.top = `${e.pageY}px`;
+        });
+
+        // Label Info Popup
+        function updateLabelInfo() {
+            let infoContent = '<h3 class="font-bold">Labels:</h3><ul>';
+            labels.forEach(label => {
+                infoContent += `<li>${label.name} (${label.region}): ${label.count}</li>`;
+            });
+            infoContent += '</ul>';
+            
+            labelInfoPopup.innerHTML = infoContent;
+        }
+
+        labelInfoBtn.addEventListener('click', (e) => {
+            updateLabelInfo();
+            labelInfoPopup.style.display = 'block';
+            labelInfoPopup.style.left = `${e.pageX}px`;
+            labelInfoPopup.style.top = `${e.pageY}px`;
+        });
+
+        // Close popups when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#datasetInfoBtn') && !e.target.closest('#datasetInfoPopup')) {
+                datasetInfoPopup.style.display = 'none';
+            }
+            if (!e.target.closest('#labelInfoBtn') && !e.target.closest('#labelInfoPopup')) {
+                labelInfoPopup.style.display = 'none';
+            }
+        });
+
+    // Sidebar toggle functionality
+    toggleSidebar.addEventListener('click', () => {
+        sidebar.classList.toggle('w-64');
+        sidebar.classList.toggle('w-20');
+        document.querySelectorAll('.sidebar-text').forEach(el => el.classList.toggle('hidden'));
+    });
+
+    // Navigation functionality
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const sectionId = item.getAttribute('data-section');
+            
+            navItems.forEach(navItem => navItem.classList.remove('bg-gray-700'));
+            contentSections.forEach(section => section.classList.remove('active'));
+            
+            item.classList.add('bg-gray-700');
+            document.getElementById(sectionId).classList.add('active');
+        });
+    });
+
+    // Logout functionality
+    logoutBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to log out?')) {
+            // Simulating logout by clearing session storage
+            sessionStorage.clear();
+            // Redirect to login page (you should replace '/login' with your actual login page URL)
+            window.location.href = '/login';
+        }
+    });
+
+    // Add Dataset functionality
+    addDatasetBtn.addEventListener('click', () => {
+        window.location.href = '/new_dataset';
+    });
+
+    // Add Label Modal functionality
+    addLabelBtn.addEventListener('click', () => {
+        addLabelModal.style.display = 'block';
+    });
+
+    closeLabelModal.addEventListener('click', () => {
+        addLabelModal.style.display = 'none';
+    });
+
+    addLabelForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const labelName = document.getElementById('labelName').value;
+        const labelDescription = document.getElementById('labelDescription').value;
+        
+        // Simulating adding a new label
+        console.log(`New label: ${labelName}, Description: ${labelDescription}`);
+        alert(`Label "${labelName}" added successfully!`);
+        
+        // Close the modal and reset the form
+        addLabelModal.style.display = 'none';
+        addLabelForm.reset();
+    });
+
+    // Close modal if clicked outside
+    window.addEventListener('click', (e) => {
+        if (e.target === addLabelModal) {
+            addLabelModal.style.display = 'none';
+        }
+    });
+
+    // Entries select functionality
+    entriesSelect.addEventListener('change', () => {
+        entriesPerPage = parseInt(entriesSelect.value);
+        page = 1;
+        updateTable();
+    });
+
+    // Edit and delete functionality
+    datasetTable.addEventListener('click', (e) => {
+        if (e.target.closest('.edit-btn')) {
+            const row = e.target.closest('tr');
+            const id = row.querySelector('td:first-child').textContent;
+            alert(`Editing item ${id}`);
+            // Here you would typically open a modal or navigate to an edit page
+        } else if (e.target.closest('.delete-btn')) {
+            const row = e.target.closest('tr');
+            const id = row.querySelector('td:first-child').textContent;
+            if (confirm(`Are you sure you want to delete item ${id}?`)) {
+                console.log(`Deleting item ${id}`);
+                // Simulating deletion by removing the row
+                row.remove();
+                updateTable();
+            }
+        }
+    });
+
+    // Pagination functionality
+    prevBtn.addEventListener('click', () => {
+        if (page > 1) {
+            page--;
+            updateTable();
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        const totalItems = datasetTable.querySelectorAll('tbody tr').length;
+        if (page * entriesPerPage < totalItems) {
+            page++;
+            updateTable();
+        }
+    });
+
+      // Implementasi search yang bekerja dengan benar
+        function searchLabels() {
+            const searchTerm = labelSearchInput.value.toLowerCase();
+            const filteredLabels = labels.filter(label => 
+                label.class.toLowerCase().includes(searchTerm) || 
+                label.keterangan.toLowerCase().includes(searchTerm)
+            );
+            
+            labelPage = 1; // Reset ke halaman pertama saat melakukan pencarian
+            renderLabelTable(filteredLabels);
+        }
+
+        // Fungsi untuk merender tabel label
+        function renderLabelTable(labelsToRender) {
+            const tbody = labelTable.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            const startIndex = (labelPage - 1) * labelEntriesPerPage;
+            const endIndex = startIndex + labelEntriesPerPage;
+            const paginatedLabels = labelsToRender.slice(startIndex, endIndex);
+
+            paginatedLabels.forEach((label, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">${startIndex + index + 1}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${label.class}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${label.keterangan}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="text-gray-600 hover:text-gray-900 mr-3 edit-label-btn">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-900 delete-label-btn">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="text-blue-600 hover:text-blue-900 ml-3 info-label-btn">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            updatePagination(labelsToRender.length);
+        }
+
+        // Fungsi untuk memperbarui informasi pagination
+        function updatePagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / labelEntriesPerPage);
+            labelCurrentPage.textContent = labelPage;
+            labelEntriesInfo.textContent = `Showing ${Math.min((labelPage - 1) * labelEntriesPerPage + 1, totalItems)} to ${Math.min(labelPage * labelEntriesPerPage, totalItems)} of ${totalItems} entries`;
+            
+            labelPrevBtn.disabled = labelPage === 1;
+            labelNextBtn.disabled = labelPage >= totalPages;
+        }
+
+        // Event listener untuk search input
+        labelSearchInput.addEventListener('input', searchLabels);
+
+        // Event listener untuk pagination
+        labelPrevBtn.addEventListener('click', () => {
+            if (labelPage > 1) {
+                labelPage--;
+                searchLabels();
+            }
+        });
+
+        labelNextBtn.addEventListener('click', () => {
+            const filteredLabels = labels.filter(label => 
+                label.class.toLowerCase().includes(labelSearchInput.value.toLowerCase()) || 
+                label.keterangan.toLowerCase().includes(labelSearchInput.value.toLowerCase())
+            );
+            const totalPages = Math.ceil(filteredLabels.length / labelEntriesPerPage);
+            if (labelPage < totalPages) {
+                labelPage++;
+                searchLabels();
+            }
+        });
+
+        // Event listener untuk perubahan jumlah entri per halaman
+        labelEntriesSelect.addEventListener('change', () => {
+            labelEntriesPerPage = parseInt(labelEntriesSelect.value);
+            labelPage = 1;
+            searchLabels();
+        });
+
+        // Fungsi untuk menambahkan label baru
+        function addNewLabel(labelClass, labelKeterangan) {
+            const newLabel = {
+                id: labels.length + 1,
+                class: labelClass,
+                keterangan: labelKeterangan,
+                count: 0 // Label baru mulai dengan jumlah 0
+            };
+            labels.push(newLabel);
+            searchLabels(); // Memperbarui tampilan tabel
+        }
+
+        // Event listener untuk form penambahan label baru
+        newLabelForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const labelClass = document.getElementById('labelClass').value;
+            const labelKeterangan = document.getElementById('labelKeterangan').value;
+            
+            addNewLabel(labelClass, labelKeterangan);
+            
+            alert(`Label "${labelClass}" berhasil ditambahkan!`);
+            
+            // Menutup modal dan mereset form
+            newLabelModal.style.display = 'none';
+            newLabelForm.reset();
+        });
+
+        // Fungsi untuk mengedit label
+        function editLabel(labelId, newClass, newKeterangan) {
+            const labelIndex = labels.findIndex(l => l.id === labelId);
+            if (labelIndex !== -1) {
+                labels[labelIndex].class = newClass;
+                labels[labelIndex].keterangan = newKeterangan;
+                searchLabels(); // Memperbarui tampilan tabel
+            }
+        }
+
+        // Fungsi untuk menghapus label
+        function deleteLabel(labelId) {
+            labels = labels.filter(l => l.id !== labelId);
+            searchLabels(); // Memperbarui tampilan tabel
+        }
+
+        // Event delegation untuk tombol edit, delete, dan info
+        labelTable.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            if (!row) return;
+
+            const labelId = parseInt(row.querySelector('td:first-child').textContent);
+            const label = labels.find(l => l.id === labelId);
+
+            if (e.target.closest('.edit-label-btn')) {
+                const newClass = prompt('Masukkan nama class baru:', label.class);
+                const newKeterangan = prompt('Masukkan keterangan baru:', label.keterangan);
+                if (newClass && newKeterangan) {
+                    editLabel(labelId, newClass, newKeterangan);
+                }
+            } else if (e.target.closest('.delete-label-btn')) {
+                if (confirm(`Apakah Anda yakin ingin menghapus label "${label.class}"?`)) {
+                    deleteLabel(labelId);
+                }
+            } else if (e.target.closest('.info-label-btn')) {
+                infoPopupContent.textContent = `Label: ${label.class}, Jumlah Data: ${label.count}`;
+                infoPopup.style.display = 'block';
+                infoPopup.style.left = `${e.pageX}px`;
+                infoPopup.style.top = `${e.pageY}px`;
+            }
+        });
+
+        
+        // Inisialisasi
+        fetchLabels(); // Mengambil data label dari server (disimulasikan)
+        searchLabels(); // Menampilkan tabel label untuk pertama kali
+    });
     </script>
-</body>
-</html>

@@ -95,6 +95,11 @@ def logout():
     flash('Anda telah berhasil logout.', 'success')
     return redirect(url_for('login'))
 
+@app.route('/new_dataset')
+def new_dataset():
+    return render_template('new_dataset.html')
+
+
 @app.route('/upload', methods=['POST'])
 def upload():
     if session.get('user_role') != 'admin':
