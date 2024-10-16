@@ -86,7 +86,6 @@ def dashboard_admin():
     return render_template('dashboard_admin.html')
 
 @app.route('/logout')
-@login_required
 def logout():
     logout_user()
     session.pop('user_role', None)

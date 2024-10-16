@@ -4,181 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard CBIR</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-                .welcome-message {
-            color: var(--primary-color);
-            text-align: left;
-            font-size: 1.5rem;
-            margin-top: 1rem;
-        }
-
-        .welcome-message i {
-            margin-right: 8px;
-        }
-        
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fafafa;
-            border: 1px solid #ddd;
-            color: #333333;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .description {
-            font-size: 16px;
-            color: #333333;
-            border: 1px solid #ddd;
-            padding: 12px;
-            border-radius: 4px;
-            background-color: #fafafa;
-        }
-        
-          .sidebar {
-            transition: width 0.3s ease-in-out;
-        }
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 5rem;
-            }
-            .sidebar .sidebar-text {
-                display: none;
-            }
-        }
-        .button-container {
-            display: flex;
-            gap: 16px;
-            padding: 20px;
-            border-radius: 8px;
-        }
-        .button {
-            display: inline-flex;
-            align-items: center;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .button-primary {
-            background-color: #4a5568;
-            color: white;
-        }
-        .button-primary:hover {
-            background-color: #2d3748;
-        }
-        .button-icon {
-            background-color: transparent;
-            color: #4a5568;
-            padding: 10px;
-        }
-        .button-icon:hover {
-            background-color: #e2e8f0;
-        }
-        .icon {
-            width: 16px;
-            height: 16px;
-            fill: currentColor;
-        }
-        
-        .content-section {
-            display: none;
-        }
-        .content-section.active {
-            display: block;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-        }
-        .popup {
-            display: none;
-            position: absolute;
-            background-color: white;
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 1000;
-            max-width: 300px;
-        }
-        .info-icon {
-            background-color: white;
-            color: #4a5568;
-            border: 2px solid #4a5568;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .info-icon:hover {
-            background-color: #4a5568;
-            color: white;
-        }
-        .songket-image {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .image-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.9);
-        }
-        .modal-content {
-            margin: auto;
-            display: block;
-            width: 80%;
-            max-width: 700px;
-        }
-        .close {
-            position: absolute;
-            top: 15px;
-            right: 35px;
-            color: #f1f1f1;
-            font-size: 40px;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        .close:hover,
-        .close:focus {
-            color: #bbb;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body class="bg-gray-100">
     <div class="flex h-screen">
@@ -219,7 +47,7 @@
             <!-- Header -->
             <header class="bg-white shadow-md">
                 <div class="flex items-center justify-between px-6 py-4">
-                    <h1 class="text-2xl font-semibold text-gray-800">Dashboard Admin CBIR</h1>
+                    <h1 class="text-2xl font-semibold text-gray-500">Dashboard Admin CBIR</h1>
                     <div class="flex items-center space-x-4">
                         <div class="flex items-center space-x-2">
                             <div class="w-10 h-10 rounded-full bg-gray-600 flex items-center justify-center text-white">
@@ -249,27 +77,54 @@
                     </div>
                     </div>
 
-                      <!-- Kelola Dataset Section -->
-                      <div id="kelola-dataset" class="content-section">
-                        <div class="bg-white rounded-lg shadow-md p-6">
-                            <div class="flex justify-between items-center mb-6">
-                                <h2 class="text-2xl font-semibold text-gray-800">Dataset Management</h2>
-                                <div class="button-container flex items-center space-x-4">
-                                    <button id="addDatasetBtn" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors duration-200 flex items-center">
-                                        <i class="fas fa-plus mr-2"></i> Add Dataset
-                                    </button>
-                                    <button id="datasetInfoBtn" class="info-button" aria-label="Dataset Information">
-                                        <i class="fas fa-info-circle"></i>
-                                    </button>
+    <!-- Kelola Dataset Section -->
+    <div id="kelola-dataset" class="content-section">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold text-gray-800">Pengelolaan Data</h2>
+                <div class="flex items-center space-x-4">
+                    <button id="addDatasetBtn" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors duration-200 flex items-center">
+                        <i class="fas fa-plus mr-2"></i> Add Dataset
+                    </button>
+                    <button id="deleteMultipleBtn" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors duration-200 flex items-center">
+                        <i class="fas fa-trash-alt mr-2"></i> Delete Selected
+                    </button>
+                    <button id="datasetInfoBtn" class="info-button" aria-label="Dataset Information">
+                        <i class="fas fa-info-circle info-icon"></i>
+                        <span>Informasi Data</span>
+                    </button>
+                </div>
+            </div>
+                            <div class="mb-6 flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <span class="mr-2">Show</span>
+                                    <select id="datasetEntriesSelect" class="border rounded px-2 py-1">
+                                        <option>10</option>
+                                        <option>25</option>
+                                        <option>50</option>
+                                        <option>100</option>
+                                    </select>
+                                    <span class="ml-2">entries</span>
+                                </div>
+                                <div class="relative">
+                                    <input
+                                        id="datasetSearchInput"
+                                        type="text"
+                                        placeholder="Search..."
+                                        class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                    />
+                                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                                 </div>
                             </div>
+                            
                             <div class="overflow-x-auto">
                                 <table id="datasetTable" class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No.</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Kain</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Asal Daerah</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                         </tr>
                                     </thead>
@@ -277,45 +132,42 @@
                                         <!-- Table rows will be dynamically inserted here -->
                                     </tbody>
                                 </table>
-                            </div>  
-                            <div class="flex items-center justify-between mt-4">
-                            <div id="entriesInfo">Showing 1 to 1 of 1 entries</div>
-                            <div class="flex space-x-2">
-                                <button id="prevBtn" class="px-3 py-1 border rounded text-sm text-gray-600 hover:bg-gray-100">Prev</button>
-                                <button id="currentPage" class="px-3 py-1 border rounded text-sm bg-gray-600 text-white">1</button>
-                                <button id="nextBtn" class="px-3 py-1 border rounded text-sm text-gray-600 hover:bg-gray-100">Next</button>
+                            </div>
+                            
+                            <div class="flex items-center justify-between mt-6">
+                                <div id="datasetEntriesInfo" class="text-sm text-gray-600">Showing 1 to 10 of 100 entries</div>
+                                <div class="flex space-x-2">
+                                    <button id="datasetPrevBtn" class="px-3 py-1 border rounded text-sm text-gray-600 hover:bg-gray-100">Prev</button>
+                                    <button id="datasetCurrentPage" class="px-3 py-1 border rounded text-sm bg-gray-600 text-white">1</button>
+                                    <button id="datasetNextBtn" class="px-3 py-1 border rounded text-sm text-gray-600 hover:bg-gray-100">Next</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div id="kelola-dataset" class="content-section">
-                    <!-- ... existing table structure ... -->
-                    <table id="datasetTable" class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No.</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <!-- Dataset rows will be dynamically added here -->
-                        </tbody>
-                    </table>
-                </div>
+                    
+                    <!-- Modal gambar penuh -->
+    <div id="imageModal" class="image-modal">
+        <span class="close">&times;</span>
+        <img id="fullImage" class="modal-content" src="" alt="Full size image">
+    </div>
 
                 <!-- Kelola Label Section -->
                 <div id="kelola-label" class="content-section">
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-2xl font-semibold text-gray-800">Label Management</h2>
-                            <button id="newLabelBtn" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors duration-200 flex items-center">
-                                <i class="fas fa-plus mr-2"></i> New Label
-                            </button>
-                            <button id="labelInfoBtn" class="text-gray-600 hover:text-gray-900">
-                                <i class="fas fa-info-circle"></i>
-                            </button>
+                            <h2 class="text-3xl font-light text-gray-600 tracking-wide">Pengelolaan Label</h2>
+                            <div class="flex items-center space-x-4">
+                                <button id="newLabelBtn" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors duration-200 flex items-center">
+                                    <i class="fas fa-plus mr-2"></i> New Label
+                                </button>
+                                <button id="deleteLabelMultipleBtn" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors duration-200 flex items-center">
+                                    <i class="fas fa-trash-alt mr-2"></i> Delete Selected
+                                </button>
+                                <button id="labelInfoBtn" class="info-button" aria-label="Label Information">
+                                    <i class="fas fa-info-circle info-icon"></i>
+                                    <span>Informasi Label</span>
+                                </button>
+                            </div>
                         </div>
                         <div class="mb-4 flex justify-between items-center">
                             <div class="flex items-center">
@@ -400,236 +252,6 @@
     </div>
     <div id="datasetInfoPopup" class="popup"></div>
     <div id="labelInfoPopup" class="popup"></div>
-
-   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // Get references to DOM elements
-    const sidebar = document.getElementById('sidebar');
-    const toggleSidebar = document.getElementById('toggleSidebar');
-    const navItems = document.querySelectorAll('nav a');
-    const contentSections = document.querySelectorAll('.content-section');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const addDatasetBtn = document.getElementById('addDatasetBtn');
-    const addLabelBtn = document.getElementById('addLabelBtn');
-    const addLabelModal = document.getElementById('addLabelModal');
-    const closeLabelModal = document.getElementById('closeLabelModal');
-    const addLabelForm = document.getElementById('addLabelForm');
-    const entriesSelect = document.getElementById('entriesSelect');
-    const searchInput = document.getElementById('searchInput');
-    const datasetTable = document.getElementById('datasetTable');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const currentPage = document.getElementById('currentPage');
-    const entriesInfo = document.getElementById('entriesInfo');
-    const newLabelBtn = document.getElementById('newLabelBtn');
-    const datasetInfoBtn = document.getElementById('datasetInfoBtn');
-    const labelInfoBtn = document.getElementById('labelInfoBtn');
-    const datasetInfoPopup = document.getElementById('datasetInfoPopup');
-    const labelInfoPopup = document.getElementById('labelInfoPopup');
-    
-    addDatasetBtn.addEventListener('click', () => {
-            window.location.href = '/new_dataset';
-        });
-
-        // New Label Modal functionality
-        newLabelBtn.addEventListener('click', () => {
-            addLabelModal.style.display = 'block';
-        });
-
-        closeLabelModal.addEventListener('click', () => {
-            addLabelModal.style.display = 'none';
-        });
-
-        addLabelForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const labelName = document.getElementById('labelName').value;
-            const labelRegion = document.getElementById('labelRegion').value;
-            const labelDescription = document.getElementById('labelDescription').value;
-            
-            // Add new label to the labels array
-            const newLabel = {
-                id: labels.length + 1,
-                name: labelName,
-                region: labelRegion,
-                description: labelDescription,
-                count: 0
-            };
-            labels.push(newLabel);
-
-            // Update label info
-            updateLabelInfo();
-
-            alert(`Label "${labelName}" added successfully!`);
-            
-            addLabelModal.style.display = 'none';
-            addLabelForm.reset();
-        });
-
-        // Dataset Info Popup
-        datasetInfoBtn.addEventListener('click', (e) => {
-            let infoContent = '<h3 class="font-bold">Fabric Name Totals:</h3><ul>';
-            for (let [fabric, count] of Object.entries(fabricData)) {
-                infoContent += `<li>${fabric}: ${count}</li>`;
-            }
-            infoContent += '</ul>';
-            
-            datasetInfoPopup.innerHTML = infoContent;
-            datasetInfoPopup.style.display = 'block';
-            datasetInfoPopup.style.left = `${e.pageX}px`;
-            datasetInfoPopup.style.top = `${e.pageY}px`;
-        });
-
-        // Label Info Popup
-        function updateLabelInfo() {
-            let infoContent = '<h3 class="font-bold">Labels:</h3><ul>';
-            labels.forEach(label => {
-                infoContent += `<li>${label.name} (${label.region}): ${label.count}</li>`;
-            });
-            infoContent += '</ul>';
-            
-            labelInfoPopup.innerHTML = infoContent;
-        }
-
-        labelInfoBtn.addEventListener('click', (e) => {
-            updateLabelInfo();
-            labelInfoPopup.style.display = 'block';
-            labelInfoPopup.style.left = `${e.pageX}px`;
-            labelInfoPopup.style.top = `${e.pageY}px`;
-        });
-
-        // Close popups when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('#datasetInfoBtn') && !e.target.closest('#datasetInfoPopup')) {
-                datasetInfoPopup.style.display = 'none';
-            }
-            if (!e.target.closest('#labelInfoBtn') && !e.target.closest('#labelInfoPopup')) {
-                labelInfoPopup.style.display = 'none';
-            }
-        });
-
-    // Sidebar toggle functionality
-    toggleSidebar.addEventListener('click', () => {
-            sidebar.classList.toggle('w-64');
-            sidebar.classList.toggle('w-20');
-            document.querySelectorAll('.sidebar-text').forEach(el => el.classList.toggle('hidden'));
-        });
-
-        // Navigation functionality
-        navItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-                e.preventDefault();
-                const sectionId = item.getAttribute('data-section');
-                
-                navItems.forEach(navItem => navItem.classList.remove('bg-gray-700'));
-                contentSections.forEach(section => section.classList.remove('active'));
-                
-                item.classList.add('bg-gray-700');
-                document.getElementById(sectionId).classList.add('active');
-            });
-        });
-
-        // Logout functionality
-        logoutBtn.addEventListener('click', () => {
-            if (confirm('Are you sure you want to log out?')) {
-                fetch('/logout', { method: 'POST' })
-                    .then(response => {
-                        if (response.ok) {
-                            window.location.href = '/login';
-                        }
-                    });
-            }
-        });
-
-        // Dataset management
-        function loadDatasets() {
-            fetch('/get_datasets')
-                .then(response => response.json())
-                .then(data => {
-                    const tableBody = document.getElementById('datasetTableBody');
-                    tableBody.innerHTML = '';
-                    data.forEach((dataset, index) => {
-                        const row = `
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">${index + 1}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <img class="songket-image" src="/uploads/${dataset.image_filename}" alt="Songket Fabric" onclick="showFullImage('/uploads/${dataset.image_filename}')">
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap" id="class-${dataset.id}">${dataset.fabric_name}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">${dataset.region}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <button onclick="editDataset(${dataset.id})" class="text-gray-600 hover:text-gray-900 mr-3">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </button>
-                                    <button onclick="deleteDataset(${dataset.id})" class="text-red-600 hover:text-red-900">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                        tableBody.innerHTML += row;
-                    });
-                });
-        }
-
-        function showFullImage(imageSrc) {
-            const modal = document.getElementById('imageModal');
-            const fullImage = document.getElementById('fullImage');
-            fullImage.src = imageSrc;
-            modal.style.display = 'block';
-        }
-
-        function editDataset(id) {
-            const currentName = document.getElementById(`class-${id}`).textContent;
-            const newName = prompt("Enter new class name:", currentName);
-            if (newName && newName !== currentName) {
-                fetch('/edit_dataset', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ id: id, fabric_name: newName }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById(`class-${id}`).textContent = newName;
-                        alert('Dataset updated successfully');
-                    } else {
-                        alert('Failed to update dataset');
-                    }
-                });
-            }
-        }
-
-        function deleteDataset(id) {
-            if (confirm('Are you sure you want to delete this dataset?')) {
-                fetch('/delete_dataset', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ id: id }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        loadDatasets();
-                        alert('Dataset deleted successfully');
-                    } else {
-                        alert('Failed to delete dataset');
-                    }
-                });
-            }
-        }
-
-        // Make functions global
-        window.editDataset = editDataset;
-        window.deleteDataset = deleteDataset;
-        window.showFullImage = showFullImage;
-
-        // Load datasets when the page loads
-        loadDatasets();
-  });
-    </script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 </body>
 </html>

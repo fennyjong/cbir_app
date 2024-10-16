@@ -6,57 +6,6 @@
     <title>Login - CBIR System</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* reset password css */
-        .warning-message {
-            color: red;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .overlay {
-            display: none; 
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1;
-        }
-        .reset-password {
-            display: none; 
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 30px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            z-index: 2;
-            animation: popIn 0.5s;
-            width: 400px;
-        }
-        @keyframes popIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -45%);
-            }
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%);
-            }
-        }
-        .close-btn {
-            cursor: pointer;
-            font-weight: bold;
-            float: right;
-            color: #333;
-        }
-        .icon {
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
     <div class="container">

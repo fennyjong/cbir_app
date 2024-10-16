@@ -85,16 +85,6 @@
                 }
             });
 
-            regionSelect.addEventListener('change', function() {
-                customRegion.style.display = this.value === 'lainnya' ? 'block' : 'none';
-                customRegion.required = this.value === 'lainnya';
-            });
-
-            fabricNameSelect.addEventListener('change', function() {
-                customNama.style.display = this.value === 'lainnya' ? 'block' : 'none';
-                customNama.required = this.value === 'lainnya';
-            });
-
             function initCropper() {
                 if (cropper) {
                     cropper.destroy();
