@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, send_from_directory
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.utils import secure_filename
 import os
@@ -9,7 +9,6 @@ app = Flask(__name__)
 app.config.from_object(Config)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
-# Memastikan folder upload ada
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
@@ -32,16 +31,15 @@ def register():
         username = request.form['username']
         password = request.form['password']
         
-        existing_user = User.query.filter_by(username=username).first()
-        if existing_user:
-            flash('Username sudah terdaftar!', 'danger')
+        if User.query.filter_by(username=username).first():
+            flash('Username already registered!', 'danger')
             return redirect(url_for('register'))
         
         new_user = User(username=username)
         new_user.set_password(password)
         db.session.add(new_user)
         db.session.commit()
-        flash('Registrasi berhasil! Silakan login.', 'success')
+        flash('Registration successful! Please login.', 'success')
         return redirect(url_for('login'))
     
     return render_template('register.html')
@@ -60,10 +58,10 @@ def login():
         if user and user.check_password(password):
             login_user(user)
             session['user_role'] = 'user'
-            flash('Login berhasil!', 'success')
+            flash('Login successful!', 'success')
             return redirect(url_for('dashboard_user'))
         
-        flash('Username atau password tidak valid!', 'danger')
+        flash('Invalid username or password!', 'danger')
     return render_template('login.html')
 
 @app.route('/reset_password', methods=['POST'])
@@ -76,14 +74,14 @@ def reset_password():
     if user:
         user.set_password(new_password)
         db.session.commit()
-        return jsonify({"success": True, "message": "Password berhasil direset."}), 200
+        return jsonify({"success": True, "message": "Password reset successful."}), 200
     else:
-        return jsonify({"success": False, "message": "Username tidak ditemukan."}), 404
+        return jsonify({"success": False, "message": "Username not found."}), 404
 
 @app.route('/dashboard_admin')
 def dashboard_admin():
     if session.get('user_role') != 'admin':
-        flash('Anda tidak memiliki akses ke halaman ini.', 'danger')
+        flash('You do not have access to this page.', 'danger')
         return redirect(url_for('login'))
     return render_template('dashboard_admin.html')
 
@@ -92,25 +90,24 @@ def dashboard_admin():
 def logout():
     logout_user()
     session.pop('user_role', None)
-    flash('Anda telah berhasil logout.', 'success')
+    flash('You have been logged out successfully.', 'success')
     return redirect(url_for('login'))
 
 @app.route('/new_dataset')
 def new_dataset():
     return render_template('new_dataset.html')
 
-
 @app.route('/upload', methods=['POST'])
 def upload():
     if session.get('user_role') != 'admin':
-        flash('Anda tidak memiliki akses untuk melakukan upload.', 'danger')
+        flash('You do not have permission to upload.', 'danger')
         return redirect(url_for('login'))
     
     region = request.form['region']
     fabric_name = request.form['fabric_name']
     image = request.files['image']
     
-    if image and allowed_file(image.filename):  # Pastikan ini memeriksa jenis file
+    if image and allowed_file(image.filename):
         filename = secure_filename(image.filename)
         save_dir = os.path.join(app.config['UPLOAD_FOLDER'])
         
@@ -123,14 +120,50 @@ def upload():
         db.session.add(new_dataset)
         db.session.commit()
         
-        flash('Dataset berhasil ditambahkan!', 'success')
+        flash('Dataset added successfully!', 'success')
     else:
-        flash('Gambar tidak ditemukan atau tipe file tidak valid!', 'danger')
+        flash('Image not found or invalid file type!', 'danger')
     
     return redirect(url_for('dashboard_admin'))
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/get_datasets', methods=['GET'])
+def get_datasets():
+    datasets = SongketDataset.query.all()
+    return jsonify([{
+        'id': dataset.id,
+        'region': dataset.region,
+        'fabric_name': dataset.fabric_name,
+        'image_filename': dataset.image_filename
+    } for dataset in datasets])
+
+@app.route('/edit_dataset', methods=['POST'])
+def edit_dataset():
+    data = request.json
+    dataset = SongketDataset.query.get(data['id'])
+    if dataset:
+        dataset.fabric_name = data['fabric_name']
+        db.session.commit()
+        return jsonify({'success': True}), 200
+    return jsonify({'success': False, 'message': 'Dataset not found'}), 404
+
+@app.route('/delete_dataset', methods=['POST'])
+def delete_dataset():
+    data = request.json
+    dataset = SongketDataset.query.get(data['id'])
+    if dataset:
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], dataset.image_filename))
+        db.session.delete(dataset)
+        db.session.commit()
+        return jsonify({'success': True}), 200
+    return jsonify({'success': False, 'message': 'Dataset not found'}), 404
 
 if __name__ == '__main__':
     with app.app_context():
