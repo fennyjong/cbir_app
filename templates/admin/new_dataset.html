@@ -28,7 +28,7 @@
                     <label for="region">Daerah Asal</label>
                     <select id="region" name="region" required>
                         <option value="">Pilih Daerah Asal</option>
-                        <option value="Kalimantan">Kalimantan</option>
+                        <option value="Palembang">Palembang</option>
                         <option value="Riau">Riau</option>
                         <option value="Lombok">Lombok</option>
                         <option value="lainnya">Lainnya</option>
@@ -39,7 +39,7 @@
                     <label for="fabric_name">Nama Kain</label>
                     <select id="fabric_name" name="fabric_name" required>
                         <option value="">Pilih Nama Kain</option>
-                        <option value="Batik">Bungo Cino</option>
+                        <option value="Songket Bungo Cino">Songket Bungo Cino</option>
                         <option value="Songket">Songket</option>
                         <option value="Tenun Ikat">Tenun Ikat</option>
                         <option value="Ulos">Ulos</option>
@@ -63,78 +63,6 @@
     </form>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const imageInput = document.getElementById('image-input');
-            const imagePreview = document.getElementById('image-preview');
-            const regionSelect = document.getElementById('region');
-            const customRegion = document.getElementById('custom-region');
-            const fabricNameSelect = document.getElementById('fabric_name');
-            const customNama = document.getElementById('custom-nama');
-            let cropper;
-            function updateDropdowns() {
-        // Example fetching updated data; you need to replace this with your actual fetch logic
-        const regions = ['Kalimantan', 'Riau', 'Lombok', 'lainnya', 'New Region']; // Sample regions
-        const fabricNames = ['Batik', 'Songket', 'Tenun Ikat', 'Ulos', 'lainnya', 'New Fabric']; // Sample fabrics
-        
-        const regionSelect = document.getElementById('region');
-        const fabricNameSelect = document.getElementById('fabric_name');
-
-        // Clear current options
-        regionSelect.innerHTML = `<option value="">Pilih Daerah Asal</option>`;
-        fabricNameSelect.innerHTML = `<option value="">Pilih Nama Kain</option>`;
-
-        // Add new options
-        regions.forEach(region => {
-            const option = document.createElement('option');
-            option.value = region;
-            option.textContent = region;
-            regionSelect.appendChild(option);
-        });
-
-        fabricNames.forEach(fabric => {
-            const option = document.createElement('option');
-            option.value = fabric;
-            option.textContent = fabric;
-            fabricNameSelect.appendChild(option);
-        });
-    }
-
-    // Call this function to update the dropdowns whenever needed
-    updateDropdowns();
-
-            imageInput.addEventListener('change', function(event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        imagePreview.src = e.target.result;
-                        initCropper();
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            function initCropper() {
-                if (cropper) {
-                    cropper.destroy();
-                }
-                cropper = new Cropper(imagePreview, {
-                    aspectRatio: 1,
-                    viewMode: 1,
-                    minCropBoxWidth: 225,
-                    minCropBoxHeight: 225,
-                    crop: function(event) {
-                        if (event.detail.width < 225 || event.detail.height < 225) {
-                            cropper.setCropBoxData({
-                                width: Math.max(500, event.detail.width),
-                                height: Math.max(500, event.detail.height)
-                            });
-                        }
-                    }
-                });
-            }
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/admin/new_dataset.js') }}"></script>
 </body>
 </html>

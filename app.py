@@ -43,7 +43,7 @@ def register():
         flash('Registration successful! Please login.', 'success')
         return redirect(url_for('login'))
     
-    return render_template('register.html')
+    return render_template('auth/register.html')  # Updated path to auth folder
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -63,7 +63,7 @@ def login():
             session['user_role'] = 'user'
             return redirect(url_for('modul_upload'))  # Updated to redirect to the new route
         
-    return render_template('login.html')
+    return render_template('auth/login.html')  # Updated path to auth folder
 
 @app.route('/reset_password', methods=['POST'])
 def reset_password():
@@ -84,7 +84,7 @@ def dashboard_admin():
     if session.get('user_role') != 'admin':
         flash('You do not have access to this page.', 'danger')
         return redirect(url_for('login'))
-    return render_template('dashboard_admin.html')
+    return render_template('admin/dashboard_admin.html')  # Updated path to admin folder
 
 @app.route('/logout', methods=['POST'])
 def logout():
@@ -94,7 +94,7 @@ def logout():
 
 @app.route('/new_dataset')
 def new_dataset():
-    return render_template('new_dataset.html')
+    return render_template('admin/new_dataset.html')  # Updated path to admin folder
 
 @app.route('/users/modul_upload', methods=['GET'])
 @login_required
