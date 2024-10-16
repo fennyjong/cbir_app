@@ -13,9 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const datasetInfoPopup = document.getElementById('datasetInfoPopup');
     const labelInfoPopup = document.getElementById('labelInfoPopup');
 
+    // Logout functionality
     logoutBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        
         fetch('/logout', {
             method: 'POST',
             headers: {
@@ -35,33 +35,30 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('An error occurred. Please try again.');
         });
     });
-    
-     // Fungsi untuk menampilkan gambar dalam modal
-     function showFullImage(imageSrc) {
+
+    // Show image in modal
+    function showFullImage(imageSrc) {
         const modal = document.getElementById('imageModal');
         const fullImage = document.getElementById('fullImage');
         fullImage.src = imageSrc;
         modal.style.display = 'block';
     }
 
-    // Dapatkan elemen modal
+    // Modal close functionality
     const modal = document.getElementById("imageModal");
-
-    // Dapatkan elemen <span> yang menutup modal
     const span = document.getElementsByClassName("close")[0];
 
-    // Ketika pengguna mengklik <span> (x), tutup modal
     span.onclick = function() {
         modal.style.display = "none";
-    }
+    };
 
-    // Tutup modal ketika mengklik di luar gambar
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = "none";
         }
-    }
+    };
 
+    // Navigation and sidebar toggle
     addDatasetBtn.addEventListener('click', () => {
         window.location.href = '/new_dataset';
     });
@@ -74,13 +71,13 @@ document.addEventListener('DOMContentLoaded', function() {
         addLabelModal.style.display = 'none';
     });
 
+    // Adding new label
     addLabelForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const labelName = document.getElementById('labelName').value;
         const labelRegion = document.getElementById('labelRegion').value;
         const labelDescription = document.getElementById('labelDescription').value;
 
-        // Add new label to the labels array
         const newLabel = {
             id: labels.length + 1,
             name: labelName,
@@ -95,13 +92,13 @@ document.addEventListener('DOMContentLoaded', function() {
         addLabelForm.reset();
     });
 
-
     toggleSidebar.addEventListener('click', () => {
         sidebar.classList.toggle('w-64');
         sidebar.classList.toggle('w-20');
         document.querySelectorAll('.sidebar-text').forEach(el => el.classList.toggle('hidden'));
     });
 
+    // Navigation item click functionality
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
@@ -113,36 +110,62 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Load datasets and handle pagination
+    let currentPage = 1;
+    let entriesPerPage = 10;
+    let datasets = [];
+
     function loadDatasets() {
         fetch('/get_datasets')
             .then(response => response.json())
             .then(data => {
-                const tableBody = document.getElementById('datasetTableBody');
-                tableBody.innerHTML = '';
-                data.forEach((dataset, index) => {
-                    const row = `
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">${index + 1}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <img class="songket-image" src="/uploads/${dataset.image_filename}" alt="Songket Fabric" onclick="showFullImage('/uploads/${dataset.image_filename}')">
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap" id="class-${dataset.id}">${dataset.fabric_name}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">${dataset.region}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <button onclick="editDataset(${dataset.id})" class="text-gray-600 hover:text-gray-900 mr-3">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button onclick="deleteDataset(${dataset.id})" class="text-red-600 hover:text-red-900">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    tableBody.innerHTML += row;
-                });
+                datasets = data;
+                displayDatasets();
             });
     }
 
+    function displayDatasets() {
+        const tableBody = document.getElementById('datasetTableBody');
+        tableBody.innerHTML = '';
+
+        const searchQuery = datasetSearchInput.value.toLowerCase();
+        const filteredDatasets = datasets.filter(dataset =>
+            dataset.fabric_name.toLowerCase().includes(searchQuery)
+        );
+
+        const totalEntries = filteredDatasets.length;
+        const totalPages = Math.ceil(totalEntries / entriesPerPage);
+        const startIndex = (currentPage - 1) * entriesPerPage;
+        const endIndex = startIndex + entriesPerPage;
+        const paginatedDatasets = filteredDatasets.slice(startIndex, endIndex);
+
+        paginatedDatasets.forEach((dataset, index) => {
+            const row = `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">${startIndex + index + 1}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <img class="songket-image" src="/uploads/${dataset.image_filename}" alt="Songket Fabric" onclick="showFullImage('/uploads/${dataset.image_filename}')">
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap" id="class-${dataset.id}">${dataset.fabric_name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${dataset.region}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="editDataset(${dataset.id})" class="text-gray-600 hover:text-gray-900 mr-3">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button onclick="deleteDataset(${dataset.id})" class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+
+        datasetEntriesInfo.textContent = `Showing ${startIndex + 1} to ${Math.min(startIndex + entriesPerPage, totalEntries)} of ${totalEntries} entries`;
+        datasetCurrentPage.textContent = currentPage;
+    }
+
+    // Edit and delete dataset functionality
     function editDataset(id) {
         const currentName = document.getElementById(`class-${id}`).textContent;
         const newName = prompt("Enter new class name:", currentName);
@@ -187,16 +210,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Pagination controls
     const datasetEntriesSelect = document.getElementById('datasetEntriesSelect');
     const datasetSearchInput = document.getElementById('datasetSearchInput');
     const datasetPrevBtn = document.getElementById('datasetPrevBtn');
     const datasetNextBtn = document.getElementById('datasetNextBtn');
     const datasetCurrentPage = document.getElementById('datasetCurrentPage');
     const datasetEntriesInfo = document.getElementById('datasetEntriesInfo');
-
-    let currentPage = 1;
-    let entriesPerPage = 10;
-    let datasets = []; // Store all datasets for pagination and search
 
     datasetEntriesSelect.addEventListener('change', (e) => {
         entriesPerPage = parseInt(e.target.value);
@@ -223,55 +243,6 @@ document.addEventListener('DOMContentLoaded', function() {
             loadDatasets();
         }
     });
-
-    function loadDatasets() {
-        fetch('/get_datasets')
-            .then(response => response.json())
-            .then(data => {
-                datasets = data; // Store the fetched datasets
-                displayDatasets();
-            });
-    }
-
-    function displayDatasets() {
-        const tableBody = document.getElementById('datasetTableBody');
-        tableBody.innerHTML = '';
-
-        const searchQuery = datasetSearchInput.value.toLowerCase();
-        const filteredDatasets = datasets.filter(dataset =>
-            dataset.fabric_name.toLowerCase().includes(searchQuery)
-        );
-
-        const totalEntries = filteredDatasets.length;
-        const totalPages = Math.ceil(totalEntries / entriesPerPage);
-        const startIndex = (currentPage - 1) * entriesPerPage;
-        const endIndex = startIndex + entriesPerPage;
-        const paginatedDatasets = filteredDatasets.slice(startIndex, endIndex);
-        paginatedDatasets.forEach((dataset, index) => {
-            const row = `
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">${startIndex + index + 1}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <img class="songket-image" src="/uploads/${dataset.image_filename}" alt="Songket Fabric" onclick="showFullImage('/uploads/${dataset.image_filename}')">
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap" id="class-${dataset.id}">${dataset.fabric_name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${dataset.region}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="editDataset(${dataset.id})" class="text-gray-600 hover:text-gray-900 mr-3">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button onclick="deleteDataset(${dataset.id})" class="text-red-600 hover:text-red-900">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </td>
-                </tr>
-            `;
-            tableBody.innerHTML += row;
-        });
-
-        datasetEntriesInfo.textContent = `Showing ${startIndex + 1} to ${Math.min(startIndex + entriesPerPage, totalEntries)} of ${totalEntries} entries`;
-        datasetCurrentPage.textContent = currentPage;
-    }
 
     // Make functions global
     window.editDataset = editDataset;
