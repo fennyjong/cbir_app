@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.utils import secure_filename
 import os
+from PIL import Image  # Importing PIL to handle image resizing
 from config import Config
 from models import db, User, SongketDataset
 
@@ -57,6 +58,8 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user)
+            user.last_login_at = db.func.now()  # Update last login time
+            db.session.commit()  # Save changes
             session['user_role'] = 'user'
             return redirect(url_for('modul_upload'))  # Updated to redirect to the new route
         
@@ -115,13 +118,19 @@ def upload():
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         
-        image.save(os.path.join(save_dir, filename))
+        # Open image using PIL and resize it to 255x255
+        img = Image.open(image)
+        img_resized = img.resize((255, 255))  # Resize to 255x255
         
+        # Save resized image
+        img_resized.save(os.path.join(save_dir, filename))
+        
+        # Save dataset info to the database
         new_dataset = SongketDataset(region=region, fabric_name=fabric_name, image_filename=filename)
         db.session.add(new_dataset)
         db.session.commit()
         
-        flash('Dataset added successfully!', 'success')
+        flash('Dataset added successfully with resized image!', 'success')
     else:
         flash('Image not found or invalid file type!', 'danger')
     

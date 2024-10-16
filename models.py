@@ -1,4 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy 
 from flask_bcrypt import Bcrypt
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,6 +10,8 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(255), nullable=False) 
+    created_at = db.Column(db.DateTime, server_default=db.func.now())  # Waktu registrasi
+    last_login_at = db.Column(db.DateTime, nullable=True)  # Waktu login terakhir
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -17,13 +19,14 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    
+
 class SongketDataset(db.Model):
     __tablename__ = 'songket_dataset'
     id = db.Column(db.Integer, primary_key=True)
     region = db.Column(db.String(120), nullable=False)
     fabric_name = db.Column(db.String(120), nullable=False)
     image_filename = db.Column(db.String(255), nullable=False)
+    uploaded_at = db.Column(db.DateTime, server_default=db.func.now())  # Waktu upload data
 
     def __init__(self, region, fabric_name, image_filename):
         self.region = region

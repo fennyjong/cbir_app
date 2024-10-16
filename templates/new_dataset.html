@@ -6,7 +6,7 @@
     <title>Penambahan Dataset</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dataset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/new_dataset.css') }}">
 </head>
 <body>
     <h2>Penambahan Dataset</h2>
@@ -39,7 +39,7 @@
                     <label for="fabric_name">Nama Kain</label>
                     <select id="fabric_name" name="fabric_name" required>
                         <option value="">Pilih Nama Kain</option>
-                        <option value="Batik">Batik</option>
+                        <option value="Batik">Bungo Cino</option>
                         <option value="Songket">Songket</option>
                         <option value="Tenun Ikat">Tenun Ikat</option>
                         <option value="Ulos">Ulos</option>
@@ -127,8 +127,8 @@
                     crop: function(event) {
                         if (event.detail.width < 225 || event.detail.height < 225) {
                             cropper.setCropBoxData({
-                                width: Math.max(225, event.detail.width),
-                                height: Math.max(225, event.detail.height)
+                                width: Math.max(500, event.detail.width),
+                                height: Math.max(500, event.detail.height)
                             });
                         }
                     }
