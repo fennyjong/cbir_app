@@ -58,8 +58,7 @@ def login():
         if user and user.check_password(password):
             login_user(user)
             session['user_role'] = 'user'
-            flash('Login successful!', 'success')
-            return redirect(url_for('dashboard_user'))
+            return redirect(url_for('modul_upload'))  # Updated to redirect to the new route
         
     return render_template('login.html')
 
@@ -93,6 +92,11 @@ def logout():
 @app.route('/new_dataset')
 def new_dataset():
     return render_template('new_dataset.html')
+
+@app.route('/users/modul_upload', methods=['GET'])
+@login_required
+def modul_upload():
+    return render_template('users/modul_upload.html')  # Correct path to the template
 
 @app.route('/upload', methods=['POST'])
 def upload():
