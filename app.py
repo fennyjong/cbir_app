@@ -127,7 +127,7 @@ def upload():
         db.session.add(new_dataset)
         db.session.commit()
         
-        flash('Dataset added successfully with resized image!', 'success')
+        flash('Dataset Berhasil Ditambahkan', 'success')
     else:
         flash('Image not found or invalid file type!', 'danger')
     

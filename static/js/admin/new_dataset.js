@@ -38,4 +38,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    window.onload = function() {
+        var notification = document.getElementById("notification");
+        if (notification) {
+            setTimeout(function() {
+                notification.style.display = "none";
+            }, 5000); // Change duration (in milliseconds) as needed
+        }
+    }
 });

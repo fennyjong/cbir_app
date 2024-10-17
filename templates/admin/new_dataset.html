@@ -9,10 +9,19 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/new_dataset.css') }}">
 </head>
 <body>
-    <h2>Penambahan Dataset</h2>
-    <form action="/upload" method="POST" enctype="multipart/form-data" id="upload-form">
-        <div class="form-grid">
-            <div>
+    <div class="container">
+        <h2>Penambahan Dataset</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div id="notification" class="notification {{ messages[0][0] }}">
+                    <i class="fas fa-check-circle"></i> {{ messages[0][1] }}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form action="/upload" method="POST" enctype="multipart/form-data" id="upload-form">
+            <div class="form-section">
                 <div class="form-group">
                     <label for="image">Unggah Gambar</label>
                     <input type="file" id="image-input" name="image" accept="image/*" required>
@@ -23,19 +32,25 @@
                     </div>
                 </div>
             </div>
-            <div>
+            
+            <div class="form-section">
                 <div class="form-group">
-                    <label for="region">Daerah Asal</label>
+                    <label for="region">Daerah Asal<span class="required-star">*</span></label>
                     <select id="region" name="region" required>
                         <option value="">Pilih Daerah Asal</option>
                         <option value="Palembang">Palembang</option>
                         <option value="Riau">Riau</option>
                         <option value="Lombok">Lombok</option>
                     </select>
-                    <input type="text" id="custom-region" name="custom-region" placeholder="Masukkan Daerah Lain" style="display: none; margin-top: 10px;">
                 </div>
+                <div class="form-group" id="custom-region-group" style="display: none;">
+                    <input type="text" id="custom-region" name="custom-region" placeholder="Masukkan Daerah Lain">
+                </div>
+            </div>
+            
+            <div class="form-section">
                 <div class="form-group">
-                    <label for="fabric_name">Nama Kain</label>
+                    <label for="fabric_name">Nama Kain<span class="required-star">*</span></label>
                     <select id="fabric_name" name="fabric_name" required>
                         <option value="">Pilih Nama Kain</option>
                         <option value="Songket Bungo Cino">Songket Bungo Cino</option>
@@ -47,18 +62,29 @@
                         <option value="Gringsing">Gringsing</option>
                         <option value="Endek">Endek</option>
                     </select>
-                    <input type="text" id="custom-nama" name="custom-nama" placeholder="Masukkan Nama Lain" style="display: none; margin-top: 10px;">
                 </div>
-                <div class="form-group">
-                    <div class="augment-group">
-                        <input type="checkbox" id="augment1" name="augment1" value="rotate">
-                        <label for="augment1">Augmentasi Gambar</label>
-                    </div>
+                <div class="form-group" id="custom-nama-group" style="display: none;">
+                    <input type="text" id="custom-nama" name="custom-nama" placeholder="Masukkan Nama Lain">
                 </div>
-                <button type="submit" class="btn">Unggah Dataset</button>
             </div>
-        </div>
-    </form>
+            
+            <div class="form-section">
+                <div class="augment-group">
+                    <input type="checkbox" id="augment1" name="augment1" value="rotate">
+                    <label for="augment1">Augmentasi Gambar</label>
+                </div>
+            </div>
+            
+            <div class="btn-container">
+                <a href="{{ url_for('dashboard_admin') }}" class="btn">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </a>
+                <button type="submit" class="btn">
+                    <i class="fas fa-upload"></i> Unggah
+                </button>
+            </div>
+        </form>
+    </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script src="{{ url_for('static', filename='js/admin/new_dataset.js') }}"></script>
