@@ -1,22 +1,26 @@
+// Fungsi untuk memvalidasi form login
 function validateForm() {
-    const username = document.forms["loginForm"]["username"].value;
+    const username = document.forms["loginForm"]["username"].value.trim();
     const password = document.forms["loginForm"]["password"].value;
     const errorElement = document.getElementById("error-msg");
 
+    // Menghapus pesan error sebelumnya
     errorElement.innerHTML = "";
 
-    if (username === "") {
+    // Validasi username
+    if (!username) {
         errorElement.innerHTML = "Username harus diisi.";
         return false;
     }
-
+    
     const usernameRegex = /^[a-zA-Z0-9]+$/;
     if (!usernameRegex.test(username)) {
         errorElement.innerHTML = "Username hanya boleh mengandung huruf dan angka.";
         return false;
     }
 
-    if (password === "") {
+    // Validasi password
+    if (!password) {
         errorElement.innerHTML = "Password harus diisi.";
         return false;
     }
@@ -26,59 +30,65 @@ function validateForm() {
         return false;
     }
 
-    return true;
+    return true; // Form valid
 }
 
+// Fungsi untuk menampilkan form reset password
 function showResetPassword() {
     document.getElementById("resetPasswordForm").style.display = "block";
     document.getElementById("overlay").style.display = "block";
 }
 
+// Fungsi untuk menyembunyikan form reset password
 function hideResetPassword() {
     document.getElementById("resetPasswordForm").style.display = "none";
     document.getElementById("overlay").style.display = "none";
 }
 
+// Fungsi untuk toggle visibilitas password
 function togglePasswordVisibility(inputId, icon) {
     const input = document.getElementById(inputId);
     const iconElement = icon.querySelector('i');
-    
+
     if (input.type === "password") {
         input.type = "text";
-        iconElement.classList.remove('fa-lock');
-        iconElement.classList.add('fa-lock-open');
+        iconElement.classList.replace('fa-lock', 'fa-lock-open');
     } else {
         input.type = "password";
-        iconElement.classList.remove('fa-lock-open');
-        iconElement.classList.add('fa-lock');
+        iconElement.classList.replace('fa-lock-open', 'fa-lock');
     }
 }
 
+// Fungsi untuk memvalidasi form reset password
 function validateResetForm() {
-    const resetUsername = document.getElementById("resetUsername").value;
+    const resetUsername = document.getElementById("resetUsername").value.trim();
     const newPassword = document.getElementById("newPassword").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
     const resetErrorElement = document.getElementById("reset-error-msg");
 
+    // Menghapus pesan error sebelumnya
     resetErrorElement.innerHTML = "";
 
+    // Validasi password baru
     if (newPassword.length < 8) {
         resetErrorElement.innerHTML = "Password baru harus minimal 8 karakter.";
         return false;
     }
 
     const upperCaseRegex = /[A-Z]/;
-    const specialCharRegex = /[_!@#$%^&*(),.?":{}|<>]/; 
+    const specialCharRegex = /[_!@#$%^&*(),.?":{}|<>]/;
     if (!upperCaseRegex.test(newPassword) || !specialCharRegex.test(newPassword)) {
         resetErrorElement.innerHTML = "Password harus mengandung minimal 1 huruf besar dan 1 karakter unik.";
         return false;
     }
 
+    // Validasi konfirmasi password
     if (newPassword !== confirmPassword) {
         resetErrorElement.innerHTML = "Password baru dan konfirmasi password harus sama.";
         return false;
     }
 
+    // Mengirim data reset password ke server
     fetch('/reset_password', {
         method: 'POST',
         headers: {
@@ -103,5 +113,5 @@ function validateResetForm() {
         resetErrorElement.innerHTML = "Terjadi kesalahan. Silakan coba lagi.";
     });
 
-    return false;
+    return false; // Mencegah form submit secara default
 }
