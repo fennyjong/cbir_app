@@ -10,6 +10,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
+# Create upload directory if it doesn't exist
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
@@ -43,7 +44,7 @@ def register():
         flash('Registration successful! Please login.', 'success')
         return redirect(url_for('login'))
     
-    return render_template('auth/register.html')  # Updated path to auth folder
+    return render_template('auth/register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -61,9 +62,9 @@ def login():
             user.last_login_at = db.func.now()  # Update last login time
             db.session.commit()  # Save changes
             session['user_role'] = 'user'
-            return redirect(url_for('modul_upload'))  # Updated to redirect to the new route
+            return redirect(url_for('modul_upload'))
         
-    return render_template('auth/login.html')  # Updated path to auth folder
+    return render_template('auth/login.html')
 
 @app.route('/reset_password', methods=['POST'])
 def reset_password():
@@ -76,15 +77,14 @@ def reset_password():
         user.set_password(new_password)
         db.session.commit()
         return jsonify({"success": True, "message": "Password reset successful."}), 200
-    else:
-        return jsonify({"success": False, "message": "Username not found."}), 404
+    return jsonify({"success": False, "message": "Username not found."}), 404
 
 @app.route('/dashboard_admin')
 def dashboard_admin():
     if session.get('user_role') != 'admin':
         flash('You do not have access to this page.', 'danger')
         return redirect(url_for('login'))
-    return render_template('admin/dashboard_admin.html')  # Updated path to admin folder
+    return render_template('admin/dashboard_admin.html')
 
 @app.route('/logout', methods=['POST'])
 def logout():
@@ -94,12 +94,12 @@ def logout():
 
 @app.route('/new_dataset')
 def new_dataset():
-    return render_template('admin/new_dataset.html')  # Updated path to admin folder
+    return render_template('admin/new_dataset.html')
 
 @app.route('/users/modul_upload', methods=['GET'])
 @login_required
 def modul_upload():
-    return render_template('users/modul_upload.html')  # Correct path to the template
+    return render_template('users/modul_upload.html')
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -114,9 +114,6 @@ def upload():
     if image and allowed_file(image.filename):
         filename = secure_filename(image.filename)
         save_dir = os.path.join(app.config['UPLOAD_FOLDER'])
-        
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir)
         
         # Open image using PIL and resize it to 255x255
         img = Image.open(image)
@@ -174,6 +171,22 @@ def delete_dataset():
         db.session.commit()
         return jsonify({'success': True}), 200
     return jsonify({'success': False, 'message': 'Dataset not found'}), 404
+
+@app.route('/delete_multiple_datasets', methods=['POST'])
+def delete_multiple_datasets():
+    ids = request.json.get('ids', [])
+    success = True
+    
+    for id in ids:
+        dataset = SongketDataset.query.get(id)
+        if dataset:
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], dataset.image_filename))
+            db.session.delete(dataset)
+        else:
+            success = False
+    
+    db.session.commit()
+    return jsonify({'success': success})
 
 if __name__ == '__main__':
     with app.app_context():

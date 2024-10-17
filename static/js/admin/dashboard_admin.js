@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeLabelModal = document.getElementById('closeLabelModal');
     const addLabelForm = document.getElementById('addLabelForm');
 
-
     // Logout functionality
     logoutBtn.addEventListener('click', function(e) {
         e.preventDefault();
@@ -108,61 +107,111 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById(sectionId).classList.add('active');
         });
     });
+// Delete multiple datasets
+const deleteMultipleBtn = document.getElementById('deleteMultipleBtn');
+deleteMultipleBtn.addEventListener('click', () => {
+    const selectedIds = [];
+    const checkboxes = document.querySelectorAll('input[name="datasetCheckbox"]:checked');
+    
+    checkboxes.forEach(checkbox => {
+        selectedIds.push(checkbox.dataset.id);
+    });
 
-    // Load datasets and handle pagination
-    let currentPage = 1;
-    let entriesPerPage = 10;
-    let datasets = [];
-
-    function loadDatasets() {
-        fetch('/get_datasets')
-            .then(response => response.json())
-            .then(data => {
-                datasets = data;
-                displayDatasets();
-            });
+    if (selectedIds.length === 0) {
+        alert('Please select at least one dataset to delete.');
+        return;
     }
 
-    function displayDatasets() {
-        const tableBody = document.getElementById('datasetTableBody');
-        tableBody.innerHTML = '';
-
-        const searchQuery = datasetSearchInput.value.toLowerCase();
-        const filteredDatasets = datasets.filter(dataset =>
-            dataset.fabric_name.toLowerCase().includes(searchQuery)
-        );
-
-        const totalEntries = filteredDatasets.length;
-        const totalPages = Math.ceil(totalEntries / entriesPerPage);
-        const startIndex = (currentPage - 1) * entriesPerPage;
-        const endIndex = startIndex + entriesPerPage;
-        const paginatedDatasets = filteredDatasets.slice(startIndex, endIndex);
-
-        paginatedDatasets.forEach((dataset, index) => {
-            const row = `
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">${startIndex + index + 1}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <img class="songket-image" src="/uploads/${dataset.image_filename}" alt="Songket Fabric" onclick="showFullImage('/uploads/${dataset.image_filename}')">
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap" id="class-${dataset.id}">${dataset.fabric_name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${dataset.region}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="editDataset(${dataset.id})" class="text-gray-600 hover:text-gray-900 mr-3">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button onclick="deleteDataset(${dataset.id})" class="text-red-600 hover:text-red-900">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </td>
-                </tr>
-            `;
-            tableBody.innerHTML += row;
+    if (confirm(`Are you sure you want to delete the selected datasets? (${selectedIds.length})`)) {
+        fetch('/delete_multiple_datasets', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ids: selectedIds }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadDatasets(); // Refresh the dataset table
+                alert('Selected datasets deleted successfully.');
+            } else {
+                alert('Failed to delete selected datasets.');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting datasets.');
         });
-
-        datasetEntriesInfo.textContent = `Showing ${startIndex + 1} to ${Math.min(startIndex + entriesPerPage, totalEntries)} of ${totalEntries} entries`;
-        datasetCurrentPage.textContent = currentPage;
     }
+});
+
+// Select/Deselect all checkboxes
+const selectAllCheckbox = document.getElementById('selectAll');
+selectAllCheckbox.addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('input[name="datasetCheckbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+    });
+});
+
+// Load datasets and handle pagination
+let currentPage = 1;
+let entriesPerPage = 10;
+let datasets = [];
+
+function loadDatasets() {
+    fetch('/get_datasets')
+        .then(response => response.json())
+        .then(data => {
+            datasets = data;
+            displayDatasets();
+        });
+}
+
+function displayDatasets() {
+    const tableBody = document.getElementById('datasetTableBody');
+    tableBody.innerHTML = '';
+
+    const searchQuery = datasetSearchInput.value.toLowerCase();
+    const filteredDatasets = datasets.filter(dataset =>
+        dataset.fabric_name.toLowerCase().includes(searchQuery)
+    );
+
+    const totalEntries = filteredDatasets.length;
+    const totalPages = Math.ceil(totalEntries / entriesPerPage);
+    const startIndex = (currentPage - 1) * entriesPerPage;
+    const endIndex = startIndex + entriesPerPage;
+    const paginatedDatasets = filteredDatasets.slice(startIndex, endIndex);
+
+    paginatedDatasets.forEach((dataset, index) => {
+        const row = `
+            <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <input type="checkbox" name="datasetCheckbox" data-id="${dataset.id}" />
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">${startIndex + index + 1}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <img class="songket-image" src="/uploads/${dataset.image_filename}" alt="Songket Fabric" onclick="showFullImage('/uploads/${dataset.image_filename}')">
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap" id="class-${dataset.id}">${dataset.fabric_name}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${dataset.region}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button onclick="editDataset(${dataset.id})" class="text-gray-600 hover:text-gray-900 mr-3">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button onclick="deleteDataset(${dataset.id})" class="text-red-600 hover:text-red-900">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </td>
+            </tr>
+        `;
+        tableBody.innerHTML += row;
+    });
+
+    datasetEntriesInfo.textContent = `Showing ${startIndex + 1} to ${Math.min(startIndex + entriesPerPage, totalEntries)} of ${totalEntries} entries`;
+    datasetCurrentPage.textContent = currentPage;
+}
 
     // Edit and delete dataset functionality
     function editDataset(id) {
