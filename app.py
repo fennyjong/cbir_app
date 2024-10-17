@@ -131,7 +131,7 @@ def upload():
     else:
         flash('Image not found or invalid file type!', 'danger')
     
-    return redirect(url_for('dashboard_admin'))
+    return render_template('admin/new_dataset.html') 
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
