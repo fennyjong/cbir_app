@@ -10,8 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const addLabelModal = document.getElementById('addLabelModal');
     const closeLabelModal = document.getElementById('closeLabelModal');
     const addLabelForm = document.getElementById('addLabelForm');
-    const datasetInfoPopup = document.getElementById('datasetInfoPopup');
-    const labelInfoPopup = document.getElementById('labelInfoPopup');
+
 
     // Logout functionality
     logoutBtn.addEventListener('click', function(e) {
