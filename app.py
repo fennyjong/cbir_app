@@ -5,6 +5,7 @@ import os
 from PIL import Image  
 from config import Config
 from models import db, User, SongketDataset, Label
+from sqlalchemy import func
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -92,11 +93,6 @@ def logout():
     session.pop('user_role', None)
     return jsonify({"success": True, "message": "You have been logged out successfully."})
 
-@app.route('/users/modul_upload', methods=['GET'])
-@login_required
-def modul_upload():
-    return render_template('users/modul_upload.html')
-
 @app.route('/upload', methods=['POST'])
 def upload():
     if session.get('user_role') != 'admin':
@@ -104,7 +100,7 @@ def upload():
         return redirect(url_for('login'))
     
     region = request.form['region']
-    fabric_name = request.form['label_name']  # Ubah 'fabric_name' menjadi 'label_name'
+    fabric_name = request.form['label_name']  
     image = request.files['image']
     
     if image and allowed_file(image.filename):
@@ -123,7 +119,7 @@ def upload():
     else:
         flash('Image not found or invalid file type!', 'danger')
     
-    return render_template('admin/new_dataset.html')
+    return render_template('admin/new_dataset.html')  
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -132,6 +128,20 @@ def allowed_file(filename):
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/new_dataset')
+def new_dataset_view():
+    # Query data nama kain dan daerah asal dari database
+    labels = db.session.query(Label).all()  # Ambil semua objek Label
+    regions = db.session.query(Label.region).distinct().all()  # Ambil daerah asal unik
+
+    # Mengubah data menjadi Fabric Name format
+    fabric_names = [label.fabric_name for label in labels]  # Ambil nama kain sebagai list
+    unique_regions = [region[0] for region in regions]  # Ambil daerah asal unik sebagai list
+
+    # Render template dengan data yang diperlukan
+    return render_template('admin/new_dataset.html', fabric_names=fabric_names, regions=unique_regions)
+
 
 @app.route('/get_datasets', methods=['GET'])
 def get_datasets():
@@ -228,18 +238,17 @@ def delete_multiple_labels():
     db.session.commit()
     return jsonify(success=True)
 
-@app.route('/new_dataset')
-def new_dataset_view():
-    # Query data nama kain dan daerah asal dari database
-    labels = db.session.query(Label).all()  # Ambil semua objek Label
-    regions = db.session.query(Label.region).distinct().all()  # Ambil daerah asal unik
+@app.route('/api/dataset-info')
+def get_dataset_info():
+    dataset_info = db.session.query(
+        SongketDataset.fabric_name,
+        func.count(SongketDataset.id).label('count')
+    ).group_by(SongketDataset.fabric_name).all()
+    
+    result = [{'fabric_name': item[0], 'count': item[1]} for item in dataset_info]
+    
+    return jsonify(result)
 
-    # Mengubah data menjadi Fabric Name format
-    fabric_names = [label.fabric_name for label in labels]  # Ambil nama kain sebagai list
-    unique_regions = [region[0] for region in regions]  # Ambil daerah asal unik sebagai list
-
-    # Render template dengan data yang diperlukan
-    return render_template('admin/new_dataset.html', fabric_names=fabric_names, regions=unique_regions)
 
 if __name__ == '__main__':
     with app.app_context():

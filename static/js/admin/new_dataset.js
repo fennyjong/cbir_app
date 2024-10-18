@@ -3,6 +3,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const imagePreview = document.getElementById('image-preview');
     const regionSelect = document.getElementById('region');
 
+    document.getElementById('upload-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const formData = new FormData(this);
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => {
+            if (response.ok) {
+                // Redirect to /new_dataset on successful upload
+                window.location.href = '/new_dataset';
+            } else {
+                alert('Upload failed. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+    });
+    
     let cropper;
 
     imageInput.addEventListener('change', function(event) {

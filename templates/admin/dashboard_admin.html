@@ -258,6 +258,25 @@
     </div>
 </div>
 </div>
+
+<div id="datasetInfoModal" class="dataset-modal">
+    <div class="dataset-modal-content">
+        <span class="close-button">&times;</span>
+        <h2 class="text-2xl font-semibold mb-4">Informasi total data</h2>
+        <table class="dataset-table">
+            <thead>
+                <tr>
+                    <th>Label</th>
+                    <th>Jumlah data</th>
+                </tr>
+            </thead>
+            <tbody id="datasetInfoTable">
+                <!-- Data will be populated dynamically -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -267,5 +286,32 @@
     <link rel="stylesheet" href="path/to/your/styles.css">
     <script src="{{ url_for('static', filename='js/admin/dashboard_admin.js') }}"></script>
     <script src="{{ url_for('static', filename='js/admin/label.js') }}"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('datasetInfoModal');
+    const closeBtn = modal.querySelector('.close-button');
+    const infoBtn = document.getElementById('datasetInfoBtn');
+    
+    infoBtn.addEventListener('click', function() {
+        modal.style.display = 'block';
+        // Prevent body scrolling when modal is open
+        document.body.style.overflow = 'hidden';
+    });
+
+    closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+        // Restore body scrolling when modal is closed
+        document.body.style.overflow = 'auto';
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            // Restore body scrolling when modal is closed
+            document.body.style.overflow = 'auto';
+        }
+    });
+});
+    </script>
 </head>
 </html>    
