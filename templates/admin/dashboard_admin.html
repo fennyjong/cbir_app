@@ -258,11 +258,10 @@
     </div>
 </div>
 </div>
-
 <div id="datasetInfoModal" class="dataset-modal">
     <div class="dataset-modal-content">
         <span class="close-button">&times;</span>
-        <h2 class="text-2xl font-semibold mb-4">Informasi total data</h2>
+        <h2 class="text-2xl font-semibold mb-4">Informasi Total dataset</h2>
         <table class="dataset-table">
             <thead>
                 <tr>
@@ -273,6 +272,12 @@
             <tbody id="datasetInfoTable">
                 <!-- Data will be populated dynamically -->
             </tbody>
+            <tfoot>
+                <tr>
+                    <td><strong>Total</strong></td>
+                    <td id="totalCount"><strong>0</strong></td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </div>
@@ -287,12 +292,13 @@
     <script src="{{ url_for('static', filename='js/admin/dashboard_admin.js') }}"></script>
     <script src="{{ url_for('static', filename='js/admin/label.js') }}"></script>
    
-   <script>
+    <script>
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('datasetInfoModal');
     const closeBtn = modal.querySelector('.close-button');
     const infoBtn = document.getElementById('datasetInfoBtn');
     const datasetInfoTable = document.getElementById('datasetInfoTable');
+    const totalCount = document.getElementById('totalCount');  // Reference to the total count element
     
     infoBtn.addEventListener('click', function() {
         modal.style.display = 'block';
@@ -309,15 +315,21 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-            console.log("Fetched Data:", data);  // Tambahkan log untuk debug
-            datasetInfoTable.innerHTML = '';  // Kosongkan tabel sebelum diisi
+            console.log("Fetched Data:", data);  // Log for debugging
+            datasetInfoTable.innerHTML = '';  // Clear the table before filling
 
-            // Populate table with data
+            let total = 0;  // Initialize total count
+            
+            // Populate table with data and calculate total
             data.forEach(item => {
                 const row = document.createElement('tr');
                 row.innerHTML = `<td>${item.fabric_name}</td><td>${item.count}</td>`;
                 datasetInfoTable.appendChild(row);
+                total += item.count;  // Add to total
             });
+
+            // Display total count in the footer
+            totalCount.innerHTML = total;  
         })
         .catch(error => console.error('Error fetching dataset info:', error));
     });
@@ -336,4 +348,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
     </script>
 </head>
-</html>    
+</html>
+    
