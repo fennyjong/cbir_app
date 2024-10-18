@@ -208,137 +208,50 @@ def delete_multiple_datasets():
 
 @app.route('/add_label', methods=['POST'])
 def add_label():
-    try:
-        data = request.get_json()
+    data = request.get_json()
+    new_label = Label(name=data['name'], region=data['region'], description=data['description'])
+    db.session.add(new_label)
+    db.session.commit()
+    return jsonify(success=True)
 
-        existing_label = Label.query.filter_by(name=data['name'], region=data['region']).first()
-        if existing_label:
-            return jsonify({
-                'success': False,
-                'message': 'Label already exists!'
-            }), 400
-
-        new_label = Label(
-            name=data['name'],
-            region=data['region'],
-            description=data['description']
-        )
-
-        db.session.add(new_label)
-        db.session.commit()
-
-        return jsonify({
-            'success': True,
-            'message': 'Label added successfully',
-            'label': {
-                'id': new_label.id,
-                'name': new_label.name,
-                'region': new_label.region,
-                'description': new_label.description,
-                'created_at': new_label.created_at.isoformat()
-            }
-        })
-
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 500
+@app.route('/edit_label/<int:id>', methods=['PUT'])
+def edit_label(id):
+    label = Label.query.get_or_404(id)
+    data = request.get_json()
+    label.name = data['name']
+    label.region = data['region']
+    label.description = data['description']
+    db.session.commit()
+    return jsonify(success=True)
 
 @app.route('/get_labels', methods=['GET'])
 def get_labels():
-    try:
-        labels = Label.query.order_by(Label.created_at.desc()).all()
-        return jsonify([{
+    labels = Label.query.all()
+    return jsonify([
+        {
             'id': label.id,
             'name': label.name,
             'region': label.region,
             'description': label.description,
-            'created_at': label.created_at.isoformat()
-        } for label in labels])
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 500
+            'created_at': label.created_at.strftime("%Y-%m-%d %H:%M:%S")  # Format waktu saat diambil
+        } for label in labels
+    ])
 
 @app.route('/delete_label/<int:id>', methods=['DELETE'])
 def delete_label(id):
-    try:
-        label = Label.query.get(id)
-        if not label:
-            return jsonify({
-                'success': False,
-                'message': 'Label not found'
-            }), 404
-
-        db.session.delete(label)
-        db.session.commit()
-
-        return jsonify({
-            'success': True,
-            'message': 'Label deleted successfully'
-        })
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 500
-
-@app.route('/edit_label/<int:id>', methods=['PUT'])
-def edit_label(id):
-    try:
-        data = request.get_json()
-        label = Label.query.get(id)
-
-        if not label:
-            return jsonify({
-                'success': False,
-                'message': 'Label not found'
-            }), 404
-
-        label.name = data['name']
-        label.region = data['region']
-        label.description = data['description']
-        db.session.commit()
-
-        return jsonify({
-            'success': True,
-            'message': 'Label updated successfully'
-        })
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 500
+    label = Label.query.get_or_404(id)
+    db.session.delete(label)
+    db.session.commit()
+    return jsonify(success=True)
 
 @app.route('/delete_multiple_labels', methods=['POST'])
 def delete_multiple_labels():
-    ids = request.json.get('ids', [])  # Get the list of IDs from the request
-    success = True
-    messages = []
-
-    for id in ids:
-        label = Label.query.get(id) 
-        if label:
-            if label.image_filename: 
-                try:
-                    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], label.image_filename))
-                except Exception as e:
-                    messages.append(f"Failed to delete file for label ID {id}: {str(e)}")
-                    success = False
-            
-            db.session.delete(label)
-        else:
-            messages.append(f"Label ID {id} not found.")
-            success = False
-
-    db.session.commit() 
-
-    return jsonify({'success': success, 'messages': messages})
+    ids = request.json.get('ids', [])
+    labels_to_delete = Label.query.filter(Label.id.in_(ids)).all()
+    for label in labels_to_delete:
+        db.session.delete(label)
+    db.session.commit()
+    return jsonify(success=True)
 
 if __name__ == '__main__':
     with app.app_context():
