@@ -80,13 +80,6 @@ def reset_password():
         return jsonify({"success": True, "message": "Password reset successful."}), 200
     return jsonify({"success": False, "message": "Username not found."}), 404
 
-@app.route('/dashboard_admin')
-def dashboard_admin():
-    if session.get('user_role') != 'admin':
-        flash('You do not have access to this page.', 'danger')
-        return redirect(url_for('login'))
-    return render_template('admin/dashboard_admin.html')
-
 @app.route('/logout', methods=['POST'])
 def logout():
     logout_user()
@@ -238,8 +231,17 @@ def delete_multiple_labels():
     db.session.commit()
     return jsonify(success=True)
 
-@app.route('/api/dataset-info')
-def get_dataset_info():
+@app.route('/dashboard_admin', methods=['GET', 'POST'])
+def dashboard_admin():
+    if session.get('user_role') != 'admin':
+        flash('You do not have access to this page.', 'danger')
+        return redirect(url_for('login'))
+
+    # Jika permintaan adalah GET, render template
+    if request.method == 'GET':
+        return render_template('admin/dashboard_admin.html')
+    
+    # Jika permintaan adalah POST, ambil data dataset
     dataset_info = db.session.query(
         SongketDataset.fabric_name,
         func.count(SongketDataset.id).label('count')
@@ -248,7 +250,6 @@ def get_dataset_info():
     result = [{'fabric_name': item[0], 'count': item[1]} for item in dataset_info]
     
     return jsonify(result)
-
 
 if __name__ == '__main__':
     with app.app_context():
