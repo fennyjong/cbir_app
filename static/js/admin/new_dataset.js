@@ -2,29 +2,66 @@ document.addEventListener('DOMContentLoaded', function() {
     const imageInput = document.getElementById('image-input');
     const imagePreview = document.getElementById('image-preview');
     const regionSelect = document.getElementById('region');
+    
+         // Handle change event for fabric name select
+         document.getElementById('label_name').addEventListener('change', function() {
+            const selectedFabric = this.value;
+            const regionSelect = document.getElementById('region');
 
-    document.getElementById('upload-form').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission
+            // Clear current options
+            regionSelect.innerHTML = '<option value="">Pilih Daerah Asal</option>';
 
-        const formData = new FormData(this);
-
-        fetch('/upload', {
-            method: 'POST',
-            body: formData,
-        })
-        .then(response => {
-            if (response.ok) {
-                // Redirect to /new_dataset on successful upload
-                window.location.href = '/new_dataset';
-            } else {
-                alert('Upload failed. Please try again.');
+            if (selectedFabric) {
+                // Call the Flask endpoint to get the region
+                fetch(`/get_region/${selectedFabric}`)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.text();
+                        }
+                        throw new Error('Region not found');
+                    })
+                    .then(region => {
+                        const option = document.createElement('option');
+                        option.value = region;
+                        option.textContent = region;
+                        regionSelect.appendChild(option);
+                        regionSelect.value = region; // Set the selected region
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
         });
-    });
+
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+        
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                }
+                throw new Error('Upload failed');
+            })
+            .then(html => {
+                document.body.innerHTML = html;
+                var notification = document.getElementById("notification");
+                if (notification) {
+                    notification.style.display = "block";
+                    setTimeout(function() {
+                        notification.style.display = "none";
+                    }, 5000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
     
     let cropper;
 
@@ -58,13 +95,5 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-    }
-    window.onload = function() {
-        var notification = document.getElementById("notification");
-        if (notification) {
-            setTimeout(function() {
-                notification.style.display = "none";
-            }, 5000); // Change duration (in milliseconds) as needed
-        }
     }
 });

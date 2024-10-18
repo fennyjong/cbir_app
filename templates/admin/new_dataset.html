@@ -33,6 +33,16 @@
                 </div>
             </div>
             
+            <div class="form-group">
+                <label for="label_name">Nama Kain<span class="required-star">*</span></label>
+                <select id="label_name" name="label_name" required>
+                    <option value="">Pilih Nama Kain</option>
+                    {% for fabric in fabric_names %}
+                        <option value="{{ fabric }}">{{ fabric }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
             <div class="form-section">
                 <div class="form-group">
                     <label for="region">Daerah Asal<span class="required-star">*</span></label>
@@ -43,16 +53,6 @@
                         {% endfor %}
                     </select>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="label_name">Nama Kain<span class="required-star">*</span></label>
-                <select id="label_name" name="label_name" required>
-                    <option value="">Pilih Nama Kain</option>
-                    {% for fabric in fabric_names %}
-                        <option value="{{ fabric }}">{{ fabric }}</option>
-                    {% endfor %}
-                </select>
             </div>
             
             <div class="form-section">

@@ -132,9 +132,11 @@ def new_dataset_view():
     fabric_names = [label.fabric_name for label in labels]  # Ambil nama kain sebagai list
     unique_regions = [region[0] for region in regions]  # Ambil daerah asal unik sebagai list
 
-    # Render template dengan data yang diperlukan
-    return render_template('admin/new_dataset.html', fabric_names=fabric_names, regions=unique_regions)
+    # Create a mapping of fabric names to their regions
+    fabric_to_region = {label.fabric_name: label.region for label in labels}
 
+    # Render template dengan data yang diperlukan
+    return render_template('admin/new_dataset.html', fabric_names=fabric_names, regions=unique_regions, fabric_to_region=fabric_to_region)
 
 @app.route('/get_datasets', methods=['GET'])
 def get_datasets():
@@ -182,7 +184,6 @@ def delete_multiple_datasets():
     
     db.session.commit()
     return jsonify({'success': success})
-
 
 @app.route('/add_label', methods=['POST'])
 def add_label():
@@ -250,6 +251,14 @@ def dashboard_admin():
     result = [{'fabric_name': item[0], 'count': item[1]} for item in dataset_info]
     
     return jsonify(result)
+
+@app.route('/get_region/<fabric_name>')
+def get_region(fabric_name):
+    # Ambil daerah asal berdasarkan nama kain dari database
+    region = db.session.query(Label.region).filter(Label.fabric_name == fabric_name).first()
+    if region:
+        return region[0]  # Mengembalikan nama daerah asal
+    return '', 204  # Mengembalikan 204 No Content jika tidak ditemukan
 
 if __name__ == '__main__':
     with app.app_context():
