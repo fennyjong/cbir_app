@@ -104,7 +104,7 @@ def upload():
         return redirect(url_for('login'))
     
     region = request.form['region']
-    fabric_name = request.form['fabric_name']
+    fabric_name = request.form['label_name']  # Ubah 'fabric_name' menjadi 'label_name'
     image = request.files['image']
     
     if image and allowed_file(image.filename):
@@ -123,7 +123,7 @@ def upload():
     else:
         flash('Image not found or invalid file type!', 'danger')
     
-    return render_template('admin/new_dataset.html') 
+    return render_template('admin/new_dataset.html')
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -231,15 +231,15 @@ def delete_multiple_labels():
 @app.route('/new_dataset')
 def new_dataset_view():
     # Query data nama kain dan daerah asal dari database
-    label_names = db.session.query(Label.name).all()  # Ambil semua nama kain
+    labels = db.session.query(Label).all()  # Ambil semua objek Label
     regions = db.session.query(Label.region).distinct().all()  # Ambil daerah asal unik
 
     # Mengubah data menjadi Fabric Name format
-    fabric_names = [label.name for label in label_names]  # Ambil nama kain sebagai list
-    unique_regions = [region.region for region in regions]  # Ambil daerah asal unik sebagai list
+    fabric_names = [label.fabric_name for label in labels]  # Ambil nama kain sebagai list
+    unique_regions = [region[0] for region in regions]  # Ambil daerah asal unik sebagai list
 
     # Render template dengan data yang diperlukan
-    return render_template('admin/new_dataset.html', fabric_names=fabric_names, unique_regions=unique_regions)
+    return render_template('admin/new_dataset.html', fabric_names=fabric_names, regions=unique_regions)
 
 if __name__ == '__main__':
     with app.app_context():

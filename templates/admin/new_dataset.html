@@ -39,12 +39,12 @@
                     <select id="region" name="region" required>
                         <option value="">Pilih Daerah Asal</option>
                         {% for region in regions %}
-                            <option value="{{ region[0] }}">{{ region[0] }}</option>
+                            <option value="{{ region }}">{{ region }}</option>
                         {% endfor %}
                     </select>
                 </div>
-            </div>            
-                
+            </div>
+            
             <div class="form-group">
                 <label for="label_name">Nama Kain<span class="required-star">*</span></label>
                 <select id="label_name" name="label_name" required>
@@ -53,7 +53,7 @@
                         <option value="{{ fabric }}">{{ fabric }}</option>
                     {% endfor %}
                 </select>
-            </div>              
+            </div>
             
             <div class="form-section">
                 <div class="augment-group">
