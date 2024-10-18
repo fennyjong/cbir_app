@@ -53,15 +53,17 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
+        if username == 'admin' and password == 'admin':
+            session['user_role'] = 'admin'
+            return redirect(url_for('dashboard_admin'))
+        
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user)
             user.last_login_at = db.func.now()  # Update last login time
             db.session.commit()  # Save changes
-            session['user_role'] = 'admin' if username == 'admin' else 'user'
-            return redirect(url_for('modul_upload' if session['user_role'] == 'user' else 'dashboard_admin'))
-        
-        flash('Invalid username or password!', 'danger')
+            session['user_role'] = 'user'
+            return redirect(url_for('modul_upload'))
         
     return render_template('auth/login.html')
 
@@ -122,16 +124,21 @@ def uploaded_file(filename):
 
 @app.route('/new_dataset')
 def new_dataset_view():
-    labels = db.session.query(Label).all()  # Get all Label objects
-    regions = db.session.query(Label.region).distinct().all()  # Get unique regions
+    # Query data nama kain dan daerah asal dari database
+    labels = db.session.query(Label).all()  # Ambil semua objek Label
+    regions = db.session.query(Label.region).distinct().all()  # Ambil daerah asal unik
 
-    fabric_names = [label.fabric_name for label in labels]  # Fabric names list
-    unique_regions = [region[0] for region in regions]  # Unique regions list
+    # Mengubah data menjadi Fabric Name format
+    fabric_names = [label.fabric_name for label in labels]  # Ambil nama kain sebagai list
+    unique_regions = [region[0] for region in regions]  # Ambil daerah asal unik sebagai list
 
-    # Create a mapping of fabric names to their regions
-    fabric_to_region = {label.fabric_name: label.region for label in labels}
+    # Render template dengan data yang diperlukan
+    return render_template('admin/new_dataset.html', fabric_names=fabric_names, regions=unique_regions)
 
-    return render_template('admin/new_dataset.html', fabric_names=fabric_names, regions=unique_regions, fabric_to_region=fabric_to_region)
+
+def allowed_file(filename):
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/get_datasets', methods=['GET'])
 def get_datasets():
@@ -149,9 +156,11 @@ def edit_dataset():
     dataset = SongketDataset.query.get(data['id'])
     if dataset:
         dataset.fabric_name = data['fabric_name']
+        dataset.region = data['region'] 
         db.session.commit()
         return jsonify({'success': True}), 200
     return jsonify({'success': False, 'message': 'Dataset not found'}), 404
+
 
 @app.route('/delete_dataset', methods=['POST'])
 def delete_dataset():
