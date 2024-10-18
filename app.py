@@ -233,7 +233,6 @@ def delete_multiple_labels():
         db.session.delete(label)
     db.session.commit()
     return jsonify(success=True)
-
 @app.route('/dashboard_admin', methods=['GET', 'POST'])
 def dashboard_admin():
     if session.get('user_role') != 'admin':
@@ -242,15 +241,29 @@ def dashboard_admin():
 
     if request.method == 'GET':
         return render_template('admin/dashboard_admin.html')
-    
+
+    # Handle POST request
     dataset_info = db.session.query(
         SongketDataset.fabric_name,
         func.count(SongketDataset.id).label('count')
     ).group_by(SongketDataset.fabric_name).all()
-    
+
     result = [{'fabric_name': item[0], 'count': item[1]} for item in dataset_info]
-    
-    return jsonify(result)
+
+    label_info = db.session.query(
+        Label.fabric_name,
+        func.count(Label.id).label('count')
+    ).group_by(Label.fabric_name).all()
+
+    # Prepare the label results in JSON format
+    label_result = [{'fabric_name': item[0]} for item in label_info]
+
+    combined_result = {
+        'label_info': label_result,
+        'dataset_info': result
+    }
+
+    return jsonify(combined_result)
 
 @app.route('/get_region/<fabric_name>')
 def get_region(fabric_name):

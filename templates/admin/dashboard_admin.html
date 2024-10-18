@@ -258,15 +258,16 @@
     </div>
 </div>
 </div>
+<!-- Informasi dataset -->
 <div id="datasetInfoModal" class="dataset-modal">
     <div class="dataset-modal-content">
         <span class="close-button">&times;</span>
-        <h2 class="text-2xl font-semibold mb-4">Informasi Total dataset</h2>
+        <h2 class="text-2xl font-semibold mb-4">Informasi Dataset</h2>
         <table class="dataset-table">
             <thead>
                 <tr>
                     <th>Label</th>
-                    <th>Jumlah data</th>
+                    <th>Jumlah Data</th>
                 </tr>
             </thead>
             <tbody id="datasetInfoTable">
@@ -274,39 +275,118 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td><strong>Total</strong></td>
-                    <td id="totalCount"><strong>0</strong></td>
+                    <td><strong>Total Dataset</strong></td>
+                    <td id="totalDataset"><strong>0</strong></td>
                 </tr>
             </tfoot>
         </table>
     </div>
 </div>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin</title>
-    <link rel="stylesheet" href="path/to/your/styles.css">
-    <script src="{{ url_for('static', filename='js/admin/dashboard_admin.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/admin/label.js') }}"></script>
-   
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('datasetInfoModal');
-    const closeBtn = modal.querySelector('.close-button');
-    const infoBtn = document.getElementById('datasetInfoBtn');
-    const datasetInfoTable = document.getElementById('datasetInfoTable');
-    const totalCount = document.getElementById('totalCount');  // Reference to the total count element
-    
-    infoBtn.addEventListener('click', function() {
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
+<!-- Informasi label -->
+<div id="labelInfoModal" class="dataset-modal">
+    <div class="dataset-modal-content">
+        <span class="close-button">&times;</span>
+        <h2 class="text-2xl font-semibold mb-4">Informasi Label</h2>
+        <table class="dataset-table">
+            <thead>
+                <tr>
+                    <th>Nama Kain Songket</th>
+                </tr>
+            </thead>
+            <tbody id="labelInfoTable">
+                <!-- Data will be populated dynamically -->
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td><strong>Total Label</strong></td>
+                    <td id="totalLabels"><strong>0</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
 
-        // Fetch dataset info
+<script src="{{ url_for('static', filename='js/admin/dashboard_admin.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin/label.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const datasetModal = document.getElementById('datasetInfoModal');
+        const labelModal = document.getElementById('labelInfoModal');
+        const closeBtns = document.querySelectorAll('.close-button');
+        const datasetInfoBtn = document.getElementById('datasetInfoBtn');
+        const labelInfoBtn = document.getElementById('labelInfoBtn');
+        const datasetInfoTable = document.getElementById('datasetInfoTable');
+        const labelInfoTable = document.getElementById('labelInfoTable');
+        const totalDatasetElement = document.getElementById('totalDataset');
+        const totalLabelsElement = document.getElementById('totalLabels');
+
+        function openModal(modal) {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        datasetInfoBtn.addEventListener('click', function() {
+            openModal(datasetModal);
+            fetchDatasetInfo();
+        });
+
+        labelInfoBtn.addEventListener('click', function() {
+            openModal(labelModal);
+            fetchLabelInfo();
+        });
+
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                closeModal(btn.closest('.dataset-modal'));
+            });
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('dataset-modal')) {
+                closeModal(e.target);
+            }
+        });
+
+        function fetchDatasetInfo() {
+            fetch('/dashboard_admin', {
+                method: 'POST',
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Fetched Dataset Data:", data);
+                datasetInfoTable.innerHTML = '';
+                let totalCount = 0;
+
+                data.dataset_info.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td>${item.fabric_name}</td><td>${item.count}</td>`;
+                    datasetInfoTable.appendChild(row);
+                    totalCount += item.count;
+                });
+
+                totalDatasetElement.textContent = totalCount;
+            })
+            .catch(error => console.error('Error fetching dataset info:', error));
+        }
+
+     // Fungsi untuk fetch data label
+    function fetchLabelInfo() {
         fetch('/dashboard_admin', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
         .then(response => {
             if (!response.ok) {
@@ -315,38 +395,25 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-            console.log("Fetched Data:", data);  // Log for debugging
-            datasetInfoTable.innerHTML = '';  // Clear the table before filling
-
-            let total = 0;  // Initialize total count
+            console.log("Fetched Label Data:", data);
+            labelInfoTable.innerHTML = '';
             
-            // Populate table with data and calculate total
-            data.forEach(item => {
+            // Populate table with label data
+            data.label_info.forEach(item => {
                 const row = document.createElement('tr');
-                row.innerHTML = `<td>${item.fabric_name}</td><td>${item.count}</td>`;
-                datasetInfoTable.appendChild(row);
-                total += item.count;  // Add to total
+                row.innerHTML = `
+                    <td>${item.fabric_name}</td>
+                `;
+                labelInfoTable.appendChild(row);
             });
-
-            // Display total count in the footer
-            totalCount.innerHTML = total;  
+            
+            // Update total labels count
+            totalLabelsElement.textContent = data.label_info.length;
         })
-        .catch(error => console.error('Error fetching dataset info:', error));
+        .catch(error => {
+            console.error('Error fetching label info:', error);
+            labelInfoTable.innerHTML = '<tr><td colspan="3">Error loading data</td></tr>';
+        });
+    }
     });
-
-    closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    });
-
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-    });
-});
-    </script>
-</head>
-</html>
-    
+</script>
