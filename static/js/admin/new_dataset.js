@@ -32,36 +32,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
             }
         });
-
-        document.getElementById('upload-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-        
-            fetch('/upload', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.text();
-                }
-                throw new Error('Upload failed');
-            })
-            .then(html => {
-                document.body.innerHTML = html;
-                var notification = document.getElementById("notification");
-                if (notification) {
-                    notification.style.display = "block";
-                    setTimeout(function() {
-                        notification.style.display = "none";
-                    }, 5000);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
-            });
-        });
     
     let cropper;
 
@@ -95,5 +65,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-    }
+   
+        window.onload = function() {
+            var notification = document.getElementById("notification");
+            if (notification) {
+                setTimeout(function() {
+                    notification.style.display = "none";
+                }, 5000); // Change duration (in milliseconds) as needed
+            }
+        } }
 });

@@ -53,17 +53,15 @@ def login():
         username = request.form['username']
         password = request.form['password']
         
-        if username == 'admin' and password == 'admin':
-            session['user_role'] = 'admin'
-            return redirect(url_for('dashboard_admin'))
-        
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user)
             user.last_login_at = db.func.now()  # Update last login time
             db.session.commit()  # Save changes
-            session['user_role'] = 'user'
-            return redirect(url_for('modul_upload'))
+            session['user_role'] = 'admin' if username == 'admin' else 'user'
+            return redirect(url_for('modul_upload' if session['user_role'] == 'user' else 'dashboard_admin'))
+        
+        flash('Invalid username or password!', 'danger')
         
     return render_template('auth/login.html')
 
@@ -98,11 +96,11 @@ def upload():
     
     if image and allowed_file(image.filename):
         filename = secure_filename(image.filename)
-        save_dir = os.path.join(app.config['UPLOAD_FOLDER'])
+        save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         
         img = Image.open(image)
         img_resized = img.resize((255, 255))
-        img_resized.save(os.path.join(save_dir, filename))
+        img_resized.save(save_path)
         
         new_dataset = SongketDataset(region=region, fabric_name=fabric_name, image_filename=filename)
         db.session.add(new_dataset)
@@ -112,7 +110,7 @@ def upload():
     else:
         flash('Image not found or invalid file type!', 'danger')
     
-    return render_template('admin/new_dataset.html')  
+    return redirect(url_for('new_dataset_view'))
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -124,18 +122,15 @@ def uploaded_file(filename):
 
 @app.route('/new_dataset')
 def new_dataset_view():
-    # Query data nama kain dan daerah asal dari database
-    labels = db.session.query(Label).all()  # Ambil semua objek Label
-    regions = db.session.query(Label.region).distinct().all()  # Ambil daerah asal unik
+    labels = db.session.query(Label).all()  # Get all Label objects
+    regions = db.session.query(Label.region).distinct().all()  # Get unique regions
 
-    # Mengubah data menjadi Fabric Name format
-    fabric_names = [label.fabric_name for label in labels]  # Ambil nama kain sebagai list
-    unique_regions = [region[0] for region in regions]  # Ambil daerah asal unik sebagai list
+    fabric_names = [label.fabric_name for label in labels]  # Fabric names list
+    unique_regions = [region[0] for region in regions]  # Unique regions list
 
     # Create a mapping of fabric names to their regions
     fabric_to_region = {label.fabric_name: label.region for label in labels}
 
-    # Render template dengan data yang diperlukan
     return render_template('admin/new_dataset.html', fabric_names=fabric_names, regions=unique_regions, fabric_to_region=fabric_to_region)
 
 @app.route('/get_datasets', methods=['GET'])
@@ -188,7 +183,7 @@ def delete_multiple_datasets():
 @app.route('/add_label', methods=['POST'])
 def add_label():
     data = request.get_json()
-    new_label = Label(fabric_name=data['fabric_name'], region=data['region'], description=data['description'])  # Changed 'name' to 'fabric_name'
+    new_label = Label(fabric_name=data['fabric_name'], region=data['region'], description=data['description']) 
     db.session.add(new_label)
     db.session.commit()
     return jsonify(success=True)
@@ -206,15 +201,13 @@ def edit_label(id):
 @app.route('/get_labels', methods=['GET'])
 def get_labels():
     labels = Label.query.all()
-    return jsonify([
-        {
-            'id': label.id,
-            'fabric_name': label.fabric_name,  
-            'region': label.region,
-            'description': label.description,
-            'created_at': label.created_at.strftime("%Y-%m-%d %H:%M:%S")  # Format the time when retrieved
-        } for label in labels
-    ])
+    return jsonify([{
+        'id': label.id,
+        'fabric_name': label.fabric_name,  
+        'region': label.region,
+        'description': label.description,
+        'created_at': label.created_at.strftime("%Y-%m-%d %H:%M:%S")
+    } for label in labels])
 
 @app.route('/delete_label/<int:id>', methods=['DELETE'])
 def delete_label(id):
@@ -238,11 +231,9 @@ def dashboard_admin():
         flash('You do not have access to this page.', 'danger')
         return redirect(url_for('login'))
 
-    # Jika permintaan adalah GET, render template
     if request.method == 'GET':
         return render_template('admin/dashboard_admin.html')
     
-    # Jika permintaan adalah POST, ambil data dataset
     dataset_info = db.session.query(
         SongketDataset.fabric_name,
         func.count(SongketDataset.id).label('count')
@@ -254,11 +245,10 @@ def dashboard_admin():
 
 @app.route('/get_region/<fabric_name>')
 def get_region(fabric_name):
-    # Ambil daerah asal berdasarkan nama kain dari database
     region = db.session.query(Label.region).filter(Label.fabric_name == fabric_name).first()
     if region:
-        return region[0]  # Mengembalikan nama daerah asal
-    return '', 204  # Mengembalikan 204 No Content jika tidak ditemukan
+        return region[0]
+    return '', 204
 
 if __name__ == '__main__':
     with app.app_context():
