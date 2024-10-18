@@ -58,36 +58,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Navigation and sidebar toggle
     addDatasetBtn.addEventListener('click', () => {
-        window.location.href = '/new_dataset';
-    });
-
-    newLabelBtn.addEventListener('click', () => {
-        addLabelModal.style.display = 'block';
+        window.location.href = '/new_dataset-view';
     });
 
     closeLabelModal.addEventListener('click', () => {
         addLabelModal.style.display = 'none';
-    });
-
-    // Adding new label
-    addLabelForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const labelName = document.getElementById('labelName').value;
-        const labelRegion = document.getElementById('labelRegion').value;
-        const labelDescription = document.getElementById('labelDescription').value;
-
-        const newLabel = {
-            id: labels.length + 1,
-            name: labelName,
-            region: labelRegion,
-            description: labelDescription,
-            count: 0
-        };
-        labels.push(newLabel);
-        updateLabelInfo();
-        alert(`Label "${labelName}" added successfully!`);
-        addLabelModal.style.display = 'none';
-        addLabelForm.reset();
     });
 
     toggleSidebar.addEventListener('click', () => {
@@ -107,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById(sectionId).classList.add('active');
         });
     });
+
 // Delete multiple datasets
 const deleteMultipleBtn = document.getElementById('deleteMultipleBtn');
 deleteMultipleBtn.addEventListener('click', () => {
@@ -160,82 +136,92 @@ let currentPage = 1;
 let entriesPerPage = 10;
 let datasets = [];
 
-function loadDatasets() {
-    fetch('/get_datasets')
-        .then(response => response.json())
-        .then(data => {
-            datasets = data;
-            displayDatasets();
-        });
-}
+        function loadDatasets() {
+            fetch('/get_datasets')
+                .then(response => response.json())
+                .then(data => {
+                    datasets = data;
+                    displayDatasets();
+                });
+        }
 
-function displayDatasets() {
-    const tableBody = document.getElementById('datasetTableBody');
-    tableBody.innerHTML = '';
+        function displayDatasets() {
+            const tableBody = document.getElementById('datasetTableBody');
+            tableBody.innerHTML = '';
 
-    const searchQuery = datasetSearchInput.value.toLowerCase();
-    const filteredDatasets = datasets.filter(dataset =>
-        dataset.fabric_name.toLowerCase().includes(searchQuery)
-    );
+            const searchQuery = datasetSearchInput.value.toLowerCase();
+            const filteredDatasets = datasets.filter(dataset =>
+                dataset.fabric_name.toLowerCase().includes(searchQuery)
+            );
 
-    const totalEntries = filteredDatasets.length;
-    const totalPages = Math.ceil(totalEntries / entriesPerPage);
-    const startIndex = (currentPage - 1) * entriesPerPage;
-    const endIndex = startIndex + entriesPerPage;
-    const paginatedDatasets = filteredDatasets.slice(startIndex, endIndex);
+            const totalEntries = filteredDatasets.length;
+            const totalPages = Math.ceil(totalEntries / entriesPerPage);
+            const startIndex = (currentPage - 1) * entriesPerPage;
+            const endIndex = startIndex + entriesPerPage;
+            const paginatedDatasets = filteredDatasets.slice(startIndex, endIndex);
 
-    paginatedDatasets.forEach((dataset, index) => {
-        const row = `
-            <tr>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <input type="checkbox" name="datasetCheckbox" data-id="${dataset.id}" />
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">${startIndex + index + 1}</td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <img class="songket-image" src="/uploads/${dataset.image_filename}" alt="Songket Fabric" onclick="showFullImage('/uploads/${dataset.image_filename}')">
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap" id="class-${dataset.id}">${dataset.fabric_name}</td>
-                <td class="px-6 py-4 whitespace-nowrap">${dataset.region}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button onclick="editDataset(${dataset.id})" class="text-gray-600 hover:text-gray-900 mr-3">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button onclick="deleteDataset(${dataset.id})" class="text-red-600 hover:text-red-900">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                </td>
-            </tr>
-        `;
-        tableBody.innerHTML += row;
-    });
+            paginatedDatasets.forEach((dataset, index) => {
+                const row = `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <input type="checkbox" name="datasetCheckbox" data-id="${dataset.id}" />
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">${startIndex + index + 1}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <img class="songket-image" src="/uploads/${dataset.image_filename}" alt="Songket Fabric" onclick="showFullImage('/uploads/${dataset.image_filename}')">
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap" id="class-${dataset.id}">${dataset.fabric_name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap" id="region-${dataset.id}">${dataset.region}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button onclick="editDataset(${dataset.id})" class="text-gray-600 hover:text-gray-900 mr-3">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button onclick="deleteDataset(${dataset.id})" class="text-red-600 hover:text-red-900">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+            
 
-    datasetEntriesInfo.textContent = `Showing ${startIndex + 1} to ${Math.min(startIndex + entriesPerPage, totalEntries)} of ${totalEntries} entries`;
-    datasetCurrentPage.textContent = currentPage;
-}
+            datasetEntriesInfo.textContent = `Showing ${startIndex + 1} to ${Math.min(startIndex + entriesPerPage, totalEntries)} of ${totalEntries} entries`;
+            datasetCurrentPage.textContent = currentPage;
+        }
 
     // Edit and delete dataset functionality
     function editDataset(id) {
         const currentName = document.getElementById(`class-${id}`).textContent;
-        const newName = prompt("Enter new class name:", currentName);
-        if (newName && newName !== currentName) {
+        const currentRegion = document.querySelector(`#region-${id}`).textContent; // Dapatkan asal daerah saat ini
+    
+        const newName = prompt("Masukkan nama kain:", currentName);
+        const newRegion = prompt("Masukkan asal daerah kain:", currentRegion); // Tambahkan prompt untuk asal daerah
+    
+        if ((newName && newName !== currentName) || (newRegion && newRegion !== currentRegion)) {
             fetch('/edit_dataset', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ id: id, fabric_name: newName }),
+                body: JSON.stringify({ 
+                    id: id, 
+                    fabric_name: newName, 
+                    region: newRegion // Kirim asal daerah baru
+                }),
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     document.getElementById(`class-${id}`).textContent = newName;
+                    document.querySelector(`#region-${id}`).textContent = newRegion; // Perbarui asal daerah di tampilan
                     alert('Dataset updated successfully');
                 } else {
                     alert('Failed to update dataset');
                 }
             });
         }
-    }
+    }    
 
     function deleteDataset(id) {
         if (confirm('Are you sure you want to delete this dataset?')) {

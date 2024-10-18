@@ -2,9 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.utils import secure_filename
 import os
-from PIL import Image  # Importing PIL to handle image resizing
+from PIL import Image  
 from config import Config
-from models import db, User, SongketDataset
+from models import db, User, SongketDataset, Label
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -92,8 +92,30 @@ def logout():
     session.pop('user_role', None)
     return jsonify({"success": True, "message": "You have been logged out successfully."})
 
-@app.route('/new_dataset')
+@app.route('/new-dataset', methods=['GET', 'POST'])
 def new_dataset():
+    if request.method == 'POST':
+        image = request.files['image']
+        region = request.form.get('region')
+        fabric_name = request.form.get('fabric_name')
+
+        if not image or not region or not fabric_name:
+            flash('Pastikan semua field terisi dengan benar.', 'error')
+            return redirect(url_for('new_dataset'))
+
+        flash('Data berhasil diunggah!', 'success')
+        return redirect(url_for('new_dataset'))
+
+    regions = Label.query.with_entities(Label.region).distinct().all()
+    fabric_names = Label.query.with_entities(Label.name).distinct().all()
+
+    regions = [region[0] for region in regions]
+    fabric_names = [fabric[0] for fabric in fabric_names]
+
+    return render_template('admin/new_dataset.html', regions=regions, fabric_names=fabric_names)
+
+@app.route('/new_dataset-view')
+def new_dataset_view():
     return render_template('admin/new_dataset.html')
 
 @app.route('/users/modul_upload', methods=['GET'])
@@ -115,14 +137,10 @@ def upload():
         filename = secure_filename(image.filename)
         save_dir = os.path.join(app.config['UPLOAD_FOLDER'])
         
-        # Open image using PIL and resize it to 255x255
         img = Image.open(image)
-        img_resized = img.resize((255, 255))  # Resize to 255x255
-        
-        # Save resized image
+        img_resized = img.resize((255, 255))
         img_resized.save(os.path.join(save_dir, filename))
         
-        # Save dataset info to the database
         new_dataset = SongketDataset(region=region, fabric_name=fabric_name, image_filename=filename)
         db.session.add(new_dataset)
         db.session.commit()
@@ -187,6 +205,140 @@ def delete_multiple_datasets():
     
     db.session.commit()
     return jsonify({'success': success})
+
+@app.route('/add_label', methods=['POST'])
+def add_label():
+    try:
+        data = request.get_json()
+
+        existing_label = Label.query.filter_by(name=data['name'], region=data['region']).first()
+        if existing_label:
+            return jsonify({
+                'success': False,
+                'message': 'Label already exists!'
+            }), 400
+
+        new_label = Label(
+            name=data['name'],
+            region=data['region'],
+            description=data['description']
+        )
+
+        db.session.add(new_label)
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Label added successfully',
+            'label': {
+                'id': new_label.id,
+                'name': new_label.name,
+                'region': new_label.region,
+                'description': new_label.description,
+                'created_at': new_label.created_at.isoformat()
+            }
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
+@app.route('/get_labels', methods=['GET'])
+def get_labels():
+    try:
+        labels = Label.query.order_by(Label.created_at.desc()).all()
+        return jsonify([{
+            'id': label.id,
+            'name': label.name,
+            'region': label.region,
+            'description': label.description,
+            'created_at': label.created_at.isoformat()
+        } for label in labels])
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
+@app.route('/delete_label/<int:id>', methods=['DELETE'])
+def delete_label(id):
+    try:
+        label = Label.query.get(id)
+        if not label:
+            return jsonify({
+                'success': False,
+                'message': 'Label not found'
+            }), 404
+
+        db.session.delete(label)
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Label deleted successfully'
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
+@app.route('/edit_label/<int:id>', methods=['PUT'])
+def edit_label(id):
+    try:
+        data = request.get_json()
+        label = Label.query.get(id)
+
+        if not label:
+            return jsonify({
+                'success': False,
+                'message': 'Label not found'
+            }), 404
+
+        label.name = data['name']
+        label.region = data['region']
+        label.description = data['description']
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Label updated successfully'
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
+@app.route('/delete_multiple_labels', methods=['POST'])
+def delete_multiple_labels():
+    ids = request.json.get('ids', [])  # Get the list of IDs from the request
+    success = True
+    messages = []
+
+    for id in ids:
+        label = Label.query.get(id) 
+        if label:
+            if label.image_filename: 
+                try:
+                    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], label.image_filename))
+                except Exception as e:
+                    messages.append(f"Failed to delete file for label ID {id}: {str(e)}")
+                    success = False
+            
+            db.session.delete(label)
+        else:
+            messages.append(f"Label ID {id} not found.")
+            success = False
+
+    db.session.commit() 
+
+    return jsonify({'success': success, 'messages': messages})
 
 if __name__ == '__main__':
     with app.app_context():
