@@ -26,20 +26,18 @@ function hideModal() {
 }
 
 // Prevent multiple submissions by disabling the submit button
-// Prevent multiple submissions by disabling the submit button
-// Prevent multiple submissions by disabling the submit button
 addLabelForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     submitButton.disabled = true; // Disable button to prevent multiple submissions
 
     const formData = {
-        name: document.getElementById('labelName').value.trim(),
+        fabric_name: document.getElementById('labelName').value.trim(), // Changed to fabric_name
         region: document.getElementById('labelRegion').value.trim(),
         description: document.getElementById('labelDescription').value.trim()
     };
 
     // Check for duplicate label
-    const labelExists = labels.some(label => label.name.toLowerCase() === formData.name.toLowerCase());
+    const labelExists = labels.some(label => label.fabric_name.toLowerCase() === formData.fabric_name.toLowerCase());
 
     if (labelExists && currentEditingLabelId === null) {
         alert('Label name already exists. Please choose a different name.');
@@ -76,7 +74,6 @@ addLabelForm.addEventListener('submit', async (e) => {
     }
 });
 
-
 // Global variables for label pagination
 let currentLabelPage = 1;
 let labelEntriesPerPage = 10;
@@ -104,7 +101,7 @@ function displayLabels() {
 
     // Filter labels based on search query
     const filteredLabels = labels.filter(label =>
-        label.name.toLowerCase().includes(searchQuery) ||
+        label.fabric_name.toLowerCase().includes(searchQuery) ||
         label.region.toLowerCase().includes(searchQuery)
     );
 
@@ -126,11 +123,11 @@ function displayLabels() {
                 <input type="checkbox" name="labelCheckbox" data-id="${label.id}" class="rounded border-gray-300">
             </td>
             <td class="px-6 py-4 whitespace-nowrap">${startIndex + index + 1}</td>
-            <td class="px-6 py-4 whitespace-nowrap">${escapeHtml(label.name)}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${escapeHtml(label.fabric_name)}</td>
             <td class="px-6 py-4 whitespace-nowrap">${escapeHtml(label.region)}</td>
             <td class="px-6 py-4 whitespace-nowrap">${escapeHtml(label.description)}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button onclick="editLabel(${label.id}, '${escapeHtml(label.name)}', '${escapeHtml(label.region)}', '${escapeHtml(label.description)}')" class="text-gray-600 hover:text-gray-900 mr-3">
+                <button onclick="editLabel(${label.id}, '${escapeHtml(label.fabric_name)}', '${escapeHtml(label.region)}', '${escapeHtml(label.description)}')" class="text-gray-600 hover:text-gray-900 mr-3">
                     <i class="fas fa-edit"></i> Edit
                 </button>
                 <button onclick="deleteLabel(${label.id})" class="text-red-600 hover:text-red-900">
@@ -147,9 +144,9 @@ function displayLabels() {
 }
 
 // Edit label function
-function editLabel(id, name, region, description) {
+function editLabel(id, fabric_name, region, description) {
     currentEditingLabelId = id; // Set the current editing label ID
-    document.getElementById('labelName').value = name;
+    document.getElementById('labelName').value = fabric_name;
     document.getElementById('labelRegion').value = region;
     document.getElementById('labelDescription').value = description;
 
@@ -242,18 +239,17 @@ function deleteLabel(id) {
 // Delete multiple labels
 const deleteMultipleLabelBtn = document.getElementById('deleteMultipleLabelBtn');
 deleteMultipleLabelBtn.addEventListener('click', () => {
-    const selectedCheckboxes = document.querySelectorAll('input[name="labelCheckbox"]:checked');
-    if (selectedCheckboxes.length === 0) {
+    const selectedLabels = document.querySelectorAll('input[name="labelCheckbox"]:checked');
+    const idsToDelete = Array.from(selectedLabels).map(checkbox => checkbox.getAttribute('data-id'));
+
+    if (idsToDelete.length === 0) {
         alert('Please select at least one label to delete.');
         return;
     }
 
-    if (confirm(`Are you sure you want to delete ${selectedCheckboxes.length} label(s)?`)) {
-        const idsToDelete = Array.from(selectedCheckboxes).map(checkbox => checkbox.getAttribute('data-id'));
-        
-        // Send delete request
+    if (confirm(`Are you sure you want to delete ${idsToDelete.length} label(s)?`)) {
         fetch('/delete_multiple_labels', {
-            method: 'POST',
+            method: 'POST', // Change to POST
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -262,7 +258,7 @@ deleteMultipleLabelBtn.addEventListener('click', () => {
         .then(response => response.json())
         .then(result => {
             if (result.success) {
-                alert(`${result.deletedCount} label(s) deleted successfully!`);
+                alert(`${idsToDelete.length} label(s) deleted successfully!`);
                 loadLabels(); // Refresh the labels table
             } else {
                 alert('Failed to delete labels: ' + result.message);
@@ -270,7 +266,7 @@ deleteMultipleLabelBtn.addEventListener('click', () => {
         })
         .catch(error => {
             console.error('Error deleting labels:', error);
-            alert('An error occurred while deleting the labels');
+            alert('An error occurred while deleting labels');
         });
     }
 });

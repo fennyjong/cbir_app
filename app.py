@@ -92,32 +92,6 @@ def logout():
     session.pop('user_role', None)
     return jsonify({"success": True, "message": "You have been logged out successfully."})
 
-@app.route('/new-dataset', methods=['GET', 'POST'])
-def new_dataset():
-    if request.method == 'POST':
-        image = request.files['image']
-        region = request.form.get('region')
-        fabric_name = request.form.get('fabric_name')
-
-        if not image or not region or not fabric_name:
-            flash('Pastikan semua field terisi dengan benar.', 'error')
-            return redirect(url_for('new_dataset'))
-
-        flash('Data berhasil diunggah!', 'success')
-        return redirect(url_for('new_dataset'))
-
-    regions = Label.query.with_entities(Label.region).distinct().all()
-    fabric_names = Label.query.with_entities(Label.name).distinct().all()
-
-    regions = [region[0] for region in regions]
-    fabric_names = [fabric[0] for fabric in fabric_names]
-
-    return render_template('admin/new_dataset.html', regions=regions, fabric_names=fabric_names)
-
-@app.route('/new_dataset-view')
-def new_dataset_view():
-    return render_template('admin/new_dataset.html')
-
 @app.route('/users/modul_upload', methods=['GET'])
 @login_required
 def modul_upload():
@@ -206,10 +180,11 @@ def delete_multiple_datasets():
     db.session.commit()
     return jsonify({'success': success})
 
+
 @app.route('/add_label', methods=['POST'])
 def add_label():
     data = request.get_json()
-    new_label = Label(name=data['name'], region=data['region'], description=data['description'])
+    new_label = Label(fabric_name=data['fabric_name'], region=data['region'], description=data['description'])  # Changed 'name' to 'fabric_name'
     db.session.add(new_label)
     db.session.commit()
     return jsonify(success=True)
@@ -218,7 +193,7 @@ def add_label():
 def edit_label(id):
     label = Label.query.get_or_404(id)
     data = request.get_json()
-    label.name = data['name']
+    label.fabric_name = data['fabric_name'] 
     label.region = data['region']
     label.description = data['description']
     db.session.commit()
@@ -230,10 +205,10 @@ def get_labels():
     return jsonify([
         {
             'id': label.id,
-            'name': label.name,
+            'fabric_name': label.fabric_name,  
             'region': label.region,
             'description': label.description,
-            'created_at': label.created_at.strftime("%Y-%m-%d %H:%M:%S")  # Format waktu saat diambil
+            'created_at': label.created_at.strftime("%Y-%m-%d %H:%M:%S")  # Format the time when retrieved
         } for label in labels
     ])
 
@@ -252,6 +227,19 @@ def delete_multiple_labels():
         db.session.delete(label)
     db.session.commit()
     return jsonify(success=True)
+
+@app.route('/new_dataset')
+def new_dataset_view():
+    # Query data nama kain dan daerah asal dari database
+    label_names = db.session.query(Label.name).all()  # Ambil semua nama kain
+    regions = db.session.query(Label.region).distinct().all()  # Ambil daerah asal unik
+
+    # Mengubah data menjadi Fabric Name format
+    fabric_names = [label.name for label in label_names]  # Ambil nama kain sebagai list
+    unique_regions = [region.region for region in regions]  # Ambil daerah asal unik sebagai list
+
+    # Render template dengan data yang diperlukan
+    return render_template('admin/new_dataset.html', fabric_names=fabric_names, unique_regions=unique_regions)
 
 if __name__ == '__main__':
     with app.app_context():

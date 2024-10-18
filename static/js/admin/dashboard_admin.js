@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Navigation and sidebar toggle
     addDatasetBtn.addEventListener('click', () => {
-        window.location.href = '/new_dataset-view';
+        window.location.href = '/new_dataset';
     });
 
     closeLabelModal.addEventListener('click', () => {

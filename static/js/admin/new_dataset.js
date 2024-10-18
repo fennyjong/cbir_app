@@ -2,9 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const imageInput = document.getElementById('image-input');
     const imagePreview = document.getElementById('image-preview');
     const regionSelect = document.getElementById('region');
-    const customRegion = document.getElementById('custom-region');
-    const fabricNameSelect = document.getElementById('fabric_name');
-    const customNama = document.getElementById('custom-nama');
+
     let cropper;
 
     imageInput.addEventListener('change', function(event) {
