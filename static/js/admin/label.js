@@ -115,28 +115,30 @@ function displayLabels() {
     tableBody.innerHTML = '';
 
     // Generate table rows
-    paginatedLabels.forEach((label, index) => {
-        const row = document.createElement('tr');
-        row.className = 'hover:bg-gray-50';
-        row.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap">
-                <input type="checkbox" name="labelCheckbox" data-id="${label.id}" class="rounded border-gray-300">
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">${startIndex + index + 1}</td>
-            <td class="px-6 py-4 whitespace-nowrap">${escapeHtml(label.fabric_name)}</td>
-            <td class="px-6 py-4 whitespace-nowrap">${escapeHtml(label.region)}</td>
-            <td class="px-6 py-4 whitespace-nowrap">${escapeHtml(label.description)}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button onclick="editLabel(${label.id}, '${escapeHtml(label.fabric_name)}', '${escapeHtml(label.region)}', '${escapeHtml(label.description)}')" class="text-gray-600 hover:text-gray-900 mr-3">
-                    <i class="fas fa-edit"></i> Edit
-                </button>
-                <button onclick="deleteLabel(${label.id})" class="text-red-600 hover:text-red-900">
-                    <i class="fas fa-trash"></i> Delete
-                </button>
-            </td>
-        `;
-        tableBody.appendChild(row);
-    });
+ // Generate table rows
+paginatedLabels.forEach((label, index) => {
+    const row = document.createElement('tr');
+    row.className = 'hover:bg-gray-50';
+    row.innerHTML = `
+        <td class="px-6 py-4 whitespace-nowrap">
+            <input type="checkbox" name="labelCheckbox" data-id="${label.id}" class="rounded border-gray-300">
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap">${startIndex + index + 1}</td>
+        <td class="px-6 py-4 whitespace-nowrap">${escapeHtml(label.fabric_name)}</td>
+        <td class="px-6 py-4 whitespace-nowrap">${escapeHtml(label.region)}</td>
+        <td class="px-6 py-4 description-cell">${escapeHtml(label.description)}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <button onclick="editLabel(${label.id}, '${escapeHtml(label.fabric_name)}', '${escapeHtml(label.region)}', '${escapeHtml(label.description)}')" class="text-gray-600 hover:text-gray-900 mr-3">
+                <i class="fas fa-edit"></i> Edit
+            </button>
+            <button onclick="deleteLabel(${label.id})" class="text-red-600 hover:text-red-900">
+                <i class="fas fa-trash"></i> Delete
+            </button>
+        </td>
+    `;
+    tableBody.appendChild(row);
+});
+
 
     // Update pagination info
     updatePaginationInfo(startIndex, endIndex, totalLabels);

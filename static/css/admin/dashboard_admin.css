@@ -282,3 +282,10 @@
     .dataset-modal-content::-webkit-scrollbar-thumb:hover {
         background: #a8a8a8;
     }
+
+    .description-cell {
+        max-height: 50px; 
+        overflow: hidden;
+        text-overflow: ellipsis; 
+        white-space: normal;
+    }
