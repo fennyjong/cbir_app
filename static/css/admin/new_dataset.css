@@ -3,21 +3,19 @@
     --secondary-color: #2c3e50;
     --background-color: #f5f7fa;
     --form-background: #ffffff;
-    --text-color: #333333;
-    --border-color: #e0e0e0;
+    --text-color: #333;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     background-color: var(--background-color);
     margin: 0;
     padding: 0;
     color: var(--text-color);
-    line-height: 1.4;
 }
 
 .container {
-    max-width: 700px; 
+    max-width: 700px;
     margin: 20px auto;
     background-color: var(--form-background);
     padding: 20px;
@@ -29,68 +27,39 @@ h2 {
     color: var(--secondary-color);
     text-align: center;
     margin-bottom: 20px;
-    font-size: 20px;
-    font-weight: 600;
 }
 
-.form-section, .form-group {
+.form-group, .btn-container {
     margin-bottom: 20px;
 }
 
 label {
     display: block;
     margin-bottom: 5px;
-    color: var(--secondary-color);
-    font-weight: 500;
     font-size: 12px;
+    color: var(--secondary-color);
 }
 
-input[type="file"],
-select,
-input[type="text"] {
+input[type="file"], select, input[type="text"] {
     width: 100%;
-    padding: 8px 10px;
-    border: 1px solid var(--border-color);
+    padding: 8px;
+    border: 1px solid #e0e0e0;
     border-radius: 4px;
     font-size: 12px;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-input[type="file"]:focus,
-select:focus,
-input[type="text"]:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-}
-
-select {
-    appearance: none;
-    background: url('data:image/svg+xml;utf8,<svg fill="%23333" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') no-repeat right 10px top 50%;
-    background-size: 14px;
-    padding-right: 30px; 
-}
-
-.image-preview-container {
-    margin-top: 10px;
 }
 
 .image-preview {
     width: 100%;
     height: 250px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px; 
+    border: 1px solid #e0e0e0;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
-    background-color: #f9f9f9;
 }
 
 .image-preview img {
     max-width: 100%;
     max-height: 100%;
-    object-fit: contain;
 }
 
 .btn-container {

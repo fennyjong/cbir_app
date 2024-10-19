@@ -1,77 +1,52 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const imageInput = document.getElementById('image-input');
-    const imagePreview = document.getElementById('image-preview');
-    const regionSelect = document.getElementById('region');
-    
-         // Handle change event for fabric name select
-         document.getElementById('label_name').addEventListener('change', function() {
-            const selectedFabric = this.value;
-            const regionSelect = document.getElementById('region');
+    const imageInput = document.getElementById('image-input');  // Ambil elemen input gambar
+    const imagePreview = document.getElementById('image-preview');  // Ambil elemen preview gambar
 
-            // Clear current options
-            regionSelect.innerHTML = '<option value="">Pilih Daerah Asal</option>';
-
-            if (selectedFabric) {
-                // Call the Flask endpoint to get the region
-                fetch(`/get_region/${selectedFabric}`)
-                    .then(response => {
-                        if (response.ok) {
-                            return response.text();
-                        }
-                        throw new Error('Region not found');
-                    })
-                    .then(region => {
-                        const option = document.createElement('option');
-                        option.value = region;
-                        option.textContent = region;
-                        regionSelect.appendChild(option);
-                        regionSelect.value = region; // Set the selected region
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
-            }
-        });
-    
     let cropper;
 
     imageInput.addEventListener('change', function(event) {
-        const file = event.target.files[0];
+        const file = event.target.files[0];  // Ambil file gambar yang diupload
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                imagePreview.src = e.target.result;
-                initCropper();
+                imagePreview.src = e.target.result;  // Tampilkan gambar yang diupload
+                initCropper();  // Inisialisasi cropper setelah gambar dimuat
             };
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(file);  // Baca gambar sebagai URL
         }
     });
 
     function initCropper() {
         if (cropper) {
-            cropper.destroy();
+            cropper.destroy();  // Hancurkan cropper lama jika ada
         }
         cropper = new Cropper(imagePreview, {
-            aspectRatio: 1,
+            aspectRatio: 1,  // Set rasio aspek menjadi 1:1
             viewMode: 1,
-            minCropBoxWidth: 225,
-            minCropBoxHeight: 225,
+            minCropBoxWidth: 225,  // Minimal lebar crop box
+            minCropBoxHeight: 225,  // Minimal tinggi crop box
             crop: function(event) {
-                if (event.detail.width < 225 || event.detail.height < 225) {
-                    cropper.setCropBoxData({
-                        width: Math.max(500, event.detail.width),
-                        height: Math.max(500, event.detail.height)
-                    });
-                }
+            }
+        });
+
+        document.getElementById('label_name').addEventListener('change', function() {
+            const selectedFabric = this.value;  // Ambil kain yang dipilih
+            const regionSelect = document.getElementById('region');
+            regionSelect.innerHTML = '<option value="">Pilih Daerah Asal</option>';  // Reset opsi daerah
+            if (selectedFabric) {
+                fetch(`/get_region/${selectedFabric}`)  // Ambil daerah asal kain dari server
+                    .then(response => response.ok ? response.text() : Promise.reject('Region not found'))
+                    .then(region => {
+                        regionSelect.innerHTML += `<option value="${region}">${region}</option>`;  // Tambah opsi daerah
+                        regionSelect.value = region;
+                    })
+                    .catch(console.error);  // Tampilkan error jika gagal
             }
         });
    
-        window.onload = function() {
-            var notification = document.getElementById("notification");
-            if (notification) {
-                setTimeout(function() {
-                    notification.style.display = "none";
-                }, 5000); // Change duration (in milliseconds) as needed
-            }
-        } }
+        const notification = document.getElementById("notification");  // Ambil elemen notifikasi
+        if (notification) {
+            setTimeout(() => { notification.style.display = "none"; }, 5000);  // Sembunyikan notifikasi setelah 5 detik
+        }
+    }
 });
