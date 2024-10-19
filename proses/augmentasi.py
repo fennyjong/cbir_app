@@ -1,65 +1,46 @@
 import os
-from PIL import Image, ImageOps, ImageEnhance
+import cv2
+import numpy as np
+import imgaug.augmenters as iaa
 
-def augment_image(file_path, output_folder, num_augments=7):
-    img = Image.open(file_path)
-    
+# Define the folder where augmented images will be saved
+AUGMENTED_FOLDER = 'augmented_images'
+
+# Create a sequence of augmentations
+seq = iaa.Sequential([
+    iaa.Rotate(rotate=(-90, 90)),  # Rotasi acak dari -90 hingga 90 derajat
+    iaa.ShearX(shear=(-0.2, 0.2)),   # Transformasi shear acak dari antara -20% hingga +20%
+    iaa.Affine(scale=(0.7, 1.5)),    # Zoom acak dari 70% hingga 150%
+    iaa.TranslateX(percent=(-0.2, 0.2)),  # Pergeseran horizontal acak hingga 20%
+    iaa.TranslateY(percent=(-0.2, 0.2)),  # Pergeseran vertikal acak hingga 20%
+])
+
+def augment_image(file_path, output_folder=AUGMENTED_FOLDER, num_augmentations=7):
+    img = cv2.imread(file_path)
+
+    if img is None:
+        raise ValueError(f"Image not found or could not be loaded: {file_path}")
+
     # Resize to 255x255
-    img_resized = img.resize((255, 255), Image.LANCZOS)
-    base_filename = os.path.splitext(os.path.basename(file_path))[0]
+    img_resized = cv2.resize(img, (255, 255))
     
-    augmented_filenames = []
+    # Ensure the output folder exists
+    os.makedirs(output_folder, exist_ok=True)
 
-    # 1. Original resized image
-    resized_filename = os.path.join(output_folder, f'{base_filename}_resized.jpg')
-    img_resized.save(resized_filename, 'JPEG')
-    augmented_filenames.append(resized_filename)
+    # Save the resized image
+    resized_filename = os.path.join(output_folder, f'{os.path.splitext(os.path.basename(file_path))[0]}_resized.jpg')
+    cv2.imwrite(resized_filename, img_resized)
 
-    # 2. Vertical flip
-    img_flip = ImageOps.flip(img_resized)
-    flip_filename = os.path.join(output_folder, f'{base_filename}_flip.jpg')
-    img_flip.save(flip_filename, 'JPEG')
-    augmented_filenames.append(flip_filename)
+    augmented_filenames = [resized_filename]  # Start with resized image
 
-    # 3. Rotate -90 degrees
-    img_rotate_minus = img_resized.rotate(-90, resample=Image.BICUBIC, expand=True)
-    rotate_minus_filename = os.path.join(output_folder, f'{base_filename}_rotate_minus_90.jpg')
-    img_rotate_minus.save(rotate_minus_filename, 'JPEG')
-    augmented_filenames.append(rotate_minus_filename)
+    # Generate multiple augmented images
+    for i in range(num_augmentations):
+        # Apply augmentations
+        img_augmented = seq(image=img_resized)
 
-    # 4. Rotate +90 degrees
-    img_rotate_plus = img_resized.rotate(90, resample=Image.BICUBIC, expand=True)
-    rotate_plus_filename = os.path.join(output_folder, f'{base_filename}_rotate_plus_90.jpg')
-    img_rotate_plus.save(rotate_plus_filename, 'JPEG')
-    augmented_filenames.append(rotate_plus_filename)
-
-    # 5. Zoom (crop from the center)
-    zoom_factor = 0.75
-    width, height = img_resized.size
-    new_width = int(width * zoom_factor)
-    new_height = int(height * zoom_factor)
-    img_zoom = img_resized.crop((
-        (width - new_width) // 2,
-        (height - new_height) // 2,
-        (width + new_width) // 2,
-        (height + new_height) // 2
-    )).resize((255, 255), Image.LANCZOS)
-    zoom_filename = os.path.join(output_folder, f'{base_filename}_zoom.jpg')
-    img_zoom.save(zoom_filename, 'JPEG')
-    augmented_filenames.append(zoom_filename)
-
-    # 6. Brightness adjustment
-    enhancer = ImageEnhance.Brightness(img_resized)
-    img_bright = enhancer.enhance(1.5)
-    bright_filename = os.path.join(output_folder, f'{base_filename}_bright.jpg')
-    img_bright.save(bright_filename, 'JPEG')
-    augmented_filenames.append(bright_filename)
-
-    # 7. Contrast adjustment
-    enhancer = ImageEnhance.Contrast(img_resized)
-    img_contrast = enhancer.enhance(1.5)
-    contrast_filename = os.path.join(output_folder, f'{base_filename}_contrast.jpg')
-    img_contrast.save(contrast_filename, 'JPEG')
-    augmented_filenames.append(contrast_filename)
+        # Save the augmented image with a unique filename
+        augmented_filename = os.path.join(output_folder, f'{os.path.splitext(os.path.basename(file_path))[0]}_augmented_{i + 1}.jpg')
+        cv2.imwrite(augmented_filename, img_augmented)
+        augmented_filenames.append(augmented_filename)
 
     return augmented_filenames
