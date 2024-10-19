@@ -1,12 +1,7 @@
 import os
 import cv2
-import numpy as np
 import imgaug.augmenters as iaa
 
-# Define the folder where augmented images will be saved
-AUGMENTED_FOLDER = 'augmented_images'
-
-# Create a sequence of augmentations
 seq = iaa.Sequential([
     iaa.Rotate(rotate=(-90, 90)),  # Rotasi acak dari -90 hingga 90 derajat
     iaa.ShearX(shear=(-0.2, 0.2)),   # Transformasi shear acak dari antara -20% hingga +20%
@@ -15,7 +10,7 @@ seq = iaa.Sequential([
     iaa.TranslateY(percent=(-0.2, 0.2)),  # Pergeseran vertikal acak hingga 20%
 ])
 
-def augment_image(file_path, output_folder=AUGMENTED_FOLDER, num_augmentations=7):
+def augment_image(file_path, output_folder, num_augmentations=7):
     img = cv2.imread(file_path)
 
     if img is None:

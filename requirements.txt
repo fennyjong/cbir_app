@@ -8,3 +8,14 @@ Pillow
 numpy 
 tensorflow
 imgaug
+
+# Flask: Framework web 
+# Flask-SQLAlchemy: Akses database
+# Flask-Migrate: mengelola migrasi database
+# psycopg2-binary: Koneksi ke PostgreSQL
+# flask_bcrypt: Hashing password
+# flask_uploads: Kelola file upload
+# Pillow: Edit gambar
+# numpy: Operasi angka dan array
+# tensorflow: pengenalan gambar, suara, dll
+# imgaug: Augmentasi gambar
