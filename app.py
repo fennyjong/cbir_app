@@ -6,6 +6,7 @@ from PIL import Image
 from config import Config
 from models import db, User, SongketDataset, Label
 from sqlalchemy import func
+from proses.augmentasi import augment_image
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -91,27 +92,47 @@ def upload():
     if session.get('user_role') != 'admin':
         flash('You do not have permission to upload.', 'danger')
         return redirect(url_for('login'))
-    
+
     region = request.form['region']
-    fabric_name = request.form['label_name']  
+    fabric_name = request.form['label_name']
     image = request.files['image']
-    
+
     if image and allowed_file(image.filename):
         filename = secure_filename(image.filename)
         save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        
+
+        # Open and resize the image
         img = Image.open(image)
         img_resized = img.resize((255, 255))
         img_resized.save(save_path)
-        
-        new_dataset = SongketDataset(region=region, fabric_name=fabric_name, image_filename=filename)
-        db.session.add(new_dataset)
+
+        # Check if the augment checkbox is checked
+        augment = request.form.get('augment') == 'on'
+
+        # Perform augmentation if checked
+        if augment:
+            output_folder = app.config['UPLOAD_FOLDER']
+            
+            augmented_files = augment_image(save_path, output_folder)
+            
+            # Save augmented images to database
+            for aug_file in augmented_files:
+                aug_filename = os.path.basename(aug_file)
+                new_dataset = SongketDataset(region=region, fabric_name=fabric_name, image_filename=aug_filename)
+                db.session.add(new_dataset)
+            
+            flash(f'Gambar berhasil diunggah dengan augmentasi', 'success')
+        else:
+            # Save original dataset information
+            new_dataset = SongketDataset(region=region, fabric_name=fabric_name, image_filename=filename)
+            db.session.add(new_dataset)
+            flash('Gambar berhasil diunggah tanpa augmentasi.', 'success')
+
         db.session.commit()
-        
-        flash('Dataset Berhasil Ditambahkan', 'success')
+
     else:
-        flash('Image not found or invalid file type!', 'danger')
-    
+        flash('Gambar tidak ditemukan atau jenis file tidak valid!', 'danger')
+
     return redirect(url_for('new_dataset_view'))
 
 def allowed_file(filename):
