@@ -1,58 +1,64 @@
-// Event listener yang dijalankan ketika DOM sudah sepenuhnya dimuat
-document.addEventListener('DOMContentLoaded', () => {
-    // Mendapatkan referensi ke elemen HTML
-    const imageInput = document.getElementById('image-input'); // Elemen input untuk mengupload gambar
-    const imagePreview = document.getElementById('image-preview'); // Elemen untuk menampilkan preview gambar
-    const regionSelect = document.getElementById('region'); // Elemen select untuk memilih daerah
-    const notification = document.getElementById('notification'); // Elemen untuk menampilkan notifikasi
+$(document).ready(function() {
+    const imageInput = document.getElementById('image-input');
+    const imagePreview = document.getElementById('image-preview');
+    const regionInput = document.getElementById('region');
+    const notification = document.getElementById('notification');
 
-    // Event listener untuk perubahan pada dropdown label kain
-    document.getElementById('label_name').addEventListener('change', function () {
-        const selectedFabric = this.value; // Mengambil nilai kain yang dipilih
-        regionSelect.innerHTML = '<option value="">Pilih Daerah Asal</option>'; // Mengatur ulang opsi daerah
+    // Inisialisasi Select2 untuk nama kain
+    $('#label_name').select2({
+        placeholder: 'Pilih atau ketik nama kain',
+        allowClear: true,
+        tags: true // Memungkinkan pengguna menambahkan opsi baru jika tidak ditemukan
+    });
 
+    // Event listener untuk perubahan pada select nama kain
+    $('#label_name').on('change', function() {
+        updateRegion($(this).val());
+    });
+
+    // Fungsi untuk memperbarui daerah asal berdasarkan nama kain yang dipilih
+    function updateRegion(selectedFabric) {
         if (selectedFabric) {
-            // Mengambil daerah asal yang terkait dengan kain yang dipilih dari server
             fetch(`/get_region/${selectedFabric}`)
                 .then(response => {
-                    if (!response.ok) throw new Error('Region not found'); // Menangani kesalahan
-                    return response.text(); // Mengembalikan teks daerah
+                    if (!response.ok) throw new Error('Region not found');
+                    return response.text();
                 })
                 .then(region => {
-                    // Menambahkan daerah yang diambil ke dalam opsi select daerah
-                    regionSelect.innerHTML += `<option value="${region}">${region}</option>`;
-                    regionSelect.value = region; // Mengatur nilai yang dipilih
+                    regionInput.value = region;
                 })
-                .catch(console.error); // Mencetak kesalahan ke konsol
+                .catch(error => {
+                    console.error('Error:', error);
+                    regionInput.value = '';
+                });
+        } else {
+            regionInput.value = '';
         }
-    });
+    }
 
-    // Event listener untuk perubahan pada input gambar
     imageInput.addEventListener('change', event => {
-        const file = event.target.files[0]; // Mengambil file yang diupload
+        const file = event.target.files[0];
         if (file) {
-            const reader = new FileReader(); // Membuat objek FileReader
+            const reader = new FileReader();
             reader.onload = e => {
-                imagePreview.src = e.target.result; // Menampilkan gambar yang diupload
-                initCropper(); // Memanggil fungsi untuk menginisialisasi cropper
+                imagePreview.src = e.target.result;
+                initCropper();
             };
-            reader.readAsDataURL(file); // Membaca gambar sebagai URL
+            reader.readAsDataURL(file);
         }
     });
 
-    let cropper; // Variabel untuk menyimpan instance Cropper
+    let cropper;
     function initCropper() {
-        if (cropper) cropper.destroy(); // Menghancurkan cropper lama jika ada
+        if (cropper) cropper.destroy();
 
-        // Menginisialisasi cropper baru dengan opsi yang ditentukan
         cropper = new Cropper(imagePreview, {
-            aspectRatio: 1, // Mengatur rasio aspek menjadi 1:1
-            viewMode: 1, // Mengatur mode tampilan
-            minCropBoxWidth: 225, // Lebar minimum kotak crop
-            minCropBoxHeight: 225, // Tinggi minimum kotak crop
+            aspectRatio: 1,
+            viewMode: 1,
+            minCropBoxWidth: 225,
+            minCropBoxHeight: 225,
         });
 
-        // Menyembunyikan notifikasi setelah 5 detik jika ada
         if (notification) {
             setTimeout(() => {
                 notification.style.display = "none";
