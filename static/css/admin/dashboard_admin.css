@@ -289,3 +289,38 @@
         text-overflow: ellipsis; 
         white-space: normal;
     }
+
+/* Gaya umum untuk tabel */
+table {
+    width: 100%; /* Membuat tabel memenuhi lebar penuh */
+    border-collapse: collapse; /* Menggabungkan batas tabel */
+    margin-bottom: 10px; /* Menambahkan ruang antara tabel */
+}
+
+th, td {
+    padding: 5px; /* Memberikan padding pada sel tabel */
+    text-align: left; /* Menyelaraskan teks ke kiri */
+    border: 1px solid #ddd; /* Menambahkan batas pada sel */
+}
+
+/* Gaya untuk kontainer total label */
+#totalLabels {
+    display: flex; /* Menggunakan flexbox untuk penyelarasan */
+    justify-content: flex-start; /* Menyelaraskan konten ke sebelah kiri */
+    align-items: center; /* Menyelaraskan item secara vertikal */
+    font-weight: bold; /* Membuat total label tebal */
+    margin: 0; /* Menghapus margin */
+    padding: 0; /* Menghapus padding */
+}
+
+/* Gaya untuk angka total */
+#totalCount {
+    margin-left: 5px; /* Ruang kecil antara teks dan angka */
+    font-weight: bold; /* Membuat angka total menjadi tebal */
+}
+
+/* Menyelaraskan total label dengan header tabel */
+#totalLabels {
+    margin-top: 10px; /* Ruang di atas total label, sesuaikan sesuai kebutuhan */
+    text-align: left; /* Menyelaraskan teks ke kiri */
+}

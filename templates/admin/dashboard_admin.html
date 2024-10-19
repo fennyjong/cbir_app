@@ -299,8 +299,7 @@
             </tbody>
             <tfoot>
                 <tr>
-                    <td><strong>Total Label</strong></td>
-                    <td id="totalLabels"><strong>0</strong></td>
+                    <div id="totalLabels">Total Labels: <strong class="number" id="totalCount">0</strong></div>
                 </tr>
             </tfoot>
         </table>
@@ -408,7 +407,8 @@
             });
             
             // Update total labels count
-            totalLabelsElement.textContent = data.label_info.length;
+            const totalCountElement = document.getElementById('totalCount');
+            totalCountElement.textContent = data.label_info.length;
         })
         .catch(error => {
             console.error('Error fetching label info:', error);
