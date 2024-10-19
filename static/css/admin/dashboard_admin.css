@@ -3,13 +3,13 @@
     text-align: left;
     font-size: 1.5rem;
     margin-top: 1rem;
-    }
-    
-    .welcome-message i {
+}
+
+.welcome-message i {
     margin-right: 8px;
-    }
-    
-    .container {
+}
+
+.container {
     max-width: 600px;
     margin: 0 auto;
     padding: 20px;
@@ -18,35 +18,38 @@
     color: #333333;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    
-    .description {
+}
+
+.description {
     font-size: 16px;
     color: #333333;
     border: 1px solid #ddd;
     padding: 12px;
     border-radius: 4px;
     background-color: #fafafa;
-    }
-    
-    .sidebar {
+}
+
+.sidebar {
     transition: width 0.3s ease-in-out;
-    }
-    @media (max-width: 768px) {
+}
+
+@media (max-width: 768px) {
     .sidebar {
-    width: 5rem;
+        width: 5rem;
     }
     .sidebar .sidebar-text {
-    display: none;
+        display: none;
     }
-    }
-    .button-container {
+}
+
+.button-container {
     display: flex;
     gap: 16px;
     padding: 20px;
     border-radius: 8px;
-    }
-    .button {
+}
+
+.button {
     display: inline-flex;
     align-items: center;
     padding: 10px 16px;
@@ -55,35 +58,42 @@
     font-size: 14px;
     cursor: pointer;
     transition: background-color 0.2s;
-    }
-    .button-primary {
+}
+
+.button-primary {
     background-color: #4a5568;
     color: white;
-    }
-    .button-primary:hover {
+}
+
+.button-primary:hover {
     background-color: #2d3748;
-    }
-    .button-icon {
+}
+
+.button-icon {
     background-color: transparent;
     color: #4a5568;
     padding: 10px;
-    }
-    .button-icon:hover {
+}
+
+.button-icon:hover {
     background-color: #e2e8f0;
-    }
-    .icon {
+}
+
+.icon {
     width: 16px;
     height: 16px;
     fill: currentColor;
-    }
-    
-    .content-section {
+}
+
+.content-section {
     display: none;
-    }
-    .content-section.active {
+}
+
+.content-section.active {
     display: block;
-    }
-    .modal {
+}
+
+.modal {
     display: none;
     position: fixed;
     z-index: 1000;
@@ -93,16 +103,18 @@
     height: 100%;
     overflow: auto;
     background-color: rgba(0,0,0,0.4);
-    }
-    .modal-content {
+}
+
+.modal-content {
     background-color: #fefefe;
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
     max-width: 500px;
-    }
-    .popup {
+}
+
+.popup {
     display: none;
     position: absolute;
     background-color: white;
@@ -112,8 +124,9 @@
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     z-index: 1000;
     max-width: 300px;
-    }
-    .info-icon {
+}
+
+.info-icon {
     background-color: white;
     color: #4a5568;
     border: 2px solid #4a5568;
@@ -125,20 +138,23 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    }
-    .info-icon:hover {
+}
+
+.info-icon:hover {
     background-color: #4a5568;
     color: white;
-    }
-    .songket-image {
+}
+
+.songket-image {
     width: 50px;
     height: 50px;
     object-fit: cover;
     border-radius: 8px;
     cursor: pointer;
-    }
-    .image-modal {
-        display: none;
+}
+
+.image-modal {
+    display: none;
     position: fixed;
     z-index: 1;
     padding-top: 100px;
@@ -149,29 +165,33 @@
     overflow: auto;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.9);
-    }
-    .modal-content {
-        margin: auto;
-        display: block;
-        width: 80%;
-        max-width: 700px;
-    }
-    .close {
-        position: absolute;
-        top: 15px;
-        right: 35px;
-        color: #f1f1f1;
-        font-size: 40px;
-        font-weight: bold;
-        transition: 0.3s;
-    }
-    .close:hover,
-    .close:focus {
-        color: #bbb;
-        text-decoration: none;
-        cursor: pointer;
-    }
-    .info-button {
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.info-button {
     display: flex;
     align-items: center;
     background-color: transparent;
@@ -179,148 +199,148 @@
     border: none;
     cursor: pointer;
     transition: all 0.3s ease;
-    }
-    .info-button:hover {
+}
+
+.info-button:hover {
     color: #2d3748;
-    }
-    .info-icon {
+}
+
+.info-icon {
     margin-right: 5px;
-    }
-    .logout-icon {
-        font-size: 28px;
-        line-height: 1;
-    }
-    .dataset-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-    }
-    
-    .dataset-modal-content {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background-color: white;
-        padding: 1.5rem;
-        border-radius: 0.5rem;
-        width: 400px;
-        max-height: 500px;
-        overflow-y: auto;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    
-    .close-button {
-        position: absolute;
-        top: 0.75rem;
-        right: 0.75rem;
-        cursor: pointer;
-        font-size: 1.25rem;
-        color: #666;
-        transition: color 0.2s;
-        width: 24px;
-        height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        background-color: #f3f4f6;
-    }
-    
-    .close-button:hover {
-        color: #000;
-        background-color: #e5e7eb;
-    }
-    
-    .dataset-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 0.5rem;
-    }
-    
-    .dataset-table th,
-    .dataset-table td {
-        padding: 0.5rem 0.75rem;
-        text-align: left;
-        border-bottom: 1px solid #e2e8f0;
-    }
-    
-    .dataset-table th {
-        background-color: #f8fafc;
-        font-weight: 600;
-        color: #4a5568;
-        position: sticky;
-        top: 0;
-        z-index: 1;
-    }
-    
-    .dataset-table td:last-child,
-    .dataset-table th:last-child {
-        text-align: center;
-    }
-    
-    /* Custom scrollbar */
-    .dataset-modal-content::-webkit-scrollbar {
-        width: 6px;
-    }
-    
-    .dataset-modal-content::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 3px;
-    }
-    
-    .dataset-modal-content::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
-        border-radius: 3px;
-    }
-    
-    .dataset-modal-content::-webkit-scrollbar-thumb:hover {
-        background: #a8a8a8;
-    }
+}
 
-    .description-cell {
-        max-height: 50px; 
-        overflow: hidden;
-        text-overflow: ellipsis; 
-        white-space: normal;
-    }
+.logout-icon {
+    font-size: 28px;
+    line-height: 1;
+}
 
-/* Gaya umum untuk tabel */
+.dataset-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.dataset-modal-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    width: 400px;
+    max-height: 500px;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.close-button {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    cursor: pointer;
+    font-size: 1.25rem;
+    color: #666;
+    transition: color 0.2s;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #f3f4f6;
+}
+
+.close-button:hover {
+    color: #000;
+    background-color: #e5e7eb;
+}
+
+.dataset-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+}
+
+.dataset-table th,
+.dataset-table td {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.dataset-table th {
+    background-color: #f8fafc;
+    font-weight: 600;
+    color: #4a5568;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.dataset-table td:last-child,
+.dataset-table th:last-child {
+    text-align: center;
+}
+
+.dataset-modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dataset-modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.dataset-modal-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.dataset-modal-content::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.description-cell {
+    max-height: 50px; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    white-space: normal;
+}
+
 table {
-    width: 100%; /* Membuat tabel memenuhi lebar penuh */
-    border-collapse: collapse; /* Menggabungkan batas tabel */
-    margin-bottom: 10px; /* Menambahkan ruang antara tabel */
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
 }
 
 th, td {
-    padding: 5px; /* Memberikan padding pada sel tabel */
-    text-align: left; /* Menyelaraskan teks ke kiri */
-    border: 1px solid #ddd; /* Menambahkan batas pada sel */
+    padding: 5px;
+    text-align: left;
+    font-size: 14px;
+    border: 1px solid #ddd;
 }
 
-/* Gaya untuk kontainer total label */
 #totalLabels {
-    display: flex; /* Menggunakan flexbox untuk penyelarasan */
-    justify-content: flex-start; /* Menyelaraskan konten ke sebelah kiri */
-    align-items: center; /* Menyelaraskan item secara vertikal */
-    font-weight: bold; /* Membuat total label tebal */
-    margin: 0; /* Menghapus margin */
-    padding: 0; /* Menghapus padding */
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
 }
 
-/* Gaya untuk angka total */
 #totalCount {
-    margin-left: 5px; /* Ruang kecil antara teks dan angka */
-    font-weight: bold; /* Membuat angka total menjadi tebal */
+    margin-left: 5px;
+    font-weight: bold;
 }
 
-/* Menyelaraskan total label dengan header tabel */
 #totalLabels {
-    margin-top: 10px; /* Ruang di atas total label, sesuaikan sesuai kebutuhan */
-    text-align: left; /* Menyelaraskan teks ke kiri */
+    margin-top: 10px;
+    text-align: left;
 }
