@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBIR Songket Indonesia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #8a2be2;
+            --secondary-color: #f0e6ff;
+            --text-color: #333;
+            --background-color: #f9f9f9;
+            --sidebar-width: 250px;
+            --sidebar-collapsed-width: 60px;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+        }
+        
+        .sidebar {
+            background-color: var(--primary-color);
+            color: white;
+            width: var(--sidebar-collapsed-width);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: width 0.3s ease-in-out;
+            overflow: hidden;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar:hover {
+            width: var(--sidebar-width);
+        }
+        
+        .sidebar-content {
+            width: var(--sidebar-width);
+            padding: 30px 0;
+        }
+        
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s, transform 0.2s;
+            white-space: nowrap;
+        }
+        
+        .sidebar-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .sidebar-icon {
+            width: 24px;
+            margin-right: 20px;
+            font-size: 20px;
+            text-align: center;
+        }
+        
+        .sidebar-text {
+            font-size: 16px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .sidebar:hover .sidebar-text {
+            opacity: 1;
+        }
+        
+        main {
+            flex-grow: 1;
+            padding: 40px;
+            margin-left: var(--sidebar-collapsed-width);
+            transition: margin-left 0.3s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        h1 {
+            color: #8a2be2;
+            text-align: left;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .upload-area {
+            border: 2px dashed #8a2be2;
+            border-radius: 5px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .upload-icon {
+            font-size: 48px;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+        .upload-text {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .supported-format {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .browse-files {
+            color: #8a2be2;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .file-input {
+            display: none;
+        }
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .reset-button {
+            background-color: white;
+            color: #aaa;
+        }
+        .search-button {
+            background-color: #8a2be2;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <a href="/upload" class="sidebar-item" data-section="beranda">
+                <i class="fas fa-search sidebar-icon"></i>
+                <span class="sidebar-text">Mulai Pencarian</span>
+            </a>
+            <a href="#" class="sidebar-item" data-section="kelola-dataset">
+                <i class="fas fa-info-circle sidebar-icon"></i>
+                <span class="sidebar-text">Informasi</span>
+            </a>
+            <a href="/login" class="sidebar-item" data-section="kelola-dataset">
+                <i class="fas fa-sign-out-alt sidebar-icon"></i>
+                <span class="sidebar-text">LogOut</span>
+            </a>
+        </div>
+    </aside>
+
+    <main>
+      
+    </main>

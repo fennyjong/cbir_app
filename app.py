@@ -302,6 +302,11 @@ def beranda():
 def upload_user():
     return render_template('users/modul_upload.html')
 
+@app.route('/hasil', methods=['GET', 'POST'])
+def hasil_user():
+    return render_template('users/modul_hasil.html')
+
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
