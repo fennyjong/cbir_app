@@ -1,3 +1,18 @@
+/* Sidebar styles */
+.sidebar {
+    transition: width 0.3s ease-in-out;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 5rem; /* Collapsed sidebar width on smaller screens */
+    }
+    .sidebar .sidebar-text {
+        display: none; /* Hide text in collapsed sidebar */
+    }
+}
+
+/* Welcome message styles */
 .welcome-message {
     color: var(--primary-color);
     text-align: left;
@@ -6,9 +21,10 @@
 }
 
 .welcome-message i {
-    margin-right: 8px;
+    margin-right: 8px; /* Space between icon and text */
 }
 
+/* Main container styles */
 .container {
     max-width: 600px;
     margin: 0 auto;
@@ -20,6 +36,7 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Description box styles */
 .description {
     font-size: 16px;
     color: #333333;
@@ -29,19 +46,7 @@
     background-color: #fafafa;
 }
 
-.sidebar {
-    transition: width 0.3s ease-in-out;
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        width: 5rem;
-    }
-    .sidebar .sidebar-text {
-        display: none;
-    }
-}
-
+/* Button container styles */
 .button-container {
     display: flex;
     gap: 16px;
@@ -49,6 +54,7 @@
     border-radius: 8px;
 }
 
+/* General button styles */
 .button {
     display: inline-flex;
     align-items: center;
@@ -60,6 +66,7 @@
     transition: background-color 0.2s;
 }
 
+/* Primary button styles */
 .button-primary {
     background-color: #4a5568;
     color: white;
@@ -69,6 +76,7 @@
     background-color: #2d3748;
 }
 
+/* Icon button styles */
 .button-icon {
     background-color: transparent;
     color: #4a5568;
@@ -79,12 +87,14 @@
     background-color: #e2e8f0;
 }
 
+/* Icon styles */
 .icon {
     width: 16px;
     height: 16px;
     fill: currentColor;
 }
 
+/* Content section styles */
 .content-section {
     display: none;
 }
@@ -93,6 +103,7 @@
     display: block;
 }
 
+/* Modal styles */
 .modal {
     display: none;
     position: fixed;
@@ -114,6 +125,7 @@
     max-width: 500px;
 }
 
+/* Popup styles */
 .popup {
     display: none;
     position: absolute;
@@ -126,6 +138,7 @@
     max-width: 300px;
 }
 
+/* Info icon styles */
 .info-icon {
     background-color: white;
     color: #4a5568;
@@ -145,6 +158,7 @@
     color: white;
 }
 
+/* Songket image styles */
 .songket-image {
     width: 50px;
     height: 50px;
@@ -153,6 +167,7 @@
     cursor: pointer;
 }
 
+/* Image modal styles */
 .image-modal {
     display: none;
     position: fixed;
@@ -174,6 +189,7 @@
     max-width: 700px;
 }
 
+/* Close button styles */
 .close {
     position: absolute;
     top: 15px;
@@ -191,6 +207,7 @@
     cursor: pointer;
 }
 
+/* Info button styles */
 .info-button {
     display: flex;
     align-items: center;
@@ -209,11 +226,13 @@
     margin-right: 5px;
 }
 
+/* Logout icon styles */
 .logout-icon {
     font-size: 28px;
     line-height: 1;
 }
 
+/* Dataset modal styles */
 .dataset-modal {
     display: none;
     position: fixed;
@@ -239,6 +258,7 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Close button styles for dataset modal */
 .close-button {
     position: absolute;
     top: 0.75rem;
@@ -261,6 +281,7 @@
     background-color: #e5e7eb;
 }
 
+/* Dataset table styles */
 .dataset-table {
     width: 100%;
     border-collapse: collapse;
@@ -288,6 +309,7 @@
     text-align: center;
 }
 
+/* Scrollbar styles for dataset modal */
 .dataset-modal-content::-webkit-scrollbar {
     width: 6px;
 }
@@ -306,6 +328,7 @@
     background: #a8a8a8;
 }
 
+/* Description cell styles */
 .description-cell {
     max-height: 50px; 
     overflow: hidden;
@@ -313,6 +336,7 @@
     white-space: normal;
 }
 
+/* General table styles */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -326,6 +350,7 @@ th, td {
     border: 1px solid #ddd;
 }
 
+/* Total labels styles */
 #totalLabels {
     display: flex;
     justify-content: flex-start;
