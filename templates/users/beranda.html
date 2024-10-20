@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBIR Kain Songket Indonesia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+        }
+        .container {
+            display: flex;
+            height: 100%;
+        }
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(135deg, #1a237e, #3949ab);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 3rem;
+            color: white;
+        }
+        .right-panel {
+            flex: 1;
+            background-size: cover;
+            position: relative;
+            overflow: hidden;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            transition: background 0.3s ease;
+        }
+        .right-panel:hover .overlay {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        p {
+            font-size: 18px;
+            margin-bottom: 2rem;
+            font-weight: 300;
+            line-height: 1.6;
+            max-width: 500px;
+        }
+        .btn {
+            background-color: #ffc107;
+            color: #1a237e;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: 2px solid transparent;
+        }
+        .btn:hover {
+            background-color: transparent;
+            color: #ffc107;
+            border-color: #ffc107;
+            transform: translateY(-2px);
+        }
+        .pattern {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: url("/static/assets/background.png");
+            opacity: 0.1;
+            transition: opacity 0.3s ease;
+        }
+        .right-panel:hover .pattern {
+            opacity: 0.2;
+        }
+        .image-credit {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            color: white;
+            font-size: 10px;
+            opacity: 0.7;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .left-panel, .right-panel {
+                flex: none;
+                height: 50vh;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <h1>CBIR Kain Songket Indonesia</h1>
+            <p>Jelajahi keindahan warisan budaya Indonesia melalui teknologi pencarian gambar berbasis konten (CBIR). Temukan motif unik dan makna di balik setiap kain songket.</p>
+            <a href="/upload" class="btn btn-primary">Mulai Pencarian</a>
+        </div>
+        <div class="right-panel">
+            <div class="overlay"></div>
+            <div class="pattern"></div>
+            <div class="image-credit">Sumber Foto: https://www.bahankain.com/2023/08/19/menelisik-perjalanan-kain-tenun-minangkabau-sejak-abad-ke-5-masehi</div>
+        </div>
+    </div>
+</body>
+</html>

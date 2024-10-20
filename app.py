@@ -64,7 +64,7 @@ def login():
             user.last_login_at = db.func.now()  # Update last login time
             db.session.commit()  # Save changes
             session['user_role'] = 'user'
-            return redirect(url_for('modul_upload'))
+            return redirect(url_for('beranda'))
         
     return render_template('auth/login.html')
 
@@ -133,7 +133,7 @@ def upload():
     else:
         flash('Gambar tidak ditemukan atau jenis file tidak valid!', 'danger')
 
-    return redirect(url_for('new_dataset_view'))
+    return redirect(url_for('new_dataset'))
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -254,6 +254,7 @@ def delete_multiple_labels():
         db.session.delete(label)
     db.session.commit()
     return jsonify(success=True)
+
 @app.route('/dashboard_admin', methods=['GET', 'POST'])
 def dashboard_admin():
     if session.get('user_role') != 'admin':
@@ -292,6 +293,14 @@ def get_region(fabric_name):
     if region:
         return region[0]
     return '', 204
+
+@app.route('/beranda')
+def beranda():
+    return render_template('users/beranda.html')
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_user():
+    return render_template('users/modul_upload.html')
 
 if __name__ == '__main__':
     with app.app_context():
