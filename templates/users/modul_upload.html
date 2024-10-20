@@ -93,112 +93,78 @@
         
         .container {
             background-color: white;
-            border-radius: 15px;
-            padding: 40px;
+            border-radius: 10px;
+            padding: 20px;
             width: 100%;
-            max-width: 500px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             position: relative;
         }
-        
         h1 {
-            color: var(--primary-color);
+            color: #8a2be2;
             text-align: left;
             margin-top: 0;
-            margin-bottom: 30px;
-            font-size: 28px;
+            margin-bottom: 20px;
+            font-size: 22px;
             font-weight: bold;
         }
-        
         .upload-area {
-            border: 2px dashed var(--primary-color);
-            border-radius: 10px;
+            border: 2px dashed #8a2be2;
+            border-radius: 5px;
             padding: 40px 20px;
             text-align: center;
             cursor: pointer;
-            margin-bottom: 30px;
-            transition: all 0.3s;
+            margin-bottom: 20px;
         }
-        
-        .upload-area:hover {
-            background-color: var(--secondary-color);
-        }
-        
         .upload-icon {
             font-size: 48px;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-        
-        .upload-text {
-            color: var(--text-color);
+            color: #ccc;
             margin-bottom: 10px;
-            font-size: 18px;
         }
-        
+        .upload-text {
+            color: #333;
+            margin-bottom: 5px;
+        }
         .supported-format {
-            color: #777;
+            color: #999;
             font-size: 14px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
-        
         .browse-files {
-            color: var(--primary-color);
+            color: #8a2be2;
             text-decoration: none;
             cursor: pointer;
-            font-weight: bold;
-            transition: color 0.3s;
         }
-        
-        .browse-files:hover {
-            color: #6b24b2;
-        }
-        
         .file-input {
             display: none;
         }
-        
         .preview-image {
             max-width: 100%;
             max-height: 300px;
             margin-top: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
         }
-        
         .button-container {
             display: flex;
             justify-content: flex-end;
             gap: 15px;
-            margin-top: 30px;
+            margin-top: 20px;
         }
-        
         .button {
-            padding: 12px 25px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 8px;
+            border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
             text-align: center;
-            transition: all 0.3s;
         }
-        
         .reset-button {
-            background-color: #f0f0f0;
-            color: #777;
+            background-color: white;
+            color: #aaa;
         }
-        
-        .reset-button:hover {
-            background-color: #e0e0e0;
-        }
-        
         .search-button {
-            background-color: var(--primary-color);
+            background-color: #8a2be2;
             color: white;
-        }
-        
-        .search-button:hover {
-            background-color: #6b24b2;
         }
     </style>
 </head>
@@ -222,11 +188,11 @@
 
     <main>
         <div class="container" id="upload-container">
-            <h1>Upload Gambar Songket</h1>
+            <h1>Unggah file Gambar</h1>
             <div class="upload-area" id="dropArea">
                 <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                <p class="upload-text">Drag and drop your image here</p>
-                <p class="supported-format">Supported formats: PNG, JPG</p>
+                <p class="upload-text">Drop files here</p>
+                <p class="supported-format">Supported format: PNG, JPG</p>
                 <p>or</p>
                 <span class="browse-files" id="browseFiles">Browse files</span>
                 <input type="file" id="fileInput" class="file-input" accept=".png,.jpg,.jpeg">
@@ -238,7 +204,7 @@
                     <i class="fas fa-search"></i> Pencarian
                 </button>
             </div>
-        </div>
+        </div>    
     </main>
 
     <script>
