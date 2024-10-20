@@ -1,8 +1,10 @@
 $(document).ready(function() {
     const imageInput = document.getElementById('image-input');
     const imagePreview = document.getElementById('image-preview');
+    const croppedPreview = document.getElementById('cropped-preview');
     const regionInput = document.getElementById('region');
     const notification = document.getElementById('notification');
+    let cropper;
 
     // Inisialisasi Select2 untuk nama kain
     $('#label_name').select2({
@@ -48,21 +50,43 @@ $(document).ready(function() {
         }
     });
 
-    let cropper;
     function initCropper() {
         if (cropper) cropper.destroy();
 
         cropper = new Cropper(imagePreview, {
             aspectRatio: 1,
             viewMode: 1,
-            minCropBoxWidth: 225,
-            minCropBoxHeight: 225,
+            minCropBoxWidth: 100,
+            minCropBoxHeight: 100,
+            crop: function(event) {
+                updateCroppedPreview();
+            }
         });
+    }
 
-        if (notification) {
-            setTimeout(() => {
-                notification.style.display = "none";
-            }, 5000);
+    function updateCroppedPreview() {
+        if (cropper) {
+            const croppedCanvas = cropper.getCroppedCanvas();
+            if (croppedCanvas) {
+                croppedPreview.src = croppedCanvas.toDataURL();
+            }
         }
+    }
+
+    $('#upload-form').on('submit', function(e) {
+        e.preventDefault();
+        if (cropper) {
+            const croppedCanvas = cropper.getCroppedCanvas();
+            if (croppedCanvas) {
+                $('#cropped-data').val(croppedCanvas.toDataURL());
+            }
+        }
+        this.submit();
+    });
+
+    if (notification) {
+        setTimeout(() => {
+            notification.style.display = "none";
+        }, 5000);
     }
 });

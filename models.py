@@ -25,18 +25,16 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
 class SongketDataset(db.Model):
-    __tablename__ = 'songket_dataset'  # Nama tabel di database
-    id = db.Column(db.Integer, primary_key=True)  # ID unik untuk dataset
-    region = db.Column(db.String(120), nullable=False)  # Wilayah asal kain
-    fabric_name = db.Column(db.String(120), nullable=False)  # Nama kain
-    image_filename = db.Column(db.String(255), nullable=False)  # Nama file gambar
-    uploaded_at = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)  # Waktu upload data
+    __tablename__ = 'songket_dataset'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    region = db.Column(db.String(100), nullable=False)
+    fabric_name = db.Column(db.String(100), nullable=False)
+    image_filename = db.Column(db.String(255), nullable=False)
+    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    def __init__(self, region, fabric_name, image_filename):
-        """Inisialisasi atribut dataset kain songket."""
-        self.region = region
-        self.fabric_name = fabric_name
-        self.image_filename = image_filename
+    def __repr__(self):
+        return f'<SongketDataset {self.fabric_name} from {self.region}>'
 
 class Label(db.Model):
     __tablename__ = 'labels'  # Nama tabel di database

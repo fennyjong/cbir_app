@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.utils import secure_filename
 import os
+import base64
+from io import BytesIO
 from PIL import Image  
 from config import Config
 from models import db, User, SongketDataset, Label
@@ -95,44 +97,53 @@ def upload():
     region = request.form['region']
     fabric_name = request.form['label_name']
     image = request.files['image']
+    cropped_data = request.form.get('cropped-data')
 
-    if image and allowed_file(image.filename):
-        filename = secure_filename(image.filename)
+    if image and allowed_file(image.filename) and cropped_data:
+        filename = secure_filename(f"{fabric_name}_{region}.png")
         save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
-        # Open and resize the image
-        img = Image.open(image)
+        # Process the cropped image data
+        cropped_data = cropped_data.split(',')[1]
+        img_data = base64.b64decode(cropped_data)
+        img = Image.open(BytesIO(img_data))
+        
+        # Resize the cropped image if necessary
         img_resized = img.resize((255, 255))
         img_resized.save(save_path)
 
-        # Check if the augment checkbox is checked
-        augment = request.form.get('augment') == 'on'
+        try:
+            # Check if the augment checkbox is checked
+            augment = request.form.get('augment') == 'on'
 
-        # Perform augmentation if checked
-        if augment:
-            output_folder = app.config['UPLOAD_FOLDER']
-            
-            augmented_files = augment_image(save_path, output_folder)
-            
-            # Save augmented images to database
-            for aug_file in augmented_files:
-                aug_filename = os.path.basename(aug_file)
-                new_dataset = SongketDataset(region=region, fabric_name=fabric_name, image_filename=aug_filename)
+            # Perform augmentation if checked
+            if augment:
+                output_folder = app.config['UPLOAD_FOLDER']
+                
+                augmented_files = augment_image(save_path, output_folder)
+                
+                # Save augmented images to database
+                for aug_file in augmented_files:
+                    aug_filename = os.path.basename(aug_file)
+                    new_dataset = SongketDataset(region=region, fabric_name=fabric_name, image_filename=aug_filename)
+                    db.session.add(new_dataset)
+                
+                flash(f'Gambar berhasil diunggah dengan augmentasi', 'success')
+            else:
+                # Save original dataset information
+                new_dataset = SongketDataset(region=region, fabric_name=fabric_name, image_filename=filename)
                 db.session.add(new_dataset)
-            
-            flash(f'Gambar berhasil diunggah dengan augmentasi', 'success')
-        else:
-            # Save original dataset information
-            new_dataset = SongketDataset(region=region, fabric_name=fabric_name, image_filename=filename)
-            db.session.add(new_dataset)
-            flash('Gambar berhasil diunggah tanpa augmentasi.', 'success')
+                flash('Gambar berhasil diunggah tanpa augmentasi.', 'success')
 
-        db.session.commit()
-
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Terjadi kesalahan saat menyimpan data: {str(e)}', 'danger')
+            app.logger.error(f'Database error: {str(e)}')
     else:
-        flash('Gambar tidak ditemukan atau jenis file tidak valid!', 'danger')
+        flash('Gambar tidak ditemukan, jenis file tidak valid, atau data cropping tidak tersedia!', 'danger')
 
-    return redirect(url_for('new_dataset'))
+    return redirect(url_for('new_dataset_view'))
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
