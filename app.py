@@ -42,8 +42,7 @@ def register():
         new_user = User(username=username)
         new_user.set_password(password)
         db.session.add(new_user)
-        db.session.commit()
-        flash('Registration successful! Please login.', 'success')
+        db.session.commit() 
         return redirect(url_for('login'))
     
     return render_template('auth/register.html')
@@ -306,6 +305,9 @@ def upload_user():
 def hasil_user():
     return render_template('users/modul_hasil.html')
 
+@app.route('/informasi')
+def informasi_user():
+    return render_template('users/modul_informasi.html')
 
 if __name__ == '__main__':
     with app.app_context():
