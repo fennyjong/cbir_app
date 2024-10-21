@@ -12,7 +12,7 @@
         <h1>Pengembangan Sistem CBIR dalam Pengenalan Kain Songket Indonesia Menggunakan CNN untuk Ekstraksi Fitur dan Cosine Similarity</h1>
         <div class="login-box">
             <h2>Registrasi Pengguna Baru</h2>
-            <form id="registerForm" method="POST" action="{{ url_for('register') }}" onsubmit="return validateForm()">
+            <form id="registerForm" method="POST" action="{{ url_for('auth.register') }}" onsubmit="return validateForm()">
                 <div class="input-group">
                     <input type="text" name="username" id="username" placeholder="Username" required>
                     <span class="icon"><i class="fas fa-user"></i></span>
@@ -33,7 +33,7 @@
                     {% endfor %}
                 {% endif %}
             {% endwith %}
-            <p>Sudah memiliki akun? <a href="{{ url_for('login') }}">Login di sini</a></p>
+            <p>Sudah memiliki akun? <a href="{{ url_for('auth.login') }}">Login di sini</a></p>
         </div>
     </div>
     <script src="{{ url_for('static', filename='js/auth/register.js') }}"></script>

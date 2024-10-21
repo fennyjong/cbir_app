@@ -1,175 +1,38 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, send_from_directory
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from werkzeug.utils import secure_filename
-import os
-import base64
-from io import BytesIO
-from PIL import Image  
+from flask import Flask, jsonify, request, flash, redirect, url_for, render_template, session, send_from_directory, current_app
 from config import Config
 from models import db, User, SongketDataset, Label
+from flask_login import LoginManager
+import os
 from sqlalchemy import func
-from proses.augmentasi import augment_image
 
 app = Flask(__name__)
 app.config.from_object(Config)
-app.config['UPLOAD_FOLDER'] = 'uploads'
 
-# Create upload directory if it doesn't exist
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
+# Menetapkan Secret Key
+app.secret_key = os.urandom(24)
 
+# Initialize the database with the Flask app
 db.init_app(app)
+
+# Initialize the LoginManager
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'auth.login'
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route('/')
-def home():
-    return redirect(url_for('login'))
+# Set up the UPLOAD_FOLDER
+base_dir = os.path.abspath(os.path.dirname(__file__))
+app.config['UPLOAD_FOLDER'] = os.path.join(base_dir, 'uploads')
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        
-        if User.query.filter_by(username=username).first():
-            flash('Username already registered!', 'danger')
-            return redirect(url_for('register'))
-        
-        new_user = User(username=username)
-        new_user.set_password(password)
-        db.session.add(new_user)
-        db.session.commit() 
-        return redirect(url_for('login'))
-    
-    return render_template('auth/register.html')
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        
-        if username == 'admin' and password == 'admin':
-            session['user_role'] = 'admin'
-            return redirect(url_for('dashboard_admin'))
-        
-        user = User.query.filter_by(username=username).first()
-        if user and user.check_password(password):
-            login_user(user)
-            user.last_login_at = db.func.now()  # Update last login time
-            db.session.commit()  # Save changes
-            session['user_role'] = 'user'
-            return redirect(url_for('beranda'))
-        
-    return render_template('auth/login.html')
-
-@app.route('/reset_password', methods=['POST'])
-def reset_password():
-    data = request.get_json()
-    username = data.get('username')
-    new_password = data.get('new_password')
-
-    user = User.query.filter_by(username=username).first()
-    if user:
-        user.set_password(new_password)
-        db.session.commit()
-        return jsonify({"success": True, "message": "Password reset successful."}), 200
-    return jsonify({"success": False, "message": "Username not found."}), 404
-
-@app.route('/logout', methods=['POST'])
-def logout():
-    logout_user()
-    session.pop('user_role', None)
-    return jsonify({"success": True, "message": "You have been logged out successfully."})
-
-@app.route('/upload', methods=['POST'])
-def upload():
-    if session.get('user_role') != 'admin':
-        flash('You do not have permission to upload.', 'danger')
-        return redirect(url_for('login'))
-
-    region = request.form['region']
-    fabric_name = request.form['label_name']
-    image = request.files['image']
-    cropped_data = request.form.get('cropped-data')
-
-    if image and allowed_file(image.filename) and cropped_data:
-        filename = secure_filename(f"{fabric_name}_{region}.png")
-        save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-
-        # Process the cropped image data
-        cropped_data = cropped_data.split(',')[1]
-        img_data = base64.b64decode(cropped_data)
-        img = Image.open(BytesIO(img_data))
-        
-        # Resize the cropped image if necessary
-        img_resized = img.resize((255, 255))
-        img_resized.save(save_path)
-
-        try:
-            # Check if the augment checkbox is checked
-            augment = request.form.get('augment') == 'on'
-
-            # Perform augmentation if checked
-            if augment:
-                output_folder = app.config['UPLOAD_FOLDER']
-                
-                augmented_files = augment_image(save_path, output_folder)
-                
-                # Save augmented images to database
-                for aug_file in augmented_files:
-                    aug_filename = os.path.basename(aug_file)
-                    new_dataset = SongketDataset(region=region, fabric_name=fabric_name, image_filename=aug_filename)
-                    db.session.add(new_dataset)
-                
-                flash(f'Gambar berhasil diunggah dengan augmentasi', 'success')
-            else:
-                # Save original dataset information
-                new_dataset = SongketDataset(region=region, fabric_name=fabric_name, image_filename=filename)
-                db.session.add(new_dataset)
-                flash('Gambar berhasil diunggah tanpa augmentasi.', 'success')
-
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Terjadi kesalahan saat menyimpan data: {str(e)}', 'danger')
-            app.logger.error(f'Database error: {str(e)}')
-    else:
-        flash('Gambar tidak ditemukan, jenis file tidak valid, atau data cropping tidak tersedia!', 'danger')
-
-    return redirect(url_for('new_dataset_view'))
-
-def allowed_file(filename):
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
-@app.route('/new_dataset')
-def new_dataset_view():
-    # Query data nama kain dan daerah asal dari database
-    labels = db.session.query(Label).all()  # Ambil semua objek Label
-    regions = db.session.query(Label.region).distinct().all()  # Ambil daerah asal unik
-
-    # Mengubah data menjadi Fabric Name format
-    fabric_names = [label.fabric_name for label in labels]  # Ambil nama kain sebagai list
-    unique_regions = [region[0] for region in regions]  # Ambil daerah asal unik sebagai list
-
-    # Render template dengan data yang diperlukan
-    return render_template('admin/new_dataset.html', fabric_names=fabric_names, regions=unique_regions)
-
-
-def allowed_file(filename):
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/get_datasets', methods=['GET'])
 def get_datasets():
@@ -191,7 +54,6 @@ def edit_dataset():
         db.session.commit()
         return jsonify({'success': True}), 200
     return jsonify({'success': False, 'message': 'Dataset not found'}), 404
-
 
 @app.route('/delete_dataset', methods=['POST'])
 def delete_dataset():
@@ -269,7 +131,7 @@ def delete_multiple_labels():
 def dashboard_admin():
     if session.get('user_role') != 'admin':
         flash('You do not have access to this page.', 'danger')
-        return redirect(url_for('login'))
+        return redirect(url_for('auth.login'))
 
     if request.method == 'GET':
         return render_template('admin/dashboard_admin.html')
@@ -297,28 +159,21 @@ def dashboard_admin():
 
     return jsonify(combined_result)
 
-@app.route('/get_region/<fabric_name>')
+@app.route('/get_region/<fabric_name>', methods=['GET'])
 def get_region(fabric_name):
     region = db.session.query(Label.region).filter(Label.fabric_name == fabric_name).first()
     if region:
         return region[0]
     return '', 204
 
-@app.route('/beranda')
-def beranda():
-    return render_template('users/beranda.html')
+# Import and register blueprints
+from routes.admin_routes import admin_bp
+from routes.auth_routes import auth_bp
+from routes.user_routes import user_bp
 
-@app.route('/upload', methods=['GET', 'POST'])
-def upload_user():
-    return render_template('users/modul_upload.html')
-
-@app.route('/hasil', methods=['GET', 'POST'])
-def hasil_user():
-    return render_template('users/modul_hasil.html')
-
-@app.route('/informasi')
-def informasi_user():
-    return render_template('users/modul_informasi.html')
+app.register_blueprint(auth_bp)
+app.register_blueprint(admin_bp, url_prefix='/admin')
+app.register_blueprint(user_bp, url_prefix='/user')
 
 if __name__ == '__main__':
     with app.app_context():

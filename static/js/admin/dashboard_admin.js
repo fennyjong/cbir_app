@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                window.location.href = '/login';
+                window.location.href = '/login'; 
             } else {
                 alert('Logout failed. Please try again.');
             }
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Navigation and sidebar toggle
     addDatasetBtn.addEventListener('click', () => {
-        window.location.href = '/new_dataset';
+        window.location.href = '/admin/new_dataset'
     });
 
     closeLabelModal.addEventListener('click', () => {

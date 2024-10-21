@@ -80,17 +80,20 @@ let labelEntriesPerPage = 10;
 let labels = [];
 
 // Function to load and display labels
-function loadLabels() {
-    fetch('/get_labels')
-        .then(response => response.json())
-        .then(data => {
-            labels = data;
-            displayLabels();
-        })
-        .catch(error => {
-            console.error('Error loading labels:', error);
-            alert('Failed to load labels');
-        });
+
+// Function to load and display labels
+async function loadLabels() {
+    try {
+        const response = await fetch('/get_labels');
+        if (!response.ok) {
+            throw new Error('Failed to fetch labels');
+        }
+        labels = await response.json();
+        displayLabels();
+    } catch (error) {
+        console.error('Error loading labels:', error);
+        alert('Failed to load labels');
+    }
 }
 
 // Function to display labels in the table

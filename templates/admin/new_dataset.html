@@ -34,7 +34,7 @@
             {% endif %}
         {% endwith %}
 
-        <form action="/upload" method="POST" enctype="multipart/form-data" id="upload-form">
+        <form action="{{ url_for('admin.upload') }}" method="POST" enctype="multipart/form-data" id="upload-form">
             <div class="form-section">
                 <div class="form-group">
                     <label for="image">Unggah Gambar</label>
@@ -75,7 +75,7 @@
             </div>
             
             <div class="btn-container">
-                <a href="{{ url_for('dashboard_admin') }}" class="btn">
+                <a href="{{ url_for('admin.dashboard_admin') }}" class="btn">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
                 <button type="submit" class="btn">
