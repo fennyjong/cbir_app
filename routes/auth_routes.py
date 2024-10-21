@@ -27,40 +27,32 @@ def register():
         return redirect(url_for('auth.login'))
     
     return render_template('auth/register.html')
-
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        
-        # Check for admin credentials
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        # Admin login check
         if username == 'admin' and password == 'admin':
-            admin_user = User.query.filter_by(username='admin').first()
-            if not admin_user:
-                # Create admin user if it doesn't exist
-                admin_user = User(username='admin')
-                admin_user.set_password('admin')
-                db.session.add(admin_user)
-                db.session.commit()
-            
-            login_user(admin_user)
             session['user_role'] = 'admin'
-            return redirect(url_for('admin.dashboard_admin')) 
-        
+            return redirect(url_for('dashboard_admin'))
+
         # Regular user login
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user)
-            user.last_login_at = db.func.now()
-            db.session.commit()
+            user.last_login_at = db.func.now()  # Update last login time
+            db.session.commit()  # Save changes
             session['user_role'] = 'user'
             flash('Login successful!', 'success')  
-            return redirect(url_for('user.beranda')) 
-        
+            return redirect(url_for('user.beranda'))
+
+        # If user does not exist or password is incorrect
         flash('Invalid username or password', 'danger')
-    
+
     return render_template('auth/login.html')
+
 
 @auth_bp.route('/reset_password', methods=['POST'])
 def reset_password():
