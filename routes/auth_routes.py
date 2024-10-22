@@ -47,10 +47,6 @@ def login():
             session['user_role'] = 'user'
             flash('Login successful!', 'success')  
             return redirect(url_for('user.beranda'))
-
-        # If user does not exist or password is incorrect
-        flash('Invalid username or password', 'danger')
-
     return render_template('auth/login.html')
 
 
@@ -69,12 +65,9 @@ def reset_password():
     return jsonify({"success": False, "message": "Username not found."}), 404
 
 @auth_bp.route('/logout', methods=['POST'])
-@login_required
 def logout():
-    print("Logout route accessed")  
     logout_user()
     session.pop('user_role', None)
-    flash('You have been logged out successfully.', 'success')
-    return jsonify({"success": True}), 200
+    return jsonify({"success": True, "message": "You have been logged out successfully."})
 
 
