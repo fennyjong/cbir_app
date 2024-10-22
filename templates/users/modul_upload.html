@@ -171,11 +171,11 @@
 <body>
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-content">
-            <a href="/upload" class="sidebar-item" data-section="beranda">
+            <a href="/user/upload" class="sidebar-item" data-section="beranda">
                 <i class="fas fa-search sidebar-icon"></i>
                 <span class="sidebar-text">Mulai Pencarian</span>
             </a>
-            <a href="/informasi" class="sidebar-item" data-section="kelola-dataset">
+            <a href="/user/informasi" class="sidebar-item" data-section="kelola-dataset">
                 <i class="fas fa-info-circle sidebar-icon"></i>
                 <span class="sidebar-text">Informasi</span>
             </a>
@@ -265,7 +265,7 @@
             if (fileInput.files.length === 0) {
                 alert("Please upload an image before searching.");
             } else {
-                window.location.href = '/hasil';
+                window.location.href = '/user/hasil';
             }
         });
     </script>
