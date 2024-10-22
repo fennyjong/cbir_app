@@ -7,6 +7,7 @@ import base64
 from io import BytesIO
 from PIL import Image
 from proses.augmentasi import augment_image
+from proses.train_model import CBIRModel, get_last_processing_time
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -95,3 +96,89 @@ def new_dataset_view():
 
     # Render template dengan data yang diperlukan
     return render_template('admin/new_dataset.html', fabric_names=fabric_names, regions=unique_regions)
+
+@admin_bp.route('/process_database', methods=['POST'])
+def process_database():
+    if session.get('user_role') != 'admin':
+        return jsonify({
+            'success': False,
+            'message': 'Unauthorized access'
+        }), 401
+
+    try:
+        cbir = CBIRModel(
+            upload_folder=current_app.config['UPLOAD_FOLDER'],
+            features_path='model/features.h5'
+        )
+        
+        success, message = cbir.process_database()
+        
+        if success:
+            last_processing = get_last_processing_time()
+            return jsonify({
+                'success': True,
+                'message': message,
+                'timestamp': last_processing
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': message
+            })
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Processing failed: {str(e)}'
+        })
+
+@admin_bp.route('/search_similar', methods=['POST'])
+def search_similar():
+    if 'image' not in request.files:
+        return jsonify({
+            'success': False,
+            'message': 'No image file provided'
+        })
+
+    try:
+        image = request.files['image']
+        
+        # Save temporary file
+        temp_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'temp_query.jpg')
+        image.save(temp_path)
+
+        # Initialize CBIR model
+        cbir = CBIRModel(
+            upload_folder=current_app.config['UPLOAD_FOLDER'],
+            features_path='model/features.h5'
+        )
+
+        # Search for similar images
+        results = cbir.search_similar(temp_path, top_k=5)
+        
+        # Remove temporary file
+        os.remove(temp_path)
+
+        if results is None:
+            return jsonify({
+                'success': False,
+                'message': 'Error processing query image'
+            })
+
+        return jsonify({
+            'success': True,
+            'results': results
+        })
+
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Search failed: {str(e)}'
+        })
+
+@admin_bp.route('/get_last_processing', methods=['GET'])
+def get_last_processing():
+    timestamp = get_last_processing_time()
+    return jsonify({
+        'timestamp': timestamp
+    })

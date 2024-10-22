@@ -8,6 +8,8 @@ Pillow
 numpy 
 tensorflow
 imgaug
+h5py 
+scikit-learn
 
 # Flask: Framework web 
 # Flask-SQLAlchemy: Akses database
