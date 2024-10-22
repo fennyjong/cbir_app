@@ -1,0 +1,28 @@
+langkah-langkah untuk menjalankan aplikasi Flask dalam mengirimkan gambar ke database
+
+1. Sesuaikan nama folder 
+
+2. Ubah URL database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@host:port/database_name'
+
+3. Ubah Nama Kain dan Nama Daerah
+new_dataset = SongketDataset(image_filename=filename, fabric_name="Songket Subahnale", region="Lombok")
+
+4. Jalankan di terminal
+python commit.py
+
+5. Kirim Permintaan POST ke API:
+pilih metode POST 
+http://localhost:5001/upload_all_images_rollback
+klik send
+
+6. Respon Berhasi;:
+{
+    "success": true,
+    "uploaded_files": 560
+}
+
+7. Cek database
+SELECT * FROM songket_dataset;
+
+
