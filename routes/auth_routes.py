@@ -59,7 +59,6 @@ def login():
             user.last_login_at = db.func.now()  # Update last login time
             db.session.commit()  # Save changes
             session['user_role'] = 'user'
-            flash('Login successful!', 'success')  
             return redirect(url_for('user.beranda'))
         else:
             flash('Invalid username/email or password!', 'danger')  # Flash message for invalid login
@@ -88,5 +87,4 @@ def reset_password():
 def logout():
     logout_user()
     session.pop('user_role', None)
-    flash('Logout berhasil!', 'success')
     return jsonify({"success": True, "message": "Anda berhasil logout."})

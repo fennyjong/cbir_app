@@ -20,6 +20,12 @@ def upload():
 def hasil():
     return render_template('users/modul_hasil.html')
 
+
+@user_bp.route('/panduan')
+@login_required
+def panduan():
+    return render_template('users/panduan.html')
+
 @user_bp.route('/informasi')
 def display_songket():
     # Join between SongketDataset and Label to get unique songket data with labels

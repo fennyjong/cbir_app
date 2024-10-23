@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panduan CBIR Kain Songket Indonesia</title>
+    <!-- Add Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/users/panduan.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/users/user.css') }}">
+</head>
+<body>
+    <button class="mobile-menu-btn">
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <div class="overlay"></div>
+
+    <aside class="sidebar">
+        <div class="sidebar-content">
+            <div class="sidebar-header">
+            </div>
+            <a href="/user/upload" class="sidebar-item active">
+                <i class="fas fa-cloud-upload-alt sidebar-icon"></i>
+                <span class="sidebar-text">Mulai Pencarian</span>
+            </a>
+            <a href="/user/informasi" class="sidebar-item">
+                <i class="fas fa-book-open sidebar-icon"></i>
+                <span class="sidebar-text">Informasi</span>
+            </a>
+            <a href="/user/panduan" class="sidebar-item">
+                <i class="fas fa-compass sidebar-icon"></i>
+                <span class="sidebar-text">Panduan</span>
+            </a>
+            <a href="/login" class="sidebar-item">
+                <i class="fas fa-sign-out-alt sidebar-icon"></i>
+                <span class="sidebar-text">LogOut</span>
+            </a>
+        </div>
+    </aside>
+
+    <main>
+        <header>
+            <h1><i class="fas fa-book-reader"></i> Panduan Penggunaan CBIR Kain Songket Indonesia</h1>
+            <p class="intro">Sistem Content-Based Image Retrieval (CBIR) untuk Mengidentifikasi dan Mencari Motif Kain Songket Indonesia</p>
+        </header>
+
+
+    <div class="main-content">
+        <div class="section">
+            <h2><i class="fas fa-info-circle"></i> Apa itu CBIR Kain Songket?</h2>
+            <p>CBIR (Content-Based Image Retrieval) Kain Songket adalah sistem pencarian berbasis konten gambar yang memungkinkan Anda mencari dan mengidentifikasi motif kain songket Indonesia berdasarkan gambar yang Anda unggah.</p>
+            <img src="/static/assets/background.png" alt="Ilustrasi Kain Songket">
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-bullseye"></i> Tujuan Sistem</h2>
+            <div class="purpose-list">
+                <ul class="feature-list">
+                    <li>Melestarikan warisan budaya Indonesia melalui dokumentasi digital motif kain songket</li>
+                    <li>Memudahkan identifikasi motif kain songket tradisional</li>
+                    <li>Membantu peneliti, kolektor dan pecinta budaya dalam mengidentifikasi motif songket</li>
+                    <li>Mendokumentasikan makna filosofis dan nilai budaya di balik setiap motif</li>
+                    <li>Mempromosikan kekayaan budaya Indonesia melalui teknologi</li>
+                    <li>Memfasilitasi proses pembelajaran dan penelitian tentang kain songket</li>
+                    <li>Mendukung pelestarian pengetahuan tradisional tentang motif songket</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-star"></i> Fitur Utama</h2>
+            <ul class="feature-list">
+                <li>Pencarian berdasarkan gambar kain songket</li>
+                <li>Identifikasi motif dan pola khas songket</li>
+                <li>Informasi detail tentang asal dan makna motif</li>
+                <li>Perbandingan dengan database motif songket yang lengkap</li>
+                <li>Hasil pencarian yang akurat dan cepat</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2><i class="fas fa-tasks"></i> Cara Penggunaan</h2>
+            <div class="step-container">
+                <div class="step-card">
+                    <div class="step-number"> Langkah 1: Persiapan Gambar</div>
+                    <p>Siapkan gambar kain songket yang ingin Anda cari. Pastikan gambar memiliki:</p>
+                    <ul class="feature-list">
+                        <li>Pencahayaan yang baik</li>
+                        <li>Fokus yang jelas</li>
+                        <li>Motif terlihat jelas</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">Langkah 2: Unggah Gambar</div>
+                    <p>Unggah gambar melalui sistem dengan:</p>
+                    <ul class="feature-list">
+                        <li>Klik tombol "Unggah File"</li>
+                        <li>Pilih file gambar dari perangkat Anda</li>
+                        <li>Tunggu proses unggah selesai</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">Langkah 3: Proses Pencarian</div>
+                    <p>Sistem akan memproses gambar dan mencari kecocokan:</p>
+                    <ul class="feature-list">
+                        <li>Analisis motif dan pola</li>
+                        <li>Pencocokan dengan database</li>
+                        <li>Pengurutan hasil berdasarkan kemiripan</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Tips Penggunaan</h2>
+            <div class="note">
+                <h3>Untuk hasil terbaik:</h3>
+                <ul class="feature-list">
+                    <li>Gunakan gambar dengan resolusi tinggi</li>
+                    <li>Hindari gambar yang blur atau terlalu gelap</li>
+                    <li>Pastikan motif songket terlihat minimal 50% dalam frame</li>
+                    <li>Ambil gambar dalam kondisi pencahayaan yang merata</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Interpretasi Hasil</h2>
+            <p>Hasil pencarian akan menampilkan:</p>
+            <ul class="feature-list">
+                <li>Gambar-gambar songket yang mirip</li>
+                <li>Persentase kemiripan dengan gambar referensi</li>
+                <li>Informasi detail tentang motif yang teridentifikasi</li>
+                <li>Daerah asal dan makna filosofis motif</li>
+            </ul>
+        </div>
+
+        <div class="credits">
+            <p class="copyright">Copyright © 2024 Fenny Jong. Universitas Tarumanagara.</p>
+        </div>
+    </div>
+    <div class="scroll-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+</body>
+<script src="{{ url_for('static', filename='js/users/panduan.js') }}"></script>
+</html> 

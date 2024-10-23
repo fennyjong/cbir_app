@@ -5,93 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Informasi Songket</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/users/user.css') }}">
     <style>
-        :root {
-            --primary-color: #5d4037;
-            --primary-light: #8d6e63;
-            --primary-dark: #321911;
-            --accent-color: #d7ccc8;
-            --text-color: #263238;
-            --bg-color: #f5f5f5;
-            --card-bg: #ffffff;
-            --sidebar-width: 250px;
-            --sidebar-collapsed-width: 70px;
-            --transition-speed: 0.3s;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Improved Sidebar */
-        .sidebar {
-            background: linear-gradient(to bottom, var(--primary-color), var(--primary-dark));
-            color: white;
-            width: var(--sidebar-collapsed-width);
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 1000;
-            transition: width var(--transition-speed) ease-in-out;
-            overflow: hidden;
-            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar:hover {
-            width: var(--sidebar-width);
-        }
-
-        .sidebar-content {
-            width: var(--sidebar-width);
-            padding: 40px 0;
-        }
-
-        .sidebar-item {
-            display: flex;
-            align-items: center;
-            padding: 16px 24px;
-            color: var(--accent-color);
-            text-decoration: none;
-            transition: all var(--transition-speed);
-            margin: 4px 0;
-        }
-
-        .sidebar-item:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-            transform: translateX(8px);
-            color: white;
-        }
-
-        .sidebar-icon {
-            width: 24px;
-            margin-right: 20px;
-            font-size: 20px;
-            text-align: center;
-        }
-
-        .sidebar-text {
-            font-size: 16px;
-            font-weight: 500;
-            opacity: 0;
-            transition: opacity var(--transition-speed);
-        }
-
-        .sidebar:hover .sidebar-text {
-            opacity: 1;
-        }
-
         /* Main Content */
         main {
             flex: 1;
@@ -269,15 +184,21 @@
     </style>
 </head>
 <body>
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar">
         <div class="sidebar-content">
-            <a href="/user/upload" class="sidebar-item">
-                <i class="fas fa-search sidebar-icon"></i>
+            <div class="sidebar-header">
+            </div>
+            <a href="/user/upload" class="sidebar-item active">
+                <i class="fas fa-cloud-upload-alt sidebar-icon"></i>
                 <span class="sidebar-text">Mulai Pencarian</span>
             </a>
             <a href="/user/informasi" class="sidebar-item">
-                <i class="fas fa-info-circle sidebar-icon"></i>
+                <i class="fas fa-book-open sidebar-icon"></i>
                 <span class="sidebar-text">Informasi</span>
+            </a>
+            <a href="/user/panduan" class="sidebar-item">
+                <i class="fas fa-compass sidebar-icon"></i>
+                <span class="sidebar-text">Panduan</span>
             </a>
             <a href="/login" class="sidebar-item">
                 <i class="fas fa-sign-out-alt sidebar-icon"></i>
@@ -332,4 +253,5 @@
         </div>
     </main>
 </body>
+<script src="{{ url_for('static', filename='js/users/panduan.js') }}"></script>
 </html>
