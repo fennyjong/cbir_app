@@ -5,7 +5,7 @@ from models import db, SongketDataset
 app = Flask(__name__)
 
 # Konfigurasi database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/tes_songket'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/songket'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inisialisasi database dengan aplikasi Flask

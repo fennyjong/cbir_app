@@ -4,124 +4,143 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CBIR Kain Songket Indonesia</title>
+    <!-- Menghubungkan font Poppins dari Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
+        /* Menghilangkan margin default dan mengatur tinggi halaman */
         body, html {
             margin: 0;
-            padding: 0;
             height: 100%;
-            font-family: 'Poppins', sans-serif;
-            background-color: #f5f5f5;
+            font-family: 'Poppins', sans-serif; /* Mengatur font */
+            background-color: #f5f5f5; /* Warna latar belakang halaman */
         }
+        /* Container utama untuk tata letak flex */
         .container {
-            display: flex;
-            height: 100%;
+            display: flex; /* Menggunakan Flexbox */
+            height: 100%; /* Mengatur tinggi container */
         }
+        /* Panel kiri dengan gradien latar belakang */
         .left-panel {
-            flex: 1;
-            background: linear-gradient(135deg, #1a237e, #3949ab);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 3rem;
-            color: white;
+            flex: 1; /* Mengambil satu bagian dari flex container */
+            background: linear-gradient(135deg, #1a237e, #3949ab); /* Gradien latar belakang */
+            display: flex; /* Menggunakan Flexbox dalam panel */
+            flex-direction: column; /* Mengatur orientasi flex secara vertikal */
+            justify-content: center; /* Menyusun konten di tengah */
+            padding: 3rem; /* Memberikan padding */
+            color: white; /* Warna teks */
         }
+        /* Panel kanan dengan gambar latar belakang */
         .right-panel {
-            flex: 1;
-            background-size: cover;
-            position: relative;
-            overflow: hidden;
+            flex: 1; /* Mengambil satu bagian dari flex container */
+            background-size: cover; /* Mengatur ukuran gambar latar belakang */
+            position: relative; /* Posisi relatif untuk overlay */
+            overflow: hidden; /* Menghindari konten melampaui batas */
         }
+        /* Overlay gelap untuk efek */
         .overlay {
-            position: absolute;
+            position: absolute; /* Posisi absolut untuk overlay */
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            transition: background 0.3s ease;
+            background: rgba(0, 0, 0, 0.4); /* Warna latar belakang dengan transparansi */
+            transition: background 0.3s ease; /* Transisi efek */
         }
+        /* Efek hover untuk overlay */
         .right-panel:hover .overlay {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.2); /* Mengubah transparansi saat hover */
         }
+        /* Judul dengan ukuran dan bayangan teks */
         h1 {
-            font-size: 3rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            font-size: 3rem; /* Ukuran font judul */
+            font-weight: 600; /* Ketebalan font */
+            margin-bottom: 1rem; /* Margin bawah */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1); /* Bayangan teks */
         }
+        /* Deskripsi teks */
         p {
-            font-size: 18px;
-            margin-bottom: 2rem;
-            font-weight: 300;
-            line-height: 1.6;
-            max-width: 500px;
+            font-size: 18px; /* Ukuran font deskripsi */
+            margin-bottom: 2rem; /* Margin bawah */
+            font-weight: 300; /* Ketebalan font */
+            line-height: 1.6; /* Jarak antar baris */
+            max-width: 500px; /* Lebar maksimum deskripsi */
         }
+        /* Gaya untuk tombol */
         .btn {
-            background-color: #ffc107;
-            color: #1a237e;
-            padding: 12px 24px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-block;
-            border: 2px solid transparent;
+            background-color: #ffc107; /* Warna latar belakang tombol */
+            color: #1a237e; /* Warna teks tombol */
+            padding: 12px 24px; /* Padding tombol */
+            border-radius: 30px; /* Sudut membulat */
+            text-decoration: none; /* Menghilangkan garis bawah */
+            font-weight: 600; /* Ketebalan font tombol */
+            transition: all 0.3s ease; /* Transisi efek tombol */
+            display: inline-block; /* Mengatur tombol sebagai blok inline */
+            border: 2px solid transparent; /* Border transparan untuk efek */
         }
+        /* Efek hover untuk tombol */
         .btn:hover {
-            background-color: transparent;
-            color: #ffc107;
-            border-color: #ffc107;
-            transform: translateY(-2px);
+            background-color: transparent; /* Mengubah latar belakang saat hover */
+            color: #ffc107; /* Mengubah warna teks saat hover */
+            border-color: #ffc107; /* Mengubah warna border saat hover */
+            transform: translateY(-2px); /* Efek angkat saat hover */
         }
+        /* Pola latar belakang pada panel kanan */
         .pattern {
-            position: absolute;
+            position: absolute; /* Posisi absolut untuk pola */
             bottom: 0;
             left: 0;
             right: 0;
-            height: 100%;
-            background: url("/static/assets/background.png");
-            opacity: 0.1;
-            transition: opacity 0.3s ease;
+            height: 100%; /* Mengatur tinggi pola */
+            background: url("/static/assets/background.png"); /* Menggunakan gambar sebagai latar belakang */
+            opacity: 0.1; /* Transparansi pola */
+            transition: opacity 0.3s ease; /* Transisi efek */
         }
+        /* Efek hover untuk pola */
         .right-panel:hover .pattern {
-            opacity: 0.2;
+            opacity: 0.2; /* Mengubah transparansi saat hover */
         }
+        /* Kredit gambar */
         .image-credit {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            color: white;
-            font-size: 10px;
-            opacity: 0.7;
+            position: absolute; /* Posisi absolut untuk kredit gambar */
+            bottom: 10px; /* Jarak dari bawah */
+            right: 10px; /* Jarak dari kanan */
+            color: white; /* Warna teks */
+            font-size: 10px; /* Ukuran font */
+            opacity: 0.7; /* Transparansi kredit gambar */
         }
+        /* Media query untuk responsif di HP */
         @media (max-width: 768px) {
             .container {
-                flex-direction: column;
+                flex-direction: column; /* Mengubah tata letak menjadi vertikal */
             }
             .left-panel, .right-panel {
-                flex: none;
-                height: 50vh;
+                flex: none; /* Menghapus fleksibilitas pada panel */
+                height: 50vh; /* Mengatur tinggi panel menjadi setengah dari viewport */
             }
             h1 {
-                font-size: 2.5rem;
+                font-size: 2.5rem; /* Ukuran font judul pada perangkat kecil */
             }
             p {
-                font-size: 1rem;
+                font-size: 1rem; /* Ukuran font deskripsi pada perangkat kecil */
             }
         }
     </style>
 </head>
 <body>
+    <!-- Container utama yang membagi halaman menjadi dua panel -->
     <div class="container">
+        <!-- Panel kiri dengan judul dan deskripsi -->
         <div class="left-panel">
             <h1>CBIR Kain Songket Indonesia</h1>
             <p>Jelajahi keindahan warisan budaya Indonesia melalui teknologi pencarian gambar berbasis konten (CBIR). Temukan motif unik dan makna di balik setiap kain songket.</p>
+            <!-- Tombol untuk memulai pencarian -->
             <a href="{{ url_for('user.upload') }}" class="btn btn-primary">Mulai Pencarian</a>
-        </div>
+        </div>  
+        <!-- Panel kanan dengan gambar latar belakang -->
         <div class="right-panel">
-            <div class="overlay"></div>
-            <div class="pattern"></div>
+            <div class="overlay"></div> <!-- Overlay untuk efek gelap -->
+            <div class="pattern"></div> <!-- Pola latar belakang -->
+            <!-- Kredit untuk gambar yang digunakan -->
             <div class="image-credit">Sumber Foto: https://www.bahankain.com/2023/08/19/menelisik-perjalanan-kain-tenun-minangkabau-sejak-abad-ke-5-masehi</div>
         </div>
     </div>
