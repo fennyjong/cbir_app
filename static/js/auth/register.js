@@ -1,6 +1,7 @@
-// Fungsi untuk memvalidasi form login
+// Fungsi untuk memvalidasi form tegister
 function validateForm() {
     const username = document.getElementById("username").value.trim();
+    const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
     const errorElement = document.getElementById("error-msg");
 
@@ -12,6 +13,13 @@ function validateForm() {
     if (!usernamePattern.test(username)) {
         errorElement.innerHTML = "Username tidak boleh mengandung karakter khusus.";
         return false; // Menghentikan eksekusi jika validasi gagal
+    }
+
+    // Validasi email (harus format email yang valid)
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Pola untuk email
+    if (!emailPattern.test(email)) {
+        errorElement.innerHTML = "Email harus dalam format yang benar.";
+        return false;
     }
 
     // Validasi password

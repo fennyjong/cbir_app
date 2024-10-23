@@ -14,9 +14,9 @@
             <h2>Login Untuk Memulai Sesi</h2>
             <form id="loginForm" method="POST" action="{{ url_for('auth.login') }}" onsubmit="return validateForm()">
                 <div class="input-group">
-                    <input type="text" name="username" placeholder="Username" required>
+                    <input type="text" name="username_or_email" placeholder="Username atau Email" required>
                     <span class="icon"><i class="fas fa-user"></i></span>
-                </div>
+                </div>                
                 <div class="input-group">
                     <input type="password" name="password" id="password" placeholder="Password" required>
                     <span class="icon" onclick="togglePasswordVisibility('password', this)">
@@ -37,7 +37,7 @@
         <h2>Reset Password</h2>
         <form id="resetForm" onsubmit="return validateResetForm()">
             <div class="input-group">
-                <input type="text" id="resetUsername" placeholder="Username" required>
+                <input type="text" id="resetUsernameOrEmail" placeholder="Username atau Email" required>
                 <span class="icon"><i class="fas fa-user"></i></span>
             </div>
             <div class="input-group">
@@ -53,11 +53,9 @@
                 </span>
             </div>
             <p id="reset-error-msg" class="warning-message"></p>
-            <p id="error-msg" class="warning-message"></p>
             <button type="submit">Reset Password</button>
         </form>
-    </div>
-
+    </div>    
     <script src="{{ url_for('static', filename='js/auth/login.js') }}"></script>
 </body>
 </html>

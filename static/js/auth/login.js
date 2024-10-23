@@ -1,32 +1,40 @@
 // Fungsi untuk memvalidasi form login
 function validateForm() {
-    const username = document.forms["loginForm"]["username"].value.trim();
+    const usernameOrEmail = document.forms["loginForm"]["username_or_email"].value.trim();
     const password = document.forms["loginForm"]["password"].value;
     const errorElement = document.getElementById("error-msg");
 
     // Menghapus pesan error sebelumnya
     errorElement.innerHTML = "";
 
-    // Validasi username
-    if (!username) {
-        errorElement.innerHTML = "Username harus diisi.";
+    // Validasi username atau email
+    if (!usernameOrEmail) {
+        errorElement.innerHTML = "Username atau Email harus diisi.";
         return false;
     }
     
+    // Validasi username
     const usernameRegex = /^[a-zA-Z0-9]+$/;
-    if (!usernameRegex.test(username)) {
+    const isEmail = usernameOrEmail.includes('@');
+    if (!isEmail && !usernameRegex.test(usernameOrEmail)) {
         errorElement.innerHTML = "Username hanya boleh mengandung huruf dan angka.";
         return false;
     }
-
+    
     // Validasi password
     if (!password) {
         errorElement.innerHTML = "Password harus diisi.";
         return false;
     }
 
-    if (username !== "admin" && password.length < 8) {
-        errorElement.innerHTML = "Password harus minimal 8 karakter";
+    // Cek untuk admin
+    if (usernameOrEmail === "admin" && password === "admin") {
+        return true; // Admin login is valid
+    }
+
+    // Validasi panjang password untuk pengguna biasa (tidak admin)
+    if (!isEmail && password.length < 8) {
+        errorElement.innerHTML = "Password harus minimal 8 karakter.";
         return false;
     }
 
@@ -61,7 +69,7 @@ function togglePasswordVisibility(inputId, icon) {
 
 // Fungsi untuk memvalidasi form reset password
 function validateResetForm() {
-    const resetUsername = document.getElementById("resetUsername").value.trim();
+    const resetUsernameOrEmail = document.getElementById("resetUsernameOrEmail").value.trim(); // Updated to include username or email
     const newPassword = document.getElementById("newPassword").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
     const resetErrorElement = document.getElementById("reset-error-msg");
@@ -95,7 +103,7 @@ function validateResetForm() {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            username: resetUsername,
+            username_or_email: resetUsernameOrEmail, // Update to send the combined input
             new_password: newPassword
         }),
     })

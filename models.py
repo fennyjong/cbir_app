@@ -12,6 +12,7 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'  # Nama tabel di database
     id = db.Column(db.Integer, primary_key=True)  # ID unik untuk pengguna
     username = db.Column(db.String(80), unique=True, nullable=False)  # Nama pengguna unik
+    email = db.Column(db.String(120), unique=True, nullable=False)  # Email pengguna unik
     password_hash = db.Column(db.String(255), nullable=False)  # Hash password
     created_at = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)  # Waktu pendaftaran
     last_login_at = db.Column(db.DateTime, nullable=True)  # Waktu login terakhir

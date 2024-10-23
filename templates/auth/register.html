@@ -15,6 +15,10 @@
             <h2>Registrasi Pengguna Baru</h2>
             <form id="registerForm" method="POST" action="{{ url_for('auth.register') }}" onsubmit="return validateForm()">
                 <div class="input-group">
+                    <input type="email" name="email" id="email" placeholder="Email" required>
+                    <span class="icon"><i class="fas fa-envelope"></i></span>
+                </div>                           
+                <div class="input-group">
                     <input type="text" name="username" id="username" placeholder="Username" required>
                     <span class="icon"><i class="fas fa-user"></i></span>
                 </div>
