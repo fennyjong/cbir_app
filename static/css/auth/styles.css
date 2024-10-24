@@ -97,47 +97,107 @@ input::placeholder {
     font-weight: bold;
     margin-top: 10px;
 }
-
+/* Reset Password Form Styles */
 .overlay {
-    display: none; 
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 1;
+    display: none;
+    z-index: 998;
 }
 
 .reset-password {
-    display: none; 
     position: fixed;
-    left: 50%;
     top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     background: white;
     padding: 30px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    z-index: 2;
-    animation: popIn 0.5s;
-    width: 400px;
-}
-
-@keyframes popIn {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -45%);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    display: none;
+    width: 90%;
+    max-width: 400px;
 }
 
 .close-btn {
+    position: absolute;
+    right: 15px;
+    top: 15px;
     cursor: pointer;
-    font-weight: bold;
-    float: right;
-    color: #333;
+    font-size: 20px;
+    color: #666;
+}
+
+/* Button Styles */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #1557b0;
+}
+
+/* Warning Message */
+.warning-message {
+    color: #d93025;
+    margin: 10px 0;
+    font-size: 14px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .container h1 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .login-box {
+        padding: 20px;
+    }
+    
+    .reset-password {
+        width: 95%;
+        padding: 20px;
+    }
+    
+    .input-group input {
+        padding: 10px 35px 10px 12px;
+        font-size: 14px;
+    }
+    
+    button {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .container h1 {
+        font-size: 18px;
+    }
+    
+    .login-box {
+        padding: 15px;
+    }
+    
+    .reset-password {
+        padding: 15px;
+    }
 }

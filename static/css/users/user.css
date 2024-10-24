@@ -3,6 +3,10 @@
     --sidebar-collapsed-width: 64px;
     --primary-color: #6a1b9a;
     --hover-color: #4a148c;
+    --text-color: #333;
+    --background-color: #f5f5f5;
+    --card-background: #fff;
+    --border-radius: 10px;
     --transition-speed: 0.3s;
 }
 
@@ -14,13 +18,17 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
     min-height: 100vh;
-    background-color: #f5f5f5;
+    position: relative;
 }
 
-/* Sidebar Styles */
+/* Sidebar Styles - Desktop Theme */
 .sidebar {
     background-color: var(--primary-color);
+    color: white;
     width: var(--sidebar-collapsed-width);
     height: 100vh;
     position: fixed;
@@ -44,7 +52,7 @@ body {
 .sidebar-header {
     padding: 20px;
     text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     margin-bottom: 20px;
 }
 
@@ -55,6 +63,7 @@ body {
     margin-bottom: 10px;
 }
 
+/* Desktop Sidebar Items */
 .sidebar-item {
     display: flex;
     align-items: center;
@@ -72,17 +81,11 @@ body {
     transform: translateX(5px);
 }
 
-.sidebar-item.active {
-    background-color: var(--hover-color);
-    border-left-color: white;
-}
-
 .sidebar-icon {
     width: 24px;
     margin-right: 20px;
     text-align: center;
     font-size: 20px;
-    color: white;
     transition: transform var(--transition-speed);
 }
 
@@ -92,7 +95,6 @@ body {
 
 .sidebar-text {
     font-size: 16px;
-    color: white;
     opacity: 0;
     transition: opacity var(--transition-speed);
 }
@@ -101,56 +103,72 @@ body {
     opacity: 1;
 }
 
+/* Mobile Menu Button */
+.mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    background: white;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.hamburger {
+    width: 24px;
+    height: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.hamburger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+    transition: all 0.3s ease-in-out;
+    border-radius: 2px;
+}
+
+/* Hamburger Animation */
+.hamburger.open span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
 /* Mobile Styles */
 @media screen and (max-width: 768px) {
     .mobile-menu-btn {
-        display: flex;
-        position: fixed;
-        top: 15px;
-        left: 15px;
-        z-index: 1001;
-        background: white;
-        border: none;
-        cursor: pointer;
-        padding: 8px;
-        border-radius: 4px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
     }
 
-    .hamburger {
-        width: 24px;
-        height: 20px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+    main {
+        padding-top: 60px;
+        transition: margin-left 0.3s ease;
     }
 
-    .hamburger span {
-        width: 100%;
-        height: 2px;
-        background-color: var(--primary-color);
-        transition: all 0.3s ease-in-out;
-        border-radius: 2px;
-    }
-
-    .hamburger.open span:nth-child(1) {
-        transform: translateY(9px) rotate(45deg);
-    }
-
-    .hamburger.open span:nth-child(2) {
-        opacity: 0;
-    }
-
-    .hamburger.open span:nth-child(3) {
-        transform: translateY(-9px) rotate(-45deg);
-    }
-
-    /* Full screen mobile sidebar */
+    /* Mobile Sidebar - White Theme */
     .sidebar {
         left: -100%;
         width: 100% !important;
-        background-color: white;
         padding-top: 70px;
+        background-color: white;
+        color: var(--text-color);
     }
 
     .sidebar.active {
@@ -161,56 +179,80 @@ body {
         width: 100%;
     }
 
-    .sidebar-header {
-        border-bottom: 1px solid #eee;
-    }
-
+    /* Mobile Sidebar Items */
     .sidebar-item {
         width: 100%;
         padding: 20px;
         font-size: 1.2rem;
-        color: #333;
-        border-left: none;
         border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        color: var(--text-color);
+        background-color: white;
+        border-left: none;
+        transform: none;
     }
 
     .sidebar-item:hover {
         background-color: #f5f5f5;
         transform: none;
         border-left: none;
-        color: var(--primary-color);
-    }
-
-    .sidebar-item.active {
-        background-color: #f5f5f5;
-        color: var(--primary-color);
-        border-left: none;
+        color: var(--text-color);
     }
 
     .sidebar-icon {
+        font-size: 1.4rem;
+        margin-right: 15px;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         color: var(--primary-color);
-        font-size: 24px;
     }
 
     .sidebar-text {
-        opacity: 1;
-        color: inherit;
+        display: block !important;
+        opacity: 1 !important;
         font-size: 1.1rem;
+        color: var(--text-color);
     }
 
-    .sidebar-item:hover .sidebar-icon {
-        transform: none;
+    .sidebar-header {
+        border-bottom: 1px solid #eee;
+        color: var(--text-color);
+    }
+}
+
+/* Overlay */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.overlay.active {
+    display: block;
+}
+
+/* Desktop styles */
+@media screen and (min-width: 769px) {
+    .sidebar {
+        width: var(--sidebar-width);
     }
 
-    .overlay {
+    .sidebar-collapsed {
+        width: var(--sidebar-collapsed-width);
+    }
+
+    .sidebar-collapsed .sidebar-text {
+        opacity: 0;
         display: none;
-        position: fixed;
-        inset: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-    }
-
-    .overlay.active {
-        display: block;
     }
 }
