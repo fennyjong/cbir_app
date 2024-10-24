@@ -93,9 +93,60 @@
             background-color: #8a2be2;
             color: white;
         }
+        .user-greeting-container {
+            position: fixed;
+            top: 20px;
+            right: 40px; /* Mengubah left menjadi right */
+            z-index: 1000;
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .user-greeting-container .user-icon {
+            color: #8a2be2;
+            font-size: 20px;
+        }
+
+        .user-greeting-container .greeting-text {
+            color: #333;
+            font-size: 16px;
+            white-space: nowrap; /* Mencegah text wrapping */
+        }
+
+        .user-greeting-container .username {
+            color: #8a2be2;
+            font-weight: bold;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .user-greeting-container {
+                right: 20px; /* Mengurangi jarak dari kanan pada layar kecil */
+                padding: 8px 12px;
+                top: 15px;
+            }
+
+            .user-greeting-container .greeting-text {
+                font-size: 14px;
+            }
+
+            .user-greeting-container .user-icon {
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="user-greeting-container">
+        <i class="fas fa-user-circle user-icon"></i>
+        <div class="greeting-text">
+            <span class="username">{{ current_user.username }}</span>
+        </div>
+    </div>
     <button class="mobile-menu-btn">
         <div class="hamburger">
             <span></span>
