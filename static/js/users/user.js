@@ -72,29 +72,6 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Handle window resize
-let resizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        if (isMobile()) {
-            // Switch to mobile layout
-            sidebar.classList.remove('sidebar-collapsed');
-            document.querySelector('main').style.marginLeft = '0';
-            if (sidebar.classList.contains('active')) {
-                document.body.style.overflow = 'hidden';
-            }
-        } else {
-            // Switch to desktop layout
-            sidebar.classList.remove('active');
-            hamburger.classList.remove('open');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-            toggleSidebarCollapsed(true);
-        }
-    }, 250);
-});
-
 // Touch swipe functionality for mobile
 let touchStartX = 0;
 let touchEndX = 0;
@@ -124,6 +101,26 @@ function handleSwipe() {
         }
     }
 }
+
+// Scroll to Top functionality
+window.addEventListener('scroll', function() {
+    const scrollButton = document.querySelector('.scroll-to-top');
+    
+    // Show button when page is scrolled down 200px
+    if (window.scrollY > 200) {
+        scrollButton.classList.add('visible');
+    } else {
+        scrollButton.classList.remove('visible');
+    }
+});
+
+// Scroll to top when button is clicked
+document.querySelector('.scroll-to-top').addEventListener('click', function() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', initializeSidebar);

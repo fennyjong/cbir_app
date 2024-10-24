@@ -184,6 +184,16 @@
     </style>
 </head>
 <body>
+    <button class="mobile-menu-btn">
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <div class="overlay"></div>
+
     <aside class="sidebar">
         <div class="sidebar-content">
             <div class="sidebar-header">
@@ -251,7 +261,10 @@
             </div>
             {% endif %}
         </div>
+        <div class="scroll-to-top">
+            <i class="fas fa-arrow-up"></i>
+        </div>
     </main>
-</body>
-<script src="{{ url_for('static', filename='js/users/user.js') }}"></script>
-</html>
+    </body>
+    <script src="{{ url_for('static', filename='js/users/user.js') }}"></script>
+    </html> 
