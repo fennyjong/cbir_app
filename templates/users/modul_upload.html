@@ -204,57 +204,107 @@
     </main>
 
     <script>
-        const dropArea = document.getElementById('dropArea');
+   const dropArea = document.getElementById('dropArea');
         const fileInput = document.getElementById('fileInput');
         const browseFiles = document.getElementById('browseFiles');
         const previewImage = document.getElementById('previewImage');
         const resetButton = document.getElementById('resetButton');
         const searchButton = document.getElementById('searchButton');
+        const uploadForm = document.getElementById('uploadForm');
 
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Handle drag enter and leave visual feedback
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropArea.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            dropArea.classList.remove('dragover');
+        }
+
+        // Handle dropped files
+        dropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        // Handle browse files click
         browseFiles.addEventListener('click', () => {
             fileInput.click();
         });
 
-        dropArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropArea.style.borderColor = '#8a2be2';
-        });
-
-        dropArea.addEventListener('dragleave', () => {
-            dropArea.style.borderColor = '#ccc';
-        });
-
-        dropArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropArea.style.borderColor = '#ccc';
-            handleFiles(e.dataTransfer.files);
-        });
-
-        fileInput.addEventListener('change', () => {
-            handleFiles(fileInput.files);
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
         });
 
         function handleFiles(files) {
             if (files.length > 0) {
                 const file = files[0];
-                if (file.type.startsWith('image/')) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        previewImage.src = e.target.result;
-                        previewImage.style.display = 'block';
-                        dropArea.style.display = 'none';
-                    };
-                    reader.readAsDataURL(file);
+                if (isValidImageFile(file)) {
+                    displayPreview(file);
                 } else {
-                    alert('Please upload an image file.');
+                    alert('Please upload a valid image file (PNG, JPG, or JPEG).');
+                    resetUpload();
                 }
             }
         }
 
-        resetButton.addEventListener('click', () => {
+        function isValidImageFile(file) {
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            return validTypes.includes(file.type);
+        }
+
+        function displayPreview(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
+                dropArea.style.display = 'none';
+                
+                // Set the file to the file input
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetUpload() {
             previewImage.style.display = 'none';
             dropArea.style.display = 'block';
             fileInput.value = '';
+            previewImage.src = '';
+        }
+
+        resetButton.addEventListener('click', resetUpload);
+
+        // Handle form submission
+        uploadForm.addEventListener('submit', (e) => {
+            if (!fileInput.files || fileInput.files.length === 0) {
+                e.preventDefault();
+                alert('Please select an image file first.');
+            }
         });
     </script>
 </body>
