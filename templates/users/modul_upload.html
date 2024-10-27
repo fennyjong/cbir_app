@@ -183,21 +183,23 @@
     <main>
         <div class="container" id="upload-container">
             <h1>Unggah file Gambar</h1>
-            <div class="upload-area" id="dropArea">
-                <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                <p class="upload-text">Drop files here</p>
-                <p class="supported-format">Supported format: PNG, JPG/JPEG</p>
-                <p>or</p>
-                <span class="browse-files" id="browseFiles">Unggah File</span>
-                <input type="file" id="fileInput" class="file-input" accept=".png,.jpg,.jpeg">
-            </div>
-            <img id="previewImage" class="preview-image" style="display: none;">
-            <div class="button-container">
-                <button class="button reset-button" id="resetButton">Reset</button>
-                <button class="button search-button" id="searchButton">
-                    <i class="fas fa-search"></i> Cari
-                </button>
-            </div>
+            <form action="/user/hasil" method="POST" enctype="multipart/form-data">
+                <div class="upload-area" id="dropArea">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <p class="upload-text">Drop files here</p>
+                    <p class="supported-format">Supported format: PNG, JPG/JPEG</p>
+                    <p>or</p>
+                    <span class="browse-files" id="browseFiles">Unggah File</span>
+                    <input type="file" id="fileInput" name="query_image" class="file-input" accept=".png,.jpg,.jpeg" required>
+                </div>
+                <img id="previewImage" class="preview-image" style="display: none;">
+                <div class="button-container">
+                    <button type="button" class="button reset-button" id="resetButton">Reset</button>
+                    <button type="submit" class="button search-button" id="searchButton">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                </div>
+            </form>
         </div>    
     </main>
 
@@ -253,14 +255,6 @@
             previewImage.style.display = 'none';
             dropArea.style.display = 'block';
             fileInput.value = '';
-        });
-
-        searchButton.addEventListener('click', () => {
-            if (fileInput.files.length === 0) {
-                alert("Please upload an image before searching.");
-            } else {
-                window.location.href = '/user/hasil';
-            }
         });
     </script>
 </body>
