@@ -219,10 +219,11 @@
     <div class="container">
         <div class="header">
             <h1>CBIR Songket Indonesia</h1>
-            <button class="search-btn" onclick="window.location.href='{{ url_for('user.upload') }}'">
+            <button class="search-btn" data-url="{{ url_for('user.upload') }}">
                 Pencarian Baru
-            </button>
+            </button>                             
         </div>
+
         <div class="search-content">
             <!-- Left side - Query Image -->
             <div class="query-section">
@@ -270,11 +271,17 @@
     </div>
 
     <script>
+
+document.querySelector('.search-btn').addEventListener('click', function() {
+        window.location.href = this.getAttribute('data-url');
+    });
+    
         document.querySelectorAll('input[name="count"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                window.location.href = `/hasil?n_results=${e.target.value}`;
+            radio.addEventListener('change', (event) => {
+                const selectedCount = event.target.value;
+                window.location.href = `{{ url_for('user.upload') }}?count=${selectedCount}`;
             });
         });
     </script>
 </body>
-</html> 
+</html>
