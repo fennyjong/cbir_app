@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy 
+from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -24,6 +24,20 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         """Memeriksa kecocokan password dengan hash."""
         return check_password_hash(self.password_hash, password)
+
+class SearchHistory(db.Model):
+    __tablename__ = 'search_history'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    query_image = db.Column(db.String(255), nullable=False)
+    search_timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    
+    # Relationship with User model to get username
+    user = db.relationship('User', backref=db.backref('searches', lazy=True))
+    
+    def __repr__(self):
+        return f'<SearchHistory {self.user.username} - {self.search_timestamp}>'
 
 class SongketDataset(db.Model):
     __tablename__ = 'songket_dataset'
@@ -50,3 +64,14 @@ class Label(db.Model):
         self.fabric_name = fabric_name 
         self.region = region
         self.description = description
+
+class DailyStats(db.Model):
+    __tablename__ = 'daily_stats'  # Nama tabel di database
+
+    id = db.Column(db.Integer, primary_key=True)  # ID unik untuk statistik harian
+    total_users = db.Column(db.Integer, nullable=False)  # Total pengguna
+    total_datasets = db.Column(db.Integer, nullable=False)  # Total dataset
+    date = db.Column(db.Date, nullable=False, unique=True)  # Tanggal statistik
+
+    def __repr__(self):
+        return f"<DailyStats {self.date}: Users={self.total_users}, Datasets={self.total_datasets}>"
