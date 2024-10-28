@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, request, flash, redirect, url_for, render_template, session, send_from_directory, current_app
+from flask import Flask, jsonify, request, flash, redirect, url_for, render_template, session, send_from_directory, current_app, send_file
 from config import Config
-from models import db, User, SongketDataset, Label
-from flask_login import LoginManager
+from models import db, User, SongketDataset, Label, SearchHistory
+from sqlalchemy import or_
+import io
 import os
 from sqlalchemy import func
 
@@ -13,15 +14,6 @@ app.secret_key = os.urandom(24)
 
 # Initialize the database with the Flask app
 db.init_app(app)
-
-# Initialize the LoginManager
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'auth.login'
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
 
 # Set up the UPLOAD_FOLDER
 base_dir = os.path.abspath(os.path.dirname(__file__))
@@ -50,7 +42,7 @@ def edit_dataset():
     dataset = SongketDataset.query.get(data['id'])
     if dataset:
         dataset.fabric_name = data['fabric_name']
-        dataset.region = data['region'] 
+        dataset.region = data['region']
         db.session.commit()
         return jsonify({'success': True}), 200
     return jsonify({'success': False, 'message': 'Dataset not found'}), 404
@@ -166,6 +158,51 @@ def get_region(fabric_name):
         return region[0]
     return '', 204
 
+@app.route('/api/search-history', methods=['GET'])
+def get_search_history():
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    search_query = request.args.get('search', '')
+
+    query = SearchHistory.query.join(User)
+
+    if search_query:
+        query = query.filter(
+            or_(
+                User.username.ilike(f'%{search_query}%'),
+                SearchHistory.query_image.ilike(f'%{search_query}%')
+            )
+        )
+
+    # Order by timestamp descending (newest first)
+    query = query.order_by(SearchHistory.search_timestamp.desc())
+
+    # Paginate results
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+
+    records = []
+    for idx, history in enumerate(pagination.items, start=1):
+        records.append({
+            'no': (page - 1) * per_page + idx,
+            'id': history.id,
+            'username': history.user.username,
+            'query_image': history.query_image,  # This will be the filename in static/uploads
+            'timestamp': history.search_timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+        })
+
+    return jsonify({
+        'data': records,
+        'total': pagination.total,
+        'pages': pagination.pages,
+        'current_page': page,
+        'per_page': per_page
+    })
+
+# Add this to ensure static files are served
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('static', filename)
+    
 # Import and register blueprints
 from routes.admin_routes import admin_bp
 from routes.auth_routes import auth_bp
@@ -179,4 +216,3 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True, host="0.0.0.0", port=5000)
-

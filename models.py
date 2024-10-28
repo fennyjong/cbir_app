@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy 
+from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -47,6 +47,20 @@ class Label(db.Model):
 
     def __init__(self, fabric_name, region, description):
         """Inisialisasi atribut label."""
-        self.fabric_name = fabric_name 
+        self.fabric_name = fabric_name
         self.region = region
         self.description = description
+        
+class SearchHistory(db.Model):
+    __tablename__ = 'search_history'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    query_image = db.Column(db.String(255), nullable=False)
+    search_timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    
+    # Relationship with User model to get username
+    user = db.relationship('User', backref=db.backref('searches', lazy=True))
+    
+    def __repr__(self):
+        return f'<SearchHistory {self.user.username} - {self.search_timestamp}>'

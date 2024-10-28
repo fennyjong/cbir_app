@@ -38,6 +38,12 @@
                             <span class="ml-4 sidebar-text">Kelola Dataset</span>
                         </a>
                     </li>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center w-full p-3 hover:bg-gray-700" data-section="riwayat-pencarian">
+                            <i class="fas fa-history"></i>
+                            <span class="ml-4 sidebar-text">Riwayat Pencarian</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -230,6 +236,71 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Riwayat perncarian section -->
+                <div id="riwayat-pencarian" class="content-section">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-semibold text-gray-800">Riwayat Pencarian</h2>
+                            <div class="flex items-center space-x-4">
+                                <button id="clearHistoryBtn" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors duration-200 flex items-center">
+                                    <i class="fas fa-trash-alt mr-2"></i> Hapus Semua
+                                </button>
+                                <button id="exportHistoryBtn" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors duration-200 flex items-center">
+                                    <i class="fas fa-download mr-2"></i> Export
+                                </button>
+                            </div>
+                        </div>
+                
+                        <div class="mb-6 flex justify-between items-center">
+                            <div class="flex items-center">
+                                <span class="mr-2">Show</span>
+                                <select id="historyEntriesSelect" class="border rounded px-2 py-1">
+                                    <option>10</option>
+                                    <option>25</option>
+                                    <option>50</option>
+                                    <option>100</option>
+                                </select>
+                                <span class="ml-2">entri</span>
+                            </div>
+                            <div class="relative">
+                                <input
+                                    type="text"
+                                    id="historySearchInput"
+                                    placeholder="Cari riwayat..."
+                                    class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                />
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                            </div>
+                        </div>
+                
+                        <div class="overflow-x-auto">
+                            <table id="historyTable" class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No.</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gambar Query</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Waktu</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTableBody" class="bg-white divide-y divide-gray-200">
+                                    <!-- Table rows will be dynamically inserted here -->
+                                </tbody>
+                            </table>
+                        </div>
+                
+                        <div class="flex items-center justify-between mt-6">
+                            <div id="historyEntriesInfo" class="text-sm text-gray-600">Showing 1 to 10 of 100 entries</div>
+                            <div class="flex space-x-2">
+                                <button id="historyPrevBtn" class="px-3 py-1 border rounded text-sm text-gray-600 hover:bg-gray-100">Prev</button>
+                                <button id="historyCurrentPage" class="px-3 py-1 border rounded text-sm bg-gray-600 text-white">1</button>
+                                <button id="historyNextBtn" class="px-3 py-1 border rounded text-sm text-gray-600 hover:bg-gray-100">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </main>
 
             <!-- Footer -->
@@ -318,3 +389,4 @@
 <script src="{{ url_for('static', filename='js/admin/label.js') }}"></script>
 <script src="{{ url_for('static', filename='js/admin/popup.js') }}"></script>
 <script src="{{ url_for('static', filename='js/admin/model.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin/history.js') }}"></script>

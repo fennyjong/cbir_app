@@ -1,12 +1,13 @@
 from flask import Blueprint, render_template, request, current_app, url_for, redirect
-from flask_login import login_required
-from models import db, Label, SongketDataset
+from flask_login import login_required, current_user
+from models import db, Label, SongketDataset, SearchHistory  # Ensure SearchHistory is imported
 from werkzeug.utils import secure_filename
 import os
+from datetime import datetime
 
 user_bp = Blueprint('user', __name__)
 
-# Add this to handle allowed file types
+# Allowed file types for upload
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 def allowed_file(filename):
@@ -48,24 +49,35 @@ def hasil():
             # Get the URL for the uploaded image
             image_url = url_for('static', filename=f'uploads/{filename}')
             
-            # Here you would typically:
-            # 1. Process the image
-            # 2. Compare with database
-            # 3. Get similar songket images
-            
-            # For now, we'll just pass the uploaded image
+            # Here you would typically process the image, compare with the database,
+            # and get similar songket images. For now, we'll just pass the uploaded image.
             similar_results = []  # This would be populated with your similarity search results
             
+            # Save to search_history table
+            search_history = SearchHistory(
+                user_id=current_user.id,
+                query_image=filename,  # Store the uploaded filename
+                search_timestamp=datetime.utcnow()
+            )
+            
+            try:
+                db.session.add(search_history)
+                db.session.commit()
+                print(f"Successfully saved search history for user {current_user.username}")
+            except Exception as e:
+                print(f"Error saving to database: {str(e)}")
+                db.session.rollback()
+
             return render_template('users/modul_hasil.html',
-                                query_image=image_url,
-                                n_results=int(request.args.get('n_results', 10)),
-                                results=similar_results)
+                                   query_image=image_url,
+                                   n_results=int(request.args.get('n_results', 10)),
+                                   results=similar_results)
     
     # Handle GET request
     return render_template('users/modul_hasil.html',
-                         query_image=request.args.get('query_image', ''),
-                         n_results=int(request.args.get('n_results', 10)),
-                         results=[])
+                           query_image=request.args.get('query_image', ''),
+                           n_results=int(request.args.get('n_results', 10)),
+                           results=[])
 
 @user_bp.route('/panduan')
 @login_required
@@ -87,3 +99,5 @@ def display_songket():
 
     # Return template with songket and label data
     return render_template('users/modul_informasi.html', songkets_with_labels=songkets_with_labels)
+
+
