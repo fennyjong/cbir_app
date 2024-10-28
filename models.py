@@ -64,14 +64,3 @@ class Label(db.Model):
         self.fabric_name = fabric_name 
         self.region = region
         self.description = description
-
-class DailyStats(db.Model):
-    __tablename__ = 'daily_stats'  # Nama tabel di database
-
-    id = db.Column(db.Integer, primary_key=True)  # ID unik untuk statistik harian
-    total_users = db.Column(db.Integer, nullable=False)  # Total pengguna
-    total_datasets = db.Column(db.Integer, nullable=False)  # Total dataset
-    date = db.Column(db.Date, nullable=False, unique=True)  # Tanggal statistik
-
-    def __repr__(self):
-        return f"<DailyStats {self.date}: Users={self.total_users}, Datasets={self.total_datasets}>"
