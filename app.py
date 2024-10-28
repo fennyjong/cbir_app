@@ -46,8 +46,7 @@ def get_datasets():
         'id': dataset.id,
         'region': dataset.region,
         'fabric_name': dataset.fabric_name,
-        'image_filename': dataset.image_filename,
-        'query_image': dataset.query_image 
+        'image_filename': dataset.image_filename
     } for dataset in datasets])
 
 @app.route('/edit_dataset', methods=['POST'])
