@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, request, current_app, url_for, redirect
-from flask_login import login_required
-from models import db, Label, SongketDataset
+from flask_login import login_required, current_user
+from models import db, SearchHistory, Label, SongketDataset
 from werkzeug.utils import secure_filename
 import os
-
+from datetime import datetime
 user_bp = Blueprint('user', __name__)
 
 # Add this to handle allowed file types
@@ -35,25 +35,37 @@ def hasil():
             return redirect(url_for('user.upload'))
         
         if file and allowed_file(file.filename):
-            # Generate unique filename to prevent overwrites
+            # Generate unique filename
             filename = secure_filename(file.filename)
+            timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S_')
+            unique_filename = timestamp + filename
+            
             # Ensure upload folder exists
             upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
             os.makedirs(upload_folder, exist_ok=True)
             
             # Save the file
-            filepath = os.path.join(upload_folder, filename)
+            filepath = os.path.join(upload_folder, unique_filename)
             file.save(filepath)
             
             # Get the URL for the uploaded image
-            image_url = url_for('static', filename=f'uploads/{filename}')
+            image_url = url_for('static', filename=f'uploads/{unique_filename}')
             
-            # Here you would typically:
-            # 1. Process the image
-            # 2. Compare with database
-            # 3. Get similar songket images
+            # Save to search_history table
+            search_history = SearchHistory(
+                user_id=current_user.id,
+                query_image=unique_filename,
+                search_timestamp=datetime.utcnow()
+            )
             
-            # For now, we'll just pass the uploaded image
+            try:
+                db.session.add(search_history)
+                db.session.commit()
+                print(f"Successfully saved search history for user {current_user.username}")
+            except Exception as e:
+                print(f"Error saving to database: {str(e)}")
+                db.session.rollback()
+            
             similar_results = []  # This would be populated with your similarity search results
             
             return render_template('users/modul_hasil.html',
@@ -61,7 +73,6 @@ def hasil():
                                 n_results=int(request.args.get('n_results', 10)),
                                 results=similar_results)
     
-    # Handle GET request
     return render_template('users/modul_hasil.html',
                          query_image=request.args.get('query_image', ''),
                          n_results=int(request.args.get('n_results', 10)),
