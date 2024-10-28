@@ -63,4 +63,19 @@ class Label(db.Model):
         """Inisialisasi atribut label."""
         self.fabric_name = fabric_name 
         self.region = region
+<<<<<<< HEAD
         self.description = description
+=======
+        self.description = description
+
+class DailyStats(db.Model):
+    __tablename__ = 'daily_stats'  # Nama tabel di database
+
+    id = db.Column(db.Integer, primary_key=True)  # ID unik untuk statistik harian
+    total_users = db.Column(db.Integer, nullable=False)  # Total pengguna
+    total_datasets = db.Column(db.Integer, nullable=False)  # Total dataset
+    date = db.Column(db.Date, nullable=False, unique=True)  # Tanggal statistik
+
+    def __repr__(self):
+        return f"<DailyStats {self.date}: Users={self.total_users}, Datasets={self.total_datasets}>"
+>>>>>>> 66c8319c7f861e08bf1a2a6f56fe4beed2b85c06

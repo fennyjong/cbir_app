@@ -11,6 +11,15 @@ from proses.train_model import CBIRModel, get_last_processing_time
 
 admin_bp = Blueprint('admin', __name__)
 
+from flask import Blueprint, render_template, jsonify
+from flask_login import login_required
+from models import db, SongketDataset, Label, User, DailyStats
+from sqlalchemy import func, extract
+from datetime import datetime, timedelta
+
+admin_bp = Blueprint('admin', __name__)
+
+
 @admin_bp.route('/dashboard')
 def dashboard_admin():
     if session.get('user_role') != 'admin':
@@ -18,6 +27,103 @@ def dashboard_admin():
         return redirect(url_for('auth.login'))
     
     return render_template('admin/dashboard_admin.html')
+
+from flask import Blueprint, render_template, jsonify
+from flask_login import login_required
+from models import db, SongketDataset, Label, User, DailyStats
+from sqlalchemy import func, extract, and_
+from datetime import datetime, timedelta
+
+admin_bp = Blueprint('admin', __name__)
+
+@admin_bp.route('/dashboard')
+def dashboard_admin():
+    if session.get('user_role') != 'admin':
+        flash('You need admin privileges to access this page.', 'danger')
+        return redirect(url_for('auth.login'))
+    
+    return render_template('admin/dashboard_admin.html')
+
+@admin_bp.route('/api/stats/<timeframe>')
+def get_stats(timeframe):
+    today = datetime.now().date()
+    
+    if timeframe == 'daily':
+        # Last 30 days
+        start_date = today - timedelta(days=30)
+        date_format = '%Y-%m-%d'
+        date_extract = func.date(User.created_at)
+        group_by = date_extract
+        
+    elif timeframe == 'monthly':
+        # Last 12 months
+        start_date = today - timedelta(days=365)
+        date_format = '%Y-%m'
+        date_extract = func.date_trunc('month', User.created_at)
+        group_by = date_extract
+        
+    elif timeframe == 'yearly':
+        # Last 5 years
+        start_date = today - timedelta(days=1825)
+        date_format = '%Y'
+        date_extract = extract('year', User.created_at)
+        group_by = date_extract
+    else:
+        return jsonify({'error': 'Invalid timeframe'}), 400
+
+    # Calculate total datasets
+    total_datasets = db.session.query(SongketDataset).count()
+
+    # Calculate total registrations (all time)
+    total_registrations = db.session.query(User).count()
+
+    # Calculate total logins (for the selected period)
+    total_logins = db.session.query(User).filter(
+        User.last_login_at >= start_date
+    ).count()
+
+    # Get registrations over time
+    registrations = db.session.query(
+        group_by.label('date'),
+        func.count(User.id).label('count')
+    ).filter(
+        User.created_at >= start_date
+    ).group_by(group_by).all()
+
+    # Get logins over time
+    logins = db.session.query(
+        func.date_trunc(timeframe, User.last_login_at).label('date'),
+        func.count(User.id).label('count')
+    ).filter(
+        User.last_login_at >= start_date
+    ).group_by('date').all()
+
+    # Get datasets over time
+    datasets = db.session.query(
+        func.date_trunc(timeframe, SongketDataset.uploaded_at).label('date'),
+        func.count(SongketDataset.id).label('count')
+    ).filter(
+        SongketDataset.uploaded_at >= start_date
+    ).group_by('date').all()
+
+    # Format the data
+    reg_data = {str(date.strftime(date_format) if hasattr(date, 'strftime') else date): count 
+                for date, count in registrations}
+    login_data = {str(date.strftime(date_format) if hasattr(date, 'strftime') else date): count 
+                  for date, count in logins}
+    dataset_data = {str(date.strftime(date_format) if hasattr(date, 'strftime') else date): count 
+                    for date, count in datasets}
+
+    return jsonify({
+        'registrations': reg_data,
+        'logins': login_data,
+        'datasets': dataset_data,
+        'totals': {
+            'total_datasets': total_datasets,
+            'total_registrations': total_registrations,
+            'total_logins': total_logins
+        }
+    })
 
 def allowed_file(filename):
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -106,6 +212,160 @@ from sqlalchemy import or_
 from datetime import datetime
 import math
 
+<<<<<<< HEAD
+=======
+@admin_bp.route('/search-history')
+@login_required
+def search_history():
+    if session.get('user_role') != 'admin':
+        flash('You need admin privileges to access this page.', 'danger')
+        return redirect(url_for('auth.login'))
+    
+    return render_template('admin/search_history.html')
+
+@admin_bp.route('/api/search-history')
+@login_required
+def get_search_history():
+    if session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    # Get pagination parameters
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    search_query = request.args.get('search', '')
+    
+    # Base query
+    query = db.session.query(
+        SearchHistory, User.username
+    ).join(
+        User, SearchHistory.user_id == User.id
+    )
+    
+    # Apply search filter if provided
+    if search_query:
+        query = query.filter(
+            or_(
+                User.username.ilike(f'%{search_query}%'),
+                SearchHistory.query_image.ilike(f'%{search_query}%')
+            )
+        )
+    
+    # Get total count for pagination
+    total_count = query.count()
+    
+    # Apply pagination
+    query = query.order_by(SearchHistory.search_timestamp.desc())\
+                .offset((page - 1) * per_page)\
+                .limit(per_page)
+    
+    # Format results
+    results = []
+    for history, username in query.all():
+        results.append({
+            'id': history.id,
+            'username': username,
+            'query_image': history.query_image,
+            'timestamp': history.search_timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        })
+    
+    return jsonify({
+        'success': True,
+        'data': results,
+        'total': total_count,
+        'pages': math.ceil(total_count / per_page),
+        'current_page': page
+    })
+
+@admin_bp.route('/api/search-history/delete/<int:history_id>', methods=['DELETE'])
+@login_required
+def delete_search_history(history_id):
+    if session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        history_entry = SearchHistory.query.get_or_404(history_id)
+        db.session.delete(history_entry)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Search history deleted successfully'
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': f'Error deleting search history: {str(e)}'
+        }), 500
+
+@admin_bp.route('/api/search-history/clear', methods=['DELETE'])
+@login_required
+def clear_search_history():
+    if session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        SearchHistory.query.delete()
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'All search history cleared successfully'
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': f'Error clearing search history: {str(e)}'
+        }), 500
+
+@admin_bp.route('/api/search-history/export')
+@login_required
+def export_search_history():
+    if session.get('user_role') != 'admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    try:
+        # Query all search history with usernames
+        history_data = db.session.query(
+            SearchHistory, User.username
+        ).join(
+            User, SearchHistory.user_id == User.id
+        ).order_by(
+            SearchHistory.search_timestamp.desc()
+        ).all()
+        
+        # Create CSV in memory
+        si = StringIO()
+        writer = csv.writer(si)
+        writer.writerow(['No.', 'Username', 'Query Image', 'Timestamp'])
+        
+        for i, (history, username) in enumerate(history_data, 1):
+            writer.writerow([
+                i,
+                username,
+                history.query_image,
+                history.search_timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+        
+        output = si.getvalue()
+        si.close()
+        
+        # Create response
+        return send_file(
+            StringIO(output),
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name=f'search_history_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
+        )
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Error exporting search history: {str(e)}'
+        }), 500
+
+>>>>>>> 66c8319c7f861e08bf1a2a6f56fe4beed2b85c06
 @admin_bp.route('/process_database', methods=['POST'])
 def process_database():
     if session.get('user_role') != 'admin':
