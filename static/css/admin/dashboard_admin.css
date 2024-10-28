@@ -369,3 +369,10 @@ th, td {
     margin-top: 10px;
     text-align: left;
 }
+
+.history-image {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+}

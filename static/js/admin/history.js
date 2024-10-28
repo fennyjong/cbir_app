@@ -1,4 +1,3 @@
-// search_history.js
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize variables
     let currentPage = 1;
@@ -16,6 +15,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const historyNextBtn = document.getElementById('historyNextBtn');
     const historyCurrentPage = document.getElementById('historyCurrentPage');
     const historyEntriesInfo = document.getElementById('historyEntriesInfo');
+
+    // Function to handle view action
+    async function handleView(id) {
+        try {
+            const response = await fetch(`/api/search-history/${id}`);
+            const data = await response.json();
+            
+            // You can implement your view logic here
+            // For example, showing a modal with detailed information
+            // This is just a placeholder alert
+            alert(`Viewing details for entry ${id}`);
+        } catch (error) {
+            console.error('Error viewing history entry:', error);
+        }
+    }
+
+    // Function to handle delete action
+    async function handleDelete(id) {
+        if (confirm('Are you sure you want to delete this entry?')) {
+            try {
+                const response = await fetch(`/api/search-history/${id}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    loadSearchHistory();
+                }
+            } catch (error) {
+                console.error('Error deleting history entry:', error);
+            }
+        }
+    }
 
     // Function to load search history
     async function loadSearchHistory() {
@@ -37,6 +67,16 @@ document.addEventListener('DOMContentLoaded', function() {
                              onerror="this.src='/static/placeholder-image.png'">
                     </td>
                     <td>${item.timestamp}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="handleView(${item.id}, '${item.query_image}', '${item.username}', '${item.timestamp}')" 
+                                class="text-blue-600 hover:text-blue-900 mr-3">
+                            <i class="fas fa-eye"></i> Detail
+                        </button>
+                        <button onclick="handleDelete(${item.id})" 
+                                class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
                 `;
                 historyTableBody.appendChild(row);
             });
@@ -55,6 +95,10 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error loading search history:', error);
         }
     }
+
+    // Make handleView and handleDelete functions globally available
+    window.handleView = handleView;
+    window.handleDelete = handleDelete;
 
     // Event Listeners
     historySearchInput.addEventListener('input', function(e) {

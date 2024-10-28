@@ -118,7 +118,6 @@ function displayLabels() {
     tableBody.innerHTML = '';
 
     // Generate table rows
- // Generate table rows
 paginatedLabels.forEach((label, index) => {
     const row = document.createElement('tr');
     row.className = 'hover:bg-gray-50';

@@ -1,10 +1,13 @@
 from flask import Flask, jsonify, request, flash, redirect, url_for, render_template, session, send_from_directory, current_app, send_file
+from flask_login import LoginManager  # Import LoginManager
 from config import Config
 from models import db, User, SongketDataset, Label, SearchHistory
 from sqlalchemy import or_
 import io
 import os
 from sqlalchemy import func
+import csv
+import datetime
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -15,12 +18,22 @@ app.secret_key = os.urandom(24)
 # Initialize the database with the Flask app
 db.init_app(app)
 
+# Initialize the login manager
+login_manager = LoginManager()
+login_manager.init_app(app)  # Attach the login manager to the app
+login_manager.login_view = 'auth.login'  # Set the login route if user is not authenticated
+
 # Set up the UPLOAD_FOLDER
 base_dir = os.path.abspath(os.path.dirname(__file__))
 app.config['UPLOAD_FOLDER'] = os.path.join(base_dir, 'uploads')
 
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
+
+# Define the user loader function for Flask-Login
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
@@ -33,7 +46,8 @@ def get_datasets():
         'id': dataset.id,
         'region': dataset.region,
         'fabric_name': dataset.fabric_name,
-        'image_filename': dataset.image_filename
+        'image_filename': dataset.image_filename,
+        'query_image': dataset.query_image 
     } for dataset in datasets])
 
 @app.route('/edit_dataset', methods=['POST'])
@@ -158,50 +172,38 @@ def get_region(fabric_name):
         return region[0]
     return '', 204
 
-@app.route('/api/search-history', methods=['GET'])
+@app.route('/api/search-history')
 def get_search_history():
-    page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 10, type=int)
+    page, per_page = request.args.get('page', 1, int), request.args.get('per_page', 10, int)
     search_query = request.args.get('search', '')
-
-    query = SearchHistory.query.join(User)
-
-    if search_query:
-        query = query.filter(
-            or_(
-                User.username.ilike(f'%{search_query}%'),
-                SearchHistory.query_image.ilike(f'%{search_query}%')
-            )
-        )
-
-    # Order by timestamp descending (newest first)
-    query = query.order_by(SearchHistory.search_timestamp.desc())
-
-    # Paginate results
+    query = SearchHistory.query.join(User).filter(
+        or_(User.username.ilike(f'%{search_query}%'), SearchHistory.query_image.ilike(f'%{search_query}%'))
+    ).order_by(SearchHistory.search_timestamp.desc())
     pagination = query.paginate(page=page, per_page=per_page, error_out=False)
-
-    records = []
-    for idx, history in enumerate(pagination.items, start=1):
-        records.append({
-            'no': (page - 1) * per_page + idx,
-            'id': history.id,
-            'username': history.user.username,
-            'query_image': history.query_image,  # This will be the filename in static/uploads
-            'timestamp': history.search_timestamp.strftime('%Y-%m-%d %H:%M:%S'),
-        })
-
     return jsonify({
-        'data': records,
-        'total': pagination.total,
-        'pages': pagination.pages,
-        'current_page': page,
-        'per_page': per_page
+        'data': [{
+            'no': (page - 1) * per_page + idx + 1,
+            'id': h.id, 'username': h.user.username, 'query_image': h.query_image,
+            'timestamp': h.search_timestamp.strftime('%Y-%m-%d %H:%M:%S')
+        } for idx, h in enumerate(pagination.items)],
+        'total': pagination.total, 'pages': pagination.pages, 'current_page': page, 'per_page': per_page
     })
 
-# Add this to ensure static files are served
-@app.route('/static/<path:filename>')
-def serve_static(filename):
-    return send_from_directory('static', filename)
+# Delete search history
+@app.route('/api/search-history/<int:history_id>', methods=['DELETE'])
+def delete_search_history(history_id):
+    history = SearchHistory.query.get(history_id)
+    if history:
+        db.session.delete(history)
+        db.session.commit()
+        return jsonify(message='History deleted successfully')
+    return jsonify(error='History not found'), 404
+
+@app.route('/api/search-history', methods=['DELETE'])
+def delete_all_search_history():
+    deleted_count = SearchHistory.query.filter_by(deleted=0).update({'deleted': 1})
+    db.session.commit()
+    return jsonify(message=f'Successfully deleted {deleted_count} history records')
     
 # Import and register blueprints
 from routes.admin_routes import admin_bp
