@@ -4,25 +4,25 @@ from flask_bcrypt import Bcrypt
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-# Inisialisasi ekstensi
-db = SQLAlchemy()  # Inisialisasi SQLAlchemy untuk database
-bcrypt = Bcrypt()  # Inisialisasi Bcrypt untuk hashing password
+# Initialize extensions
+db = SQLAlchemy()  # Initialize SQLAlchemy for database
+bcrypt = Bcrypt()  # Initialize Bcrypt for password hashing
 
 class User(UserMixin, db.Model):
-    __tablename__ = 'users'  # Nama tabel di database
-    id = db.Column(db.Integer, primary_key=True)  # ID unik untuk pengguna
-    username = db.Column(db.String(80), unique=True, nullable=False)  # Nama pengguna unik
-    email = db.Column(db.String(120), unique=True, nullable=False)  # Email pengguna unik
-    password_hash = db.Column(db.String(255), nullable=False)  # Hash password
-    created_at = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)  # Waktu pendaftaran
-    last_login_at = db.Column(db.DateTime, nullable=True)  # Waktu login terakhir
+    __tablename__ = 'users'  # Table name in the database
+    id = db.Column(db.Integer, primary_key=True)  # Unique user ID
+    username = db.Column(db.String(80), unique=True, nullable=False)  # Unique username
+    email = db.Column(db.String(120), unique=True, nullable=False)  # Unique user email
+    password_hash = db.Column(db.String(255), nullable=False)  # Password hash
+    created_at = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)  # Registration time
+    last_login_at = db.Column(db.DateTime, nullable=True)  # Last login time
 
     def set_password(self, password):
-        """Mengatur password dan hash-nya."""
+        """Set password and hash it."""
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        """Memeriksa kecocokan password dengan hash."""
+        """Check if password matches hash."""
         return check_password_hash(self.password_hash, password)
 
 class SongketDataset(db.Model):
@@ -38,15 +38,15 @@ class SongketDataset(db.Model):
         return f'<SongketDataset {self.fabric_name} from {self.region}>'
 
 class Label(db.Model):
-    __tablename__ = 'labels'  # Nama tabel di database
-    id = db.Column(db.Integer, primary_key=True)  # ID unik untuk label
-    fabric_name = db.Column(db.String(100), nullable=False)  # Nama kain
-    region = db.Column(db.String(100), nullable=False)  # Wilayah asal kain
-    description = db.Column(db.Text, nullable=False)  # Deskripsi label
-    created_at = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)  # Waktu pembuatan label
+    __tablename__ = 'labels'  # Table name in the database
+    id = db.Column(db.Integer, primary_key=True)  # Unique label ID
+    fabric_name = db.Column(db.String(100), nullable=False)  # Fabric name
+    region = db.Column(db.String(100), nullable=False)  # Fabric origin region
+    description = db.Column(db.Text, nullable=False)  # Label description
+    created_at = db.Column(db.DateTime, server_default=db.func.now(), nullable=False)  # Label creation time
 
     def __init__(self, fabric_name, region, description):
-        """Inisialisasi atribut label."""
+        """Initialize label attributes."""
         self.fabric_name = fabric_name
         self.region = region
         self.description = description
@@ -64,3 +64,13 @@ class SearchHistory(db.Model):
     
     def __repr__(self):
         return f'<SearchHistory {self.user.username} - {self.search_timestamp}>'
+
+class SongketFeatures(db.Model):
+    __tablename__ = 'songket_features'  # Table name in the database
+
+    id = db.Column(db.Integer, primary_key=True)  # Primary key
+    image_name = db.Column(db.String(255), nullable=False, unique=True)  # Unique image name
+    features = db.Column(db.PickleType, nullable=False)  # Store features as a pickled object for easier array storage
+
+    def __repr__(self):
+        return f'<SongketFeatures image_name={self.image_name}>'
