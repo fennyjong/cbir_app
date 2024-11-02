@@ -7,7 +7,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/dashboard_admin.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/stats.css') }}">
 </head>
 <body class="bg-gray-100">
     <div class="flex h-screen">
@@ -74,39 +73,15 @@
             <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
                 <!-- Beranda Section -->
                 <div id="beranda" class="content-section active">
-                    <div id="dashboard-root">
-                        <!-- Timeframe buttons -->
-                        <div class="timeframe-buttons">
-                            <button onclick="setTimeframe('daily')" class="active">Harian</button>
-                            <button onclick="setTimeframe('monthly')">Bulanan</button>
-                            <button onclick="setTimeframe('yearly')">Tahunan</button>
-                        </div>
-                        
-                        <div class="charts-container">
-                            <div class="chart">
-                                <canvas id="userActivityCanvas"></canvas>
-                            </div>
-                            <div class="chart">
-                                <canvas id="datasetCanvas"></canvas>
-                            </div>
-                        </div>
-                        
-                        <div class="summary-cards">
-                            <div class="card">
-                                <h4>Total Login</h4>
-                                <p id="total-logins">0</p>
-                            </div>
-                            <div class="card">
-                                <h4>Total Registrasi</h4>
-                                <p id="total-registrations">0</p>
-                            </div>
-                            <div class="card">
-                                <h4>Total Dataset</h4>
-                                <p id="total-datasets">0</p>
-                            </div>
+                    <div class="welcome-message" id="welcome-message">
+                        <div class="container">
+                        <i class="fas fa-chalkboard-teacher"></i>Selamat Datang Administrator
+                        <div class="description">
+                            Pengembangan Sistem CBIR dalam Pengenalan Kain Songket Indonesia Menggunakan CNN untuk Feature Extraction dan Cosine Similarity
                         </div>
                     </div>
-                </div>
+                    </div>
+                    </div>
 
  <!-- Kelola Dataset Section -->
  <div id="kelola-dataset" class="content-section">
@@ -261,11 +236,8 @@
                         </div>
                     </div>
                 </div>
-<<<<<<< HEAD
 
-                <!-- Section Riwayat pencarian-->
-=======
->>>>>>> 66c8319c7f861e08bf1a2a6f56fe4beed2b85c06
+                <!--Riwayat pencarian section-->
                 <div id="riwayat-pencarian" class="content-section">
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <div class="flex justify-between items-center mb-6">
@@ -365,6 +337,7 @@
     </div>
 </div>
 </div>
+
 <!-- Informasi dataset -->
 <div id="datasetInfoModal" class="dataset-modal">
     <div class="dataset-modal-content">
@@ -417,5 +390,4 @@
 <script src="{{ url_for('static', filename='js/admin/label.js') }}"></script>
 <script src="{{ url_for('static', filename='js/admin/popup.js') }}"></script>
 <script src="{{ url_for('static', filename='js/admin/model.js') }}"></script>
-<script src="{{ url_for('static', filename='js/admin/stats.js') }}"></script>
-<script src="{{ url_for('static', filename='js/admin/riwayat_pencarian.js.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin/history.js') }}"></script>

@@ -1,11 +1,14 @@
+from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app, session, send_from_directory
 from flask_login import login_required
 from models import db, SongketDataset, Label, User, SearchHistory
 from werkzeug.utils import secure_filename
 import os
 import base64
+import math  # Importing math module
 from io import BytesIO
 from PIL import Image
+from sqlalchemy import or_  # Importing or_ from SQLAlchemy
 from proses.augmentasi import augment_image
 from proses.train_model import CBIRModel, get_last_processing_time
 

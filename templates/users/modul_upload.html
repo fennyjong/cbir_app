@@ -122,6 +122,49 @@
             font-weight: bold;
         }
 
+        .search-button {
+            background-color: #8a2be2;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 100px;
+        }
+
+        .search-button:disabled {
+            background-color: #b794e4;
+            cursor: not-allowed;
+        }
+
+        .spinner {
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinner.show {
+            display: inline-block;
+        }
+
+        .button-text {
+            display: inline;
+        }
+
+        .button-text.hide {
+            display: none;
+        }
+
         /* Responsive styles */
         @media (max-width: 768px) {
             .user-greeting-container {
@@ -183,7 +226,7 @@
     <main>
         <div class="container" id="upload-container">
             <h1>Unggah file Gambar</h1>
-            <form action="/user/hasil" method="POST" enctype="multipart/form-data">
+            <form action="/user/hasil" method="POST" enctype="multipart/form-data" id="uploadForm">
                 <div class="upload-area" id="dropArea">
                     <i class="fas fa-cloud-upload-alt upload-icon"></i>
                     <p class="upload-text">Drop files here</p>
@@ -196,7 +239,10 @@
                 <div class="button-container">
                     <button type="button" class="button reset-button" id="resetButton">Reset</button>
                     <button type="submit" class="button search-button" id="searchButton">
-                        <i class="fas fa-search"></i> Cari
+                        <div class="spinner" id="searchSpinner"></div>
+                        <span class="button-text">
+                            <i class="fas fa-search"></i> Cari
+                        </span>
                     </button>
                 </div>
             </form>
@@ -209,9 +255,28 @@
         const browseFiles = document.getElementById('browseFiles');
         const previewImage = document.getElementById('previewImage');
         const resetButton = document.getElementById('resetButton');
-        const searchButton = document.getElementById('searchButton');
         const uploadForm = document.getElementById('uploadForm');
+        const searchButton = document.getElementById('searchButton');
+        const searchSpinner = document.getElementById('searchSpinner');
+        const buttonText = searchButton.querySelector('.button-text');
 
+        // Handle form submission
+        uploadForm.addEventListener('submit', (e) => {
+            if (!fileInput.files || fileInput.files.length === 0) {
+                e.preventDefault();
+                alert('Please select an image file first.');
+                return;
+            }
+
+            // Show loading state
+            searchButton.disabled = true;
+            searchSpinner.classList.add('show');
+            buttonText.classList.add('hide');
+
+            // The form will automatically submit and redirect to the results page
+            // The loading state will be visible until the page changes
+        });
+        
         // Prevent default drag behaviors
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropArea.addEventListener(eventName, preventDefaults, false);
