@@ -69,8 +69,8 @@ class SongketFeatures(db.Model):
     __tablename__ = 'songket_features'  # Table name in the database
 
     id = db.Column(db.Integer, primary_key=True)  # Primary key
-    image_name = db.Column(db.String(255), nullable=False, unique=True)  # Unique image name
-    features = db.Column(db.PickleType, nullable=False)  # Store features as a pickled object for easier array storage
+    image_name = db.Column(db.String(255), nullable=False, unique=True)
+    features = db.Column(db.PickleType, nullable=False)
 
     def __repr__(self):
         return f'<SongketFeatures image_name={self.image_name}>'

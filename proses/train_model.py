@@ -2,7 +2,7 @@ import os
 import numpy as np
 from keras.applications.resnet import ResNet50, preprocess_input
 from keras.preprocessing.image import load_img, img_to_array
-from models import SongketDataset, SongketFeatures, db      
+from models import SongketDataset, SongketFeatures, db  # Adjust this import to your actual database module
 from tqdm import tqdm  # For progress tracking
 
 class CBIRModel:

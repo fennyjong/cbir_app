@@ -225,11 +225,10 @@
         </div>
 
         <div class="search-content">
-            <!-- Left side - Query Image -->
             <div class="query-section">
                 <h3>Gambar Query</h3>
                 <div class="image-box">
-                    <img src="{{ query_image }}" alt="Preview Gambar">
+                    <img src="{{ query_image }}" alt="Preview Gambar" id="queryImage">
                 </div>
                 <div class="radio-group">
                     <h3>Jumlah Hasil</h3>
@@ -238,7 +237,7 @@
                         5 Gambar
                     </label>
                     <label>
-                        <input type="radio" name="count" value="10" {% if n_results == 10 %}checked{% endif %}>
+                        <input type="radio" name="count" value="10" {% if n_results == 10 %}checked{% endif %} checked>
                         10 Gambar
                     </label>
                     <label>
@@ -252,17 +251,15 @@
                 </div>
             </div>
 
-            <!-- Right side - Similar Images Grid -->
             <div class="results-section">
                 <h3>Hasil Pencarian</h3>
-                <div class="results-grid">
+                <div class="results-grid" id="resultsGrid">
                     {% for result in results %}
                     <div class="result-card">
                         <img src="{{ result.image }}" alt="Similar image {{ loop.index }}">
                         <div class="similarity-label">
-                            <i class="fas fa-percentage"></i>
-                            {{ "%.1f"|format(result.similarity * 100) }}% mirip
-                        </div>
+                            {{ "%.1f"|format(result.similarity * 100) }} <i class="fas fa-percentage"></i>&nbsp;mirip
+                        </div>                        
                     </div>
                     {% endfor %}
                 </div>
@@ -271,17 +268,84 @@
     </div>
 
     <script>
-
-document.querySelector('.search-btn').addEventListener('click', function() {
+    document.querySelector('.search-btn').addEventListener('click', function() {
         window.location.href = this.getAttribute('data-url');
     });
     
-        document.querySelectorAll('input[name="count"]').forEach(radio => {
-            radio.addEventListener('change', (event) => {
-                const selectedCount = event.target.value;
-                window.location.href = `{{ url_for('user.upload') }}?count=${selectedCount}`;
+    // Function to update results
+    async function updateResults(selectedCount) {
+        const queryImage = document.getElementById('queryImage').src;
+        const queryImageName = queryImage.split('/').pop();
+        
+        try {
+            // Show loading state
+            document.getElementById('resultsGrid').style.opacity = '0.5';
+            
+            // Make AJAX request to get new results
+            const response = await fetch(`${window.location.pathname}?count=${selectedCount}&query_image=${queryImageName}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
             });
+            
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+            const data = await response.json();
+            
+            // Update results grid
+            const resultsGrid = document.getElementById('resultsGrid');
+            resultsGrid.innerHTML = '';
+            
+            // Create and append new result cards
+            data.results.forEach((result, index) => {
+                const resultCard = document.createElement('div');
+                resultCard.className = 'result-card';
+                resultCard.innerHTML = `
+                    <img src="${result.image}" alt="Similar image ${index + 1}">
+                    <div class="similarity-label">
+                        ${(result.similarity * 100).toFixed(1)} <i class="fas fa-percentage"></i>&nbsp;mirip
+                    </div>
+                `;
+                resultsGrid.appendChild(resultCard);
+            });
+            
+            // Update URL without page reload
+            const newUrl = new URL(window.location.pathname, window.location.origin);
+            newUrl.searchParams.set('count', selectedCount);
+            newUrl.searchParams.set('query_image', queryImageName);
+            window.history.pushState({}, '', newUrl.toString());
+            
+            // Reset opacity
+            document.getElementById('resultsGrid').style.opacity = '1';
+            
+        } catch (error) {
+            console.error('Error fetching results:', error);
+            // Reset opacity on error
+            document.getElementById('resultsGrid').style.opacity = '1';
+            alert('Terjadi kesalahan saat memuat hasil');
+        }
+    }
+    
+    // Add event listeners to radio buttons
+    document.querySelectorAll('input[name="count"]').forEach(radio => {
+        radio.addEventListener('change', (event) => {
+            const selectedCount = event.target.value;
+            updateResults(selectedCount);
         });
+    });
+    
+    // Initial load if there's a query image
+    window.addEventListener('load', () => {
+        const queryImage = document.getElementById('queryImage');
+        if (queryImage && queryImage.src) {
+            const checkedRadio = document.querySelector('input[name="count"]:checked');
+            if (checkedRadio) {
+                updateResults(checkedRadio.value);
+            }
+        }
+    });
     </script>
 </body>
 </html>
