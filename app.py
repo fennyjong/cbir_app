@@ -1,13 +1,11 @@
-from flask import Flask, jsonify, request, flash, redirect, url_for, render_template, session, send_from_directory, current_app, send_file
-from flask_login import LoginManager  # Import LoginManager
+from flask import Flask, jsonify, request, flash, redirect, url_for, render_template, session, send_from_directory, send_file
+from flask_login import LoginManager
 from config import Config
 from models import db, User, SongketDataset, Label, SearchHistory
-from sqlalchemy import or_
-import io
+from sqlalchemy import or_, func
 import os
-from sqlalchemy import func
 import csv
-import datetime
+import io
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -198,13 +196,6 @@ def delete_search_history(history_id):
         return jsonify(message='History deleted successfully')
     return jsonify(error='History not found'), 404
 
-@app.route('/api/search-history', methods=['DELETE'])
-def delete_all_search_history():
-    deleted_count = SearchHistory.query.filter_by(deleted=0).update({'deleted': 1})
-    db.session.commit()
-    return jsonify(message=f'Successfully deleted {deleted_count} history records')
-
-
 @app.route('/api/songket-details/<image_filename>')
 def get_songket_details(image_filename):
     try:
@@ -239,6 +230,16 @@ def get_songket_details(image_filename):
             'error': 'Internal server error'
         }), 500
     
+@app.route('/api/search-history/clear', methods=['POST'])
+def delete_history():  # Renamed to delete_history
+    try:
+        db.session.query(SearchHistory).delete()  # Clear all records
+        db.session.commit()
+        return jsonify({'message': 'Search history cleared successfully.'}), 200
+    except Exception as e:
+        print(f'Error clearing search history: {e}')
+        return jsonify({'message': 'Failed to clear search history.'}), 500
+
 # Import and register blueprints
 from routes.admin_routes import admin_bp
 from routes.auth_routes import auth_bp

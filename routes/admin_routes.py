@@ -141,3 +141,30 @@ def get_last_processing():
     return jsonify({
         'timestamp': timestamp
     })
+
+def generate_csv(history_records):
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    # Write the header
+    writer.writerow(['ID', 'Username', 'Query Image', 'Timestamp'])
+
+    # Write each record
+    for record in history_records:
+        writer.writerow([record.id, record.user.username, record.query_image, record.search_timestamp.strftime('%Y-%m-%d %H:%M:%S')])
+
+    output.seek(0)
+    return output
+
+@admin_bp.route('/api/search_history', methods=['GET'])
+def view_search_history():
+    history_records = SearchHistory.query.all()
+    csv_output = generate_csv(history_records)
+    
+    if 'export' in request.args:
+        return send_file(io.BytesIO(csv_output.getvalue().encode('utf-8')),
+                         as_attachment=True,
+                         download_name='search_history.csv',
+                         mimetype='text/csv')
+    
+    return csv_output.getvalue(), 200, {'Content-Type': 'text/csv'}

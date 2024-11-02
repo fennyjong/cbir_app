@@ -128,32 +128,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    exportHistoryBtn.addEventListener('click', async function() {
-        try {
-            const response = await fetch('/api/search-history/export');
-            const data = await response.json();
-            
-            // Create CSV content
-            let csvContent = 'data:text/csv;charset=utf-8,';
-            csvContent += 'Username,Query Image,Timestamp\n';
-            
-            data.data.forEach(row => {
-                csvContent += `${row.username},${row.query_image},${row.timestamp}\n`;
-            });
-
-            // Download CSV file
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement('a');
-            link.setAttribute('href', encodedUri);
-            link.setAttribute('download', 'search_history.csv');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error('Error exporting history:', error);
-        }
+    document.getElementById('exportHistoryBtn').addEventListener('click', function() {
+        window.open('/admin//api/search_history', '_blank'); // Update to include the /admin prefix
     });
-
+           
     historyPrevBtn.addEventListener('click', function() {
         if (currentPage > 1) {
             currentPage--;
