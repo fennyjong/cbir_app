@@ -4,6 +4,7 @@ from keras.applications.resnet import ResNet50, preprocess_input
 from keras.preprocessing.image import load_img, img_to_array
 from models import SongketDataset, SongketFeatures, db  # Adjust this import to your actual database module
 from tqdm import tqdm  # For progress tracking
+from datetime import datetime  # Import datetime for timestamp
 
 class CBIRModel:
     def __init__(self, upload_folder, batch_size=1000, features_path=None):
@@ -69,6 +70,9 @@ class CBIRModel:
             processed += len(pending_features)
             print(f"\nSaved final batch of {len(pending_features)} features. Total processed: {processed}")
 
+        # Write the last processing time to a text file
+        self._write_last_processing_time()
+
         print(f"\nProcessing complete:")
         print(f"- Total images processed: {processed}")
         print(f"- Images skipped (already existed): {skipped}")
@@ -94,7 +98,7 @@ class CBIRModel:
         except Exception as e:
             db.session.rollback()
             print(f"Error saving batch: {str(e)}")
-            
+
     def get_features_from_db(self):
         """Retrieve all features from the database in batches."""
         features_dict = {
@@ -123,6 +127,12 @@ class CBIRModel:
         
         print(f"\nLoaded {len(features_dict['filenames'])} features successfully")
         return features_dict
+
+    def _write_last_processing_time(self):
+        """Write the last processing time to a text file."""
+        os.makedirs('model', exist_ok=True)  # Create the 'model' directory if it doesn't exist
+        with open('model/last_processing.txt', 'w') as f:
+            f.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))  # Format: YYYY-MM-DD HH:MM:SS
 
 def get_last_processing_time():
     """Get the last processing time from a text file."""
