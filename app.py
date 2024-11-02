@@ -203,6 +203,41 @@ def delete_all_search_history():
     deleted_count = SearchHistory.query.filter_by(deleted=0).update({'deleted': 1})
     db.session.commit()
     return jsonify(message=f'Successfully deleted {deleted_count} history records')
+
+
+@app.route('/api/songket-details/<image_filename>')
+def get_songket_details(image_filename):
+    try:
+        # Query joining songket_dataset with labels table
+        songket_info = db.session.query(
+            SongketDataset,
+            Label.description
+        ).join(
+            Label,
+            (SongketDataset.fabric_name == Label.fabric_name) &
+            (SongketDataset.region == Label.region)
+        ).filter(
+            SongketDataset.image_filename == image_filename
+        ).first()
+        
+        if songket_info:
+            return jsonify({
+                'fabric_name': songket_info.SongketDataset.fabric_name,
+                'region': songket_info.SongketDataset.region,
+                'description': songket_info.description
+            })
+        else:
+            return jsonify({
+                'fabric_name': 'Unknown',
+                'region': 'Unknown',
+                'description': 'No details available for this songket'
+            }), 404
+            
+    except Exception as e:
+        print(f"Error fetching songket details: {e}")
+        return jsonify({
+            'error': 'Internal server error'
+        }), 500
     
 # Import and register blueprints
 from routes.admin_routes import admin_bp

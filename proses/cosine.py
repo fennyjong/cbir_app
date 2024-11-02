@@ -2,7 +2,7 @@ import os
 import numpy as np
 from keras.applications.resnet import ResNet50, preprocess_input
 from keras.preprocessing.image import load_img, img_to_array
-from models import SongketFeatures
+from models import SongketFeatures, SongketDataset
 from flask import url_for
 
 class CBIRModel:
@@ -23,14 +23,14 @@ class CBIRModel:
             return None
 
     def find_similar_images(self, query_features, n_results=10):
-        """Find similar images based on feature similarity."""
+        """Find similar images based on feature similarity and return detailed results."""
         if not isinstance(n_results, int) or n_results <= 0:
             n_results = 10  # Fallback to default if invalid input
             
         db_features = []
         image_names = []
 
-        # Process in batches
+        # Process dataset in batches to manage memory efficiently
         offset = 0
         while True:
             batch = SongketFeatures.query.limit(self.batch_size).offset(offset).all()
@@ -55,33 +55,30 @@ class CBIRModel:
         similarities = np.dot(db_features, query_features) / (db_norm * query_norm)
 
         # Get top N similar images
-        top_indices = np.argsort(similarities)[-n_results:][::-1]  # Remove the ::-2 step
+        top_indices = np.argsort(similarities)[-n_results:][::-1]  
 
         results = []
         for idx in top_indices:
-            # Use serve_upload endpoint for database images
-            image_url = url_for('user.serve_upload', 
-                              filename=image_names[idx], 
-                              _external=True)
+            image_name = image_names[idx]
             
+            # Query additional information from SongketDataset table
+            songket_data = SongketDataset.query.filter_by(image_filename=image_name).first()
+            if songket_data:
+                fabric_name = songket_data.fabric_name
+                region = songket_data.region
+            else:
+                fabric_name = "Unknown"
+                region = "Unknown"
+
+            # Generate the URL for the image
+            image_url = url_for('user.serve_upload', filename=image_name, _external=True)
+            
+            # Append the result with detailed information
             results.append({
                 'image': image_url,
+                'fabric_name': fabric_name,
+                'region': region,
                 'similarity': float(similarities[idx])
             })
 
-        return results[:n_results]  # Ensure we return exactly n_results items
-
-def get_last_processing_time():
-    """Get the last processing time from a text file."""
-    try:
-        with open('model/last_processing.txt') as f:  # Fixed file path
-            return f.read().strip()
-    except FileNotFoundError:
-        print("Last processing time file not found.")
-        return None
-
-# Usage example
-if __name__ == "__main__":
-    model = CBIRModel(upload_folder='uploads/', batch_size=1000)
-    success, message = model.process_database()
-    print(message)
+        return results[:n_results] 

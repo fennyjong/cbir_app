@@ -62,10 +62,12 @@ def hasil():
 
         image_url = url_for('static', filename=f'uploads/{filename}')
         
+        # Ekstrak fitur dari gambar query
         query_features = model.extract_features(static_filepath)
         if query_features is None:
             return "Error processing image", 400
         
+        # Dapatkan jumlah hasil pencarian yang diminta
         try:
             n_results = int(request.form.get('count', 10))
             if n_results <= 0:
@@ -73,8 +75,10 @@ def hasil():
         except (TypeError, ValueError):
             n_results = 10
             
+        # Cari gambar yang mirip dan ambil detail tambahan
         similar_results = model.find_similar_images(query_features, n_results)
         
+        # Simpan riwayat pencarian
         search_history = SearchHistory(
             user_id=current_user.id,
             query_image=filename,
@@ -89,17 +93,19 @@ def hasil():
             db.session.rollback()
             return "Error saving search history", 500
 
+        # Jika permintaan AJAX, kembalikan JSON
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({
                 'results': similar_results
             })
 
+        # Tampilkan hasil dengan nama kain dan asal daerah
         return render_template('users/modul_hasil.html',
                              query_image=image_url,
                              n_results=n_results,
                              results=similar_results)
     
-    # Handle GET request
+    # (Kode untuk handle GET request tetap sama)
     try:
         n_results = int(request.args.get('count', 10))
         if n_results <= 0:

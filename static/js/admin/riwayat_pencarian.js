@@ -10,6 +10,7 @@ function initSearchHistory() {
     const historyEntriesSelect = document.getElementById('historyEntriesSelect');
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
     const exportHistoryBtn = document.getElementById('exportHistoryBtn');
+    const historyEntriesInfo = document.getElementById('historyEntriesInfo');
 
     // Pagination controls
     const historyPrevBtn = document.getElementById('historyPrevBtn');

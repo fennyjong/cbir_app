@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app, session, send_from_directory
 from flask_login import login_required
-from models import db, SongketDataset, Label
+from models import db, SongketDataset, SearchHistory, Label
 from werkzeug.utils import secure_filename
 import os
 import base64
@@ -8,6 +8,10 @@ from io import BytesIO
 from PIL import Image
 from proses.augmentasi import augment_image
 from proses.train_model import CBIRModel, get_last_processing_time
+from flask import Blueprint, jsonify, send_file
+from datetime import datetime
+import csv
+import io
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -107,8 +111,7 @@ def process_database():
 
     try:
         cbir = CBIRModel(
-            upload_folder=current_app.config['UPLOAD_FOLDER'],
-            features_path='model/features.h5'
+            upload_folder=current_app.config['UPLOAD_FOLDER']
         )
         
         success, message = cbir.process_database()
@@ -131,51 +134,7 @@ def process_database():
             'success': False,
             'message': f'Processing failed: {str(e)}'
         })
-
-@admin_bp.route('/search_similar', methods=['POST'])
-def search_similar():
-    if 'image' not in request.files:
-        return jsonify({
-            'success': False,
-            'message': 'No image file provided'
-        })
-
-    try:
-        image = request.files['image']
-        
-        # Save temporary file
-        temp_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'temp_query.jpg')
-        image.save(temp_path)
-
-        # Initialize CBIR model
-        cbir = CBIRModel(
-            upload_folder=current_app.config['UPLOAD_FOLDER'],
-            features_path='model/features.h5'
-        )
-
-        # Search for similar images
-        results = cbir.search_similar(temp_path, top_k=5)
-        
-        # Remove temporary file
-        os.remove(temp_path)
-
-        if results is None:
-            return jsonify({
-                'success': False,
-                'message': 'Error processing query image'
-            })
-
-        return jsonify({
-            'success': True,
-            'results': results
-        })
-
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Search failed: {str(e)}'
-        })
-
+    
 @admin_bp.route('/get_last_processing', methods=['GET'])
 def get_last_processing():
     timestamp = get_last_processing_time()

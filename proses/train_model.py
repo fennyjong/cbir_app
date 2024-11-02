@@ -141,20 +141,3 @@ def get_last_processing_time():
             return f.read().strip()
     except FileNotFoundError:
         return None
-
-# Usage example
-if __name__ == "__main__":
-    # Initialize the model with the uploads folder and batch size
-    model = CBIRModel(
-        upload_folder='uploads/',
-        batch_size=1000  # Set batch size to 1000
-    )
-
-    # Process the database to extract and save features
-    success, message = model.process_database()
-    print(message)
-
-    # Retrieve features from the database
-    features = model.get_features_from_db()
-    if features:
-        print(f"Retrieved {len(features['filenames'])} features from the database.")
