@@ -22,13 +22,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch(`/api/search-history/${id}`);
             const data = await response.json();
             
-            // You can implement your view logic here
-            // For example, showing a modal with detailed information
-            // This is just a placeholder alert
             alert(`Viewing details for entry ${id}`);
         } catch (error) {
             console.error('Error viewing history entry:', error);
         }
+    }
+
+    // Function to handle detail action - Updated to use the correct template path
+    function handleDetail(queryImage) {
+        // Navigate to modul_hasil.html with the query image
+        window.location.href = `/user/hasil?query_image=${encodeURIComponent(queryImage)}`;
     }
 
     // Function to handle delete action
@@ -63,13 +66,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>
                         <img src="/static/uploads/${item.query_image}" 
                              alt="Query Image" 
-                             class="history-image"
+                             class="history-image cursor-pointer"
+                             onclick="handleDetail('${item.query_image}')"
                              onerror="this.src='/static/placeholder-image.png'">
                     </td>
                     <td>${item.timestamp}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="handleView(${item.id}, '${item.query_image}', '${item.username}', '${item.timestamp}')" 
-                                class="text-blue-600 hover:text-blue-900 mr-3">
+                        <button onclick="handleDetail('${item.query_image}')" 
+                                class="text-blue-600 hover:text-blue-900 mr-2">
                             <i class="fas fa-eye"></i> Detail
                         </button>
                         <button onclick="handleDelete(${item.id})" 
@@ -96,9 +100,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Make handleView and handleDelete functions globally available
+    // Make functions globally available
     window.handleView = handleView;
     window.handleDelete = handleDelete;
+    window.handleDetail = handleDetail;
 
     // Event Listeners
     historySearchInput.addEventListener('input', function(e) {
@@ -129,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById('exportHistoryBtn').addEventListener('click', function() {
-        window.open('/admin//api/search_history', '_blank'); // Update to include the /admin prefix
+        window.open('/admin/api/search_history', '_blank');
     });
            
     historyPrevBtn.addEventListener('click', function() {
