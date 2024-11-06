@@ -122,7 +122,6 @@ deleteMultipleBtn.addEventListener('click', () => {
     }
 });
 
-
 // Select/Deselect all checkboxes
 const selectAllCheckbox = document.getElementById('selectAll');
 selectAllCheckbox.addEventListener('change', function() {
@@ -190,39 +189,11 @@ let datasets = [];
             datasetEntriesInfo.textContent = `Showing ${startIndex + 1} to ${Math.min(startIndex + entriesPerPage, totalEntries)} of ${totalEntries} entries`;
             datasetCurrentPage.textContent = currentPage;
         }
-
-    // Edit and delete dataset functionality
-    function editDataset(id) {
-        const currentName = document.getElementById(`class-${id}`).textContent;
-        const currentRegion = document.querySelector(`#region-${id}`).textContent; // Dapatkan asal daerah saat ini
-    
-        const newName = prompt("Masukkan nama kain:", currentName);
-        const newRegion = prompt("Masukkan asal daerah kain:", currentRegion); // Tambahkan prompt untuk asal daerah
-    
-        if ((newName && newName !== currentName) || (newRegion && newRegion !== currentRegion)) {
-            fetch('/edit_dataset', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    id: id, 
-                    fabric_name: newName, 
-                    region: newRegion // Kirim asal daerah baru
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById(`class-${id}`).textContent = newName;
-                    document.querySelector(`#region-${id}`).textContent = newRegion; // Perbarui asal daerah di tampilan
-                    alert('Dataset updated successfully');
-                } else {
-                    alert('Failed to update dataset');
-                }
-            });
+        
+        function editDataset(id) {
+            // Redirect to edit page with dataset ID
+            window.location.href = `/admin/edit_dataset/${id}`;
         }
-    }    
 
     function deleteDataset(id) {
         if (confirm('Are you sure you want to delete this dataset?')) {

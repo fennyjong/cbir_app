@@ -168,3 +168,52 @@ def view_search_history():
                          mimetype='text/csv')
     
     return csv_output.getvalue(), 200, {'Content-Type': 'text/csv'}
+@admin_bp.route('/edit_dataset/<int:id>', methods=['GET', 'POST'])
+def edit_dataset_page(id):
+    dataset = SongketDataset.query.get_or_404(id)
+    
+    # Mengambil data dari tabel Label untuk dropdown
+    fabric_data = db.session.query(Label.fabric_name, Label.region).distinct().order_by(Label.fabric_name).all()
+    
+    # Konversi ke dictionary untuk kemudahan akses di template
+    fabric_regions = {fabric: region for fabric, region in fabric_data}
+    fabric_names = list(fabric_regions.keys())
+
+    # Jika form di-submit, update dataset
+    if request.method == 'POST':
+        fabric_name = request.form.get('label_name')
+        region = request.form.get('region')
+
+        # Update dataset
+        dataset.fabric_name = fabric_name
+        dataset.region = region
+        try:
+            db.session.commit()
+            flash('Dataset berhasil diperbarui!', 'success')  # Flash success message
+            return redirect(url_for('admin_bp.edit_dataset_page', id=id))  # Redirect back to the same page to trigger pop-up
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error: {str(e)}', 'error')
+            return redirect(url_for('admin_bp.edit_dataset_page', id=id))  # Redirect back if error
+
+    return render_template('admin/edit_dataset.html', 
+                           dataset=dataset, 
+                           fabric_names=fabric_names,
+                           fabric_regions=fabric_regions)
+
+@admin_bp.route('/api/update_dataset/<int:id>', methods=['POST'])
+def update_dataset(id):
+    data = request.get_json()
+    fabric_name = data.get('fabric_name')
+    region = data.get('region')
+
+    # Validate or process the data and update the dataset
+    # Example: Update dataset in database
+    dataset = SongketDataset.query.get(id)
+    if dataset:
+        dataset.fabric_name = fabric_name
+        dataset.region = region
+        db.session.commit()
+        return jsonify(success=True)
+    else:
+        return jsonify(success=False, message="Dataset not found"), 404
