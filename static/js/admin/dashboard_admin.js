@@ -122,6 +122,7 @@ deleteMultipleBtn.addEventListener('click', () => {
     }
 });
 
+
 // Select/Deselect all checkboxes
 const selectAllCheckbox = document.getElementById('selectAll');
 selectAllCheckbox.addEventListener('change', function() {

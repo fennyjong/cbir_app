@@ -5,7 +5,7 @@ from models import db, SongketDataset
 app = Flask(__name__)
 
 # Konfigurasi database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/Skripsi_CBIR'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/Songket_Indonesia'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inisialisasi database dengan aplikasi Flask
@@ -27,7 +27,7 @@ def upload_all_images_rollback():
 
     try:
         for filename in uploaded_files:
-            new_dataset = SongketDataset(image_filename=filename, fabric_name="Songket Lebah Bergayut", region="Riau")
+            new_dataset = SongketDataset(image_filename=filename, fabric_name="Songket Awan Larat", region="Riau")
             db.session.add(new_dataset)
             success_count += 1
 

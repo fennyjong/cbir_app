@@ -28,12 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Function to handle detail action - Updated to use the correct template path
-    function handleDetail(queryImage) {
-        // Navigate to modul_hasil.html with the query image
-        window.location.href = `/user/hasil?query_image=${encodeURIComponent(queryImage)}`;
-    }
-
     // Function to handle delete action
     async function handleDelete(id) {
         if (confirm('Are you sure you want to delete this entry?')) {
@@ -66,16 +60,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>
                         <img src="/static/uploads/${item.query_image}" 
                              alt="Query Image" 
-                             class="history-image cursor-pointer"
-                             onclick="handleDetail('${item.query_image}')"
+                             class="history-image"
                              onerror="this.src='/static/placeholder-image.png'">
                     </td>
                     <td>${item.timestamp}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="handleDetail('${item.query_image}')" 
-                                class="text-blue-600 hover:text-blue-900 mr-2">
-                            <i class="fas fa-eye"></i> Detail
-                        </button>
                         <button onclick="handleDelete(${item.id})" 
                                 class="text-red-600 hover:text-red-900">
                             <i class="fas fa-trash"></i> Delete
@@ -100,10 +89,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Make functions globally available
+    // Make handleView and handleDelete functions globally available
     window.handleView = handleView;
     window.handleDelete = handleDelete;
-    window.handleDetail = handleDetail;
 
     // Event Listeners
     historySearchInput.addEventListener('input', function(e) {
@@ -134,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById('exportHistoryBtn').addEventListener('click', function() {
-        window.open('/admin/api/search_history', '_blank');
+        window.open('/admin/api/search_history', '_blank'); // Update to include the /admin prefix
     });
            
     historyPrevBtn.addEventListener('click', function() {

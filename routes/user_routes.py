@@ -69,9 +69,9 @@ def hasil():
         
         # Dapatkan jumlah hasil pencarian yang diminta
         try:
-            n_results = int(request.form.get('count', 10))
+            n_results = int(request.form.get('count', 3))
             if n_results <= 0:
-                n_results = 10
+                n_results = 3
         except (TypeError, ValueError):
             n_results = 10
             
@@ -107,11 +107,11 @@ def hasil():
     
     # (Kode untuk handle GET request tetap sama)
     try:
-        n_results = int(request.args.get('count', 10))
+        n_results = int(request.args.get('count', 3))
         if n_results <= 0:
-            n_results = 10
+            n_results = 3
     except (TypeError, ValueError):
-        n_results = 10
+        n_results = 3
         
     query_image = request.args.get('query_image', '')
     
