@@ -65,12 +65,15 @@ class SearchHistory(db.Model):
     def __repr__(self):
         return f'<SearchHistory {self.user.username} - {self.search_timestamp}>'
 
-class SongketFeatures(db.Model):
-    __tablename__ = 'songket_features'  # Table name in the database
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy import Float
 
+class SongketFeatures(db.Model):
+    __tablename__ = 'songket_features'
+    
     id = db.Column(db.Integer, primary_key=True)  # Primary key
-    image_name = db.Column(db.String(255), nullable=False, unique=True)
-    features = db.Column(db.PickleType, nullable=False)
+    image_name = db.Column(db.String(255), nullable=False, unique=True)  # Unique and not nullable
+    features = db.Column(ARRAY(Float(precision=8)), nullable=False)  # Array of FLOAT8, not nullable
 
     def __repr__(self):
         return f'<SongketFeatures image_name={self.image_name}>'

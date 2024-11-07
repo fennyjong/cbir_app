@@ -5,14 +5,14 @@ from models import db, SongketDataset
 app = Flask(__name__)
 
 # Konfigurasi database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/songket'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:admin@localhost:5432/Songket_Indonesia'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Inisialisasi database dengan aplikasi Flask
 db.init_app(app)
 @app.route('/upload_all_images_rollback', methods=['POST'])
 def upload_all_images_rollback():
-    rollback_folder = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'uploads')
+    rollback_folder = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'New folder')
     print("Checking rollback folder:", rollback_folder)
 
     if not os.path.exists(rollback_folder):
@@ -27,7 +27,7 @@ def upload_all_images_rollback():
 
     try:
         for filename in uploaded_files:
-            new_dataset = SongketDataset(image_filename=filename, fabric_name="Songket Subahnale", region="Lombok")
+            new_dataset = SongketDataset(image_filename=filename, fabric_name="Songket Awan Larat", region="Riau")
             db.session.add(new_dataset)
             success_count += 1
 

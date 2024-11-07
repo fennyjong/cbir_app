@@ -1,16 +1,17 @@
-from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, current_app, session, send_from_directory
 from flask_login import login_required
-from models import db, SongketDataset, Label, User, SearchHistory
+from models import db, SongketDataset, SearchHistory, Label
 from werkzeug.utils import secure_filename
 import os
 import base64
-import math  # Importing math module
 from io import BytesIO
 from PIL import Image
-from sqlalchemy import or_  # Importing or_ from SQLAlchemy
 from proses.augmentasi import augment_image
 from proses.train_model import CBIRModel, get_last_processing_time
+from flask import Blueprint, jsonify, send_file
+from datetime import datetime
+import csv
+import io
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -110,8 +111,7 @@ def process_database():
 
     try:
         cbir = CBIRModel(
-            upload_folder=current_app.config['UPLOAD_FOLDER'],
-            features_path='model/features.h5'
+            upload_folder=current_app.config['UPLOAD_FOLDER']
         )
         
         success, message = cbir.process_database()
@@ -134,54 +134,86 @@ def process_database():
             'success': False,
             'message': f'Processing failed: {str(e)}'
         })
-
-@admin_bp.route('/search_similar', methods=['POST'])
-def search_similar():
-    if 'image' not in request.files:
-        return jsonify({
-            'success': False,
-            'message': 'No image file provided'
-        })
-
-    try:
-        image = request.files['image']
-        
-        # Save temporary file
-        temp_path = os.path.join(current_app.config['UPLOAD_FOLDER'], 'temp_query.jpg')
-        image.save(temp_path)
-
-        # Initialize CBIR model
-        cbir = CBIRModel(
-            upload_folder=current_app.config['UPLOAD_FOLDER'],
-            features_path='model/features.h5'
-        )
-
-        # Search for similar images
-        results = cbir.search_similar(temp_path, top_k=5)
-        
-        # Remove temporary file
-        os.remove(temp_path)
-
-        if results is None:
-            return jsonify({
-                'success': False,
-                'message': 'Error processing query image'
-            })
-
-        return jsonify({
-            'success': True,
-            'results': results
-        })
-
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': f'Search failed: {str(e)}'
-        })
-
+    
 @admin_bp.route('/get_last_processing', methods=['GET'])
 def get_last_processing():
     timestamp = get_last_processing_time()
     return jsonify({
         'timestamp': timestamp
     })
+
+def generate_csv(history_records):
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    # Write the header
+    writer.writerow(['ID', 'Username', 'Query Image', 'Timestamp'])
+
+    # Write each record
+    for record in history_records:
+        writer.writerow([record.id, record.user.username, record.query_image, record.search_timestamp.strftime('%Y-%m-%d %H:%M:%S')])
+
+    output.seek(0)
+    return output
+
+@admin_bp.route('/api/search_history', methods=['GET'])
+def view_search_history():
+    history_records = SearchHistory.query.all()
+    csv_output = generate_csv(history_records)
+    
+    if 'export' in request.args:
+        return send_file(io.BytesIO(csv_output.getvalue().encode('utf-8')),
+                         as_attachment=True,
+                         download_name='search_history.csv',
+                         mimetype='text/csv')
+    
+    return csv_output.getvalue(), 200, {'Content-Type': 'text/csv'}
+@admin_bp.route('/edit_dataset/<int:id>', methods=['GET', 'POST'])
+def edit_dataset_page(id):
+    dataset = SongketDataset.query.get_or_404(id)
+    
+    # Mengambil data dari tabel Label untuk dropdown
+    fabric_data = db.session.query(Label.fabric_name, Label.region).distinct().order_by(Label.fabric_name).all()
+    
+    # Konversi ke dictionary untuk kemudahan akses di template
+    fabric_regions = {fabric: region for fabric, region in fabric_data}
+    fabric_names = list(fabric_regions.keys())
+
+    # Jika form di-submit, update dataset
+    if request.method == 'POST':
+        fabric_name = request.form.get('label_name')
+        region = request.form.get('region')
+
+        # Update dataset
+        dataset.fabric_name = fabric_name
+        dataset.region = region
+        try:
+            db.session.commit()
+            flash('Dataset berhasil diperbarui!', 'success')  # Flash success message
+            return redirect(url_for('admin_bp.edit_dataset_page', id=id))  # Redirect back to the same page to trigger pop-up
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error: {str(e)}', 'error')
+            return redirect(url_for('admin_bp.edit_dataset_page', id=id))  # Redirect back if error
+
+    return render_template('admin/edit_dataset.html', 
+                           dataset=dataset, 
+                           fabric_names=fabric_names,
+                           fabric_regions=fabric_regions)
+
+@admin_bp.route('/api/update_dataset/<int:id>', methods=['POST'])
+def update_dataset(id):
+    data = request.get_json()
+    fabric_name = data.get('fabric_name')
+    region = data.get('region')
+
+    # Validate or process the data and update the dataset
+    # Example: Update dataset in database
+    dataset = SongketDataset.query.get(id)
+    if dataset:
+        dataset.fabric_name = fabric_name
+        dataset.region = region
+        db.session.commit()
+        return jsonify(success=True)
+    else:
+        return jsonify(success=False, message="Dataset not found"), 404

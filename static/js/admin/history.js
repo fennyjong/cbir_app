@@ -22,9 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch(`/api/search-history/${id}`);
             const data = await response.json();
             
-            // You can implement your view logic here
-            // For example, showing a modal with detailed information
-            // This is just a placeholder alert
             alert(`Viewing details for entry ${id}`);
         } catch (error) {
             console.error('Error viewing history entry:', error);
@@ -68,10 +65,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     </td>
                     <td>${item.timestamp}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="handleView(${item.id}, '${item.query_image}', '${item.username}', '${item.timestamp}')" 
-                                class="text-blue-600 hover:text-blue-900 mr-3">
-                            <i class="fas fa-eye"></i> Detail
-                        </button>
                         <button onclick="handleDelete(${item.id})" 
                                 class="text-red-600 hover:text-red-900">
                             <i class="fas fa-trash"></i> Delete
@@ -128,32 +121,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    exportHistoryBtn.addEventListener('click', async function() {
-        try {
-            const response = await fetch('/api/search-history/export');
-            const data = await response.json();
-            
-            // Create CSV content
-            let csvContent = 'data:text/csv;charset=utf-8,';
-            csvContent += 'Username,Query Image,Timestamp\n';
-            
-            data.data.forEach(row => {
-                csvContent += `${row.username},${row.query_image},${row.timestamp}\n`;
-            });
-
-            // Download CSV file
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement('a');
-            link.setAttribute('href', encodedUri);
-            link.setAttribute('download', 'search_history.csv');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (error) {
-            console.error('Error exporting history:', error);
-        }
+    document.getElementById('exportHistoryBtn').addEventListener('click', function() {
+        window.open('/admin/api/search_history', '_blank'); // Update to include the /admin prefix
     });
-
+           
     historyPrevBtn.addEventListener('click', function() {
         if (currentPage > 1) {
             currentPage--;

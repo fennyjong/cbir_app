@@ -12,18 +12,6 @@
     }
 }
 
-/* Welcome message styles */
-.welcome-message {
-    color: var(--primary-color);
-    text-align: left;
-    font-size: 1.5rem;
-    margin-top: 1rem;
-}
-
-.welcome-message i {
-    margin-right: 8px; /* Space between icon and text */
-}
-
 /* Main container styles */
 .container {
     max-width: 600px;

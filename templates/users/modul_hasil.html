@@ -6,213 +6,400 @@
     <title>CBIR Songket Indonesia - Results</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #5B3E96;      /* Deep Purple */
-            --primary-light: #8A6FBE;      /* Light Purple */
-            --primary-dark: #412B6B;       /* Dark Purple */
-            --accent-color: #9C27B0;       /* Bright Purple */
-            --background-color: #F8F7FC;   /* Light Purple Background */
-            --text-color: #2A1B4D;         /* Dark Purple Text */
-            --card-shadow: 0 4px 6px rgba(91, 62, 150, 0.1);
-            --transition: all 0.3s ease;
-        }
+:root {
+    --primary-color: #5B3E96;      /* Deep Purple */
+    --primary-light: #8A6FBE;      /* Light Purple */
+    --primary-dark: #412B6B;       /* Dark Purple */
+    --accent-color: #9C27B0;       /* Bright Purple */
+    --background-color: #F8F7FC;   /* Light Purple Background */
+    --text-color: #2A1B4D;         /* Dark Purple Text */
+    --card-shadow: 0 4px 6px rgba(91, 62, 150, 0.1);
+    --transition: all 0.3s ease;
+}
 
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+/* Base Styles */
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-            padding: 20px;
-            border-radius: 12px;
-            color: white;
-            box-shadow: var(--card-shadow);
-        }
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
 
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
+/* Header Styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+    padding: 20px;
+    border-radius: 12px;
+    color: white;
+    box-shadow: var(--card-shadow);
+}
 
-        .search-btn {
-            padding: 10px 20px;
-            background: white;
-            color: var(--primary-color);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
 
-        .search-btn:hover {
-            background: var(--background-color);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
+.search-btn {
+    padding: 10px 20px;
+    background: white;
+    color: var(--primary-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
-        .search-content {
-            display: flex;
-            gap: 30px;
-            margin-top: 20px;
-        }
+.search-btn:hover {
+    background: var(--background-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
 
-        .query-section {
-            flex: 0 0 250px;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            border: 1px solid rgba(91, 62, 150, 0.1);
-        }
+/* Layout Styles */
+.search-content {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+}
 
-        .results-section {
-            flex: 1;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            border: 1px solid rgba(91, 62, 150, 0.1);
-        }
+/* Query Section Styles */
+.query-section, .results-section {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(91, 62, 150, 0.1);
+}
 
-        .image-box {
-            border: 2px dashed var(--primary-light);
-            padding: 15px;
-            text-align: center;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            transition: var(--transition);
-            background: rgba(91, 62, 150, 0.03);
-        }
+.query-section {
+    flex: 0 0 250px;
+}
 
-        .image-box:hover {
-            border-color: var(--accent-color);
-            background: rgba(91, 62, 150, 0.05);
-        }
+.results-section {
+    flex: 1;
+}
 
-        .image-box img {
-            width: 100%;
-            height: auto;
-            max-height: 200px;
-            object-fit: contain;
-            border-radius: 4px;
-        }
+.image-box {
+    border: 2px dashed var(--primary-light);
+    padding: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    transition: var(--transition);
+    background: rgba(91, 62, 150, 0.03);
+}
 
-        .radio-group {
-            margin-top: 20px;
-        }
+.image-box:hover {
+    border-color: var(--accent-color);
+    background: rgba(91, 62, 150, 0.05);
+}
 
-        .radio-group h3 {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
+.image-box img {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 4px;
+}
 
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            margin: 12px 0;
-            cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 6px;
-            transition: var(--transition);
-            color: var(--text-color);
-        }
+/* Radio Group Styles */
+.radio-group {
+    margin-top: 20px;
+}
 
-        .radio-group label:hover {
-            background: rgba(91, 62, 150, 0.05);
-        }
+.radio-group h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
 
-        .radio-group input[type="radio"] {
-            margin-right: 10px;
-            cursor: pointer;
-            accent-color: var(--primary-color);
-        }
+.radio-group label {
+    display: flex;
+    align-items: center;
+    margin: 12px 0;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: var(--transition);
+    color: var(--text-color);
+}
 
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
-        }
+.radio-group label:hover {
+    background: rgba(91, 62, 150, 0.05);
+}
 
-        .result-card {
-            background: white;
-            border-radius: 8px;
-            padding: 10px;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            border: 1px solid rgba(91, 62, 150, 0.1);
-        }
+.radio-group input[type="radio"] {
+    margin-right: 10px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
 
-        .result-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(91, 62, 150, 0.15);
-            border-color: var(--primary-light);
-        }
+/* Results Grid Styles */
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+}
 
-        .result-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 6px;
-            margin-bottom: 10px;
-        }
+.result-card {
+    background: white;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+    border: 1px solid rgba(91, 62, 150, 0.1);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
 
-        .similarity-label {
-            font-size: 13px;
-            color: var(--primary-color);
-            text-align: center;
-            padding: 8px;
-            background: rgba(91, 62, 150, 0.05);
-            border-radius: 4px;
-            font-weight: 500;
-        }
+.result-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(91, 62, 150, 0.15);
+    border-color: var(--primary-light);
+}
 
-        h3 {
+.result-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+/* Fabric Info Styles */
+.fabric-info {
+    padding: 8px;
+    background: rgba(91, 62, 150, 0.05);
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.fabric-name {
+    font-weight: 500;
+    color: var(--primary-color);
+    font-size: 14px; /* Increased from 14px */
+    margin-bottom: 8px; /* Increased spacing */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fabric-region {
+    font-size: 14px; /* Increased from 12px */
+    color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 6px; /* Space between icon and text */
+}
+
+.fabric-region i {
+    color: var(--primary-color);
+    font-size: 14px;
+}
+.similarity-label {
+    font-size: 13px;
+    color: var(--primary-color);
+    text-align: center;
+    padding: 8px;
+    background: rgba(91, 62, 150, 0.05);
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    display: block;
+    opacity: 1;
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    margin: 50px auto;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.close-modal {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--primary-color);
+    transition: var(--transition);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(91, 62, 150, 0.1);
+}
+
+.close-modal:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.modal-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: var(--card-shadow);
+}
+
+/* Detail Styles */
+.detail-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(91, 62, 150, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(91, 62, 150, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.detail-item:hover {
+    background: rgba(91, 62, 150, 0.08);
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+}
+
+.detail-value {
+    color: var(--text-color);
+    line-height: 1.6;
+    font-size: 15px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    padding: 4px 0;
+    text-align: justify;
+}
+
+h3 {
             color: var(--primary-color);
             margin-top: 0;
             margin-bottom: 20px;
             font-size: 18px;
         }
 
-        @media (max-width: 768px) {
-            .search-content {
-                flex-direction: column;
-            }
-            
-            .query-section {
-                flex: none;
-                width: auto;
-            }
-            
-            .results-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
+        .no-results-message {
+    grid-column: 1 / -1;
+    padding: 40px;
+    text-align: center;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid rgba(91, 62, 150, 0.1);
+}
 
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-        }
+.no-results-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+}
+
+.no-results-content h3 {
+    margin: 10px 0;
+    color: var(--primary-color);
+}
+
+.no-results-content p {
+    margin: 0;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .search-content {
+        flex-direction: column;
+    }
+    
+    .query-section {
+        flex: none;
+        width: auto;
+    }
+    
+    .results-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    .modal-content {
+        margin: 20px auto;
+        padding: 20px;
+        max-height: 90vh;
+    }
+    
+    .detail-item {
+        padding: 12px;
+    }
+    
+    .detail-label {
+        font-size: 14px;
+    }
+    
+    .detail-value {
+        font-size: 14px;
+    }
+}
     </style>
 </head>
 <body>
@@ -233,100 +420,228 @@
                 <div class="radio-group">
                     <h3>Jumlah Hasil</h3>
                     <label>
+                        <input type="radio" name="count" value="1" {% if n_results == 1 %}checked{% endif %}>
+                        1 Gambar
+                    </label>
+                    <label>
+                        <input type="radio" name="count" value="3" {% if n_results == 3 %}checked{% endif %} checked>
+                        3 Gambar
+                    </label>
+                    <label>
                         <input type="radio" name="count" value="5" {% if n_results == 5 %}checked{% endif %}>
                         5 Gambar
                     </label>
                     <label>
-                        <input type="radio" name="count" value="10" {% if n_results == 10 %}checked{% endif %} checked>
-                        10 Gambar
-                    </label>
-                    <label>
-                        <input type="radio" name="count" value="15" {% if n_results == 15 %}checked{% endif %}>
-                        15 Gambar
-                    </label>
-                    <label>
-                        <input type="radio" name="count" value="20" {% if n_results == 20 %}checked{% endif %}>
-                        20 Gambar
+                        <input type="radio" name="count" value="7" {% if n_results == 7 %}checked{% endif %}>
+                        7 Gambar
                     </label>
                 </div>
             </div>
 
-            <div class="results-section">
-                <h3>Hasil Pencarian</h3>
-                <div class="results-grid" id="resultsGrid">
-                    {% for result in results %}
-                    <div class="result-card">
-                        <img src="{{ result.image }}" alt="Similar image {{ loop.index }}">
-                        <div class="similarity-label">
-                            {{ "%.1f"|format(result.similarity * 100) }} <i class="fas fa-percentage"></i>&nbsp;mirip
-                        </div>                        
+                <div class="results-section">
+                    <h3>Hasil Pencarian</h3>
+                  
+                    <div class="results-grid" id="resultsGrid">
+                        {% for result in results %}
+                        <div class="result-card" data-image="{{ result.image.split('/')[-1] }}">
+                            <img src="{{ result.image }}" alt="Similar image {{ loop.index }}">
+                            <div class="fabric-info">
+                                <div class="fabric-name">{{ result.fabric_name }}</div>
+                                <div class="fabric-region">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    {{ result.region }}
+                                </div>
+                            </div>
+                            <div class="similarity-label">
+                                {{ "%.2f"|format(result.similarity * 100) }} <i class="fas fa-percentage"></i>&nbsp;mirip
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
+                
+
+    <div class="modal" id="songketModal">
+        <div class="modal-content">
+            <span class="close-modal">×</span>
+            <img class="modal-image" src="" alt="Songket Detail">
+            <div class="detail-item">
+                <div class="detail-label">
+                    <i class="fas fa-tag"></i> Nama Kain
                 </div>
+                <div class="detail-value" id="fabricName"></div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">
+                    <i class="fas fa-map-marker-alt"></i> Asal Daerah
+                </div>
+                <div class="detail-value" id="region"></div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">
+                    <i class="fas fa-info-circle"></i> Keterangan
+                </div>  
+                <div class="detail-value" id="description"></div>
             </div>
         </div>
     </div>
 
     <script>
+          const modal = document.getElementById('songketModal');
+        const closeModal = document.querySelector('.close-modal');
+
+        document.querySelectorAll('.result-card').forEach(card => {
+    card.addEventListener('click', async () => {
+        const imageUrl = card.querySelector('img').src;
+        const fabricName = card.querySelector('.fabric-name').textContent;
+        const region = card.querySelector('.region').textContent;
+        const imageFilename = card.dataset.image;
+        
+        showModal(imageUrl, fabricName, region, imageFilename);
+    });
+});
+        
+        // Function to fetch Songket details
+        async function fetchSongketDetails(imageFilename) {
+            try {
+                const response = await fetch(`/api/songket-details/${imageFilename}`);
+                if (!response.ok) throw new Error('Failed to fetch details');
+                return await response.json();
+            } catch (error) {
+                console.error('Error:', error);
+                return null;
+            }
+        }
+
+        // Function to show modal with loading state
+        function showModal(imageUrl) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+            
+            // Set image
+            const modalImage = modal.querySelector('.modal-image');
+            modalImage.src = imageUrl;
+            
+            // Show loading state
+            document.getElementById('fabricName').innerHTML = '<div class="loading"></div>';
+            document.getElementById('region').innerHTML = '<div class="loading"></div>';
+            document.getElementById('description').innerHTML = '<div class="loading"></div>';
+            
+            // Get image filename from URL
+            const imageFilename = imageUrl.split('/').pop();
+            
+            // Fetch and display details
+            fetchSongketDetails(imageFilename).then(details => {
+                if (details) {
+                    document.getElementById('fabricName').textContent = details.fabric_name;
+                    document.getElementById('region').textContent = details.region;
+                    document.getElementById('description').textContent = details.description;
+                } else {
+                    document.getElementById('fabricName').textContent = 'Information not available';
+                    document.getElementById('region').textContent = 'Information not available';
+                    document.getElementById('description').textContent = 'Information not available';
+                }
+            });
+        }
+
+        // Function to hide modal
+        function hideModal() {
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Add click event listeners to result cards
+        document.addEventListener('click', function(e) {
+            const resultCard = e.target.closest('.result-card');
+            if (resultCard) {
+                const image = resultCard.querySelector('img');
+                showModal(image.src);
+            }
+        });
+
+        // Close modal when clicking close button or outside
+        closeModal.addEventListener('click', hideModal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) hideModal();
+        });
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') hideModal();
+        });
+
     document.querySelector('.search-btn').addEventListener('click', function() {
         window.location.href = this.getAttribute('data-url');
     });
     
     // Function to update results
-    async function updateResults(selectedCount) {
-        const queryImage = document.getElementById('queryImage').src;
-        const queryImageName = queryImage.split('/').pop();
+async function updateResults(selectedCount) {
+    const queryImage = document.getElementById('queryImage').src;
+    const queryImageName = queryImage.split('/').pop();
+    
+    try {
+        const resultsGrid = document.getElementById('resultsGrid');
+        resultsGrid.style.opacity = '0.5';
         
-        try {
-            // Show loading state
-            document.getElementById('resultsGrid').style.opacity = '0.5';
-            
-            // Make AJAX request to get new results
-            const response = await fetch(`${window.location.pathname}?count=${selectedCount}&query_image=${queryImageName}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+        const response = await fetch(`${window.location.pathname}?count=${selectedCount}&query_image=${queryImageName}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
             }
-            
-            const data = await response.json();
-            
-            // Update results grid
-            const resultsGrid = document.getElementById('resultsGrid');
-            resultsGrid.innerHTML = '';
-            
-            // Create and append new result cards
+        });
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        const data = await response.json();
+        resultsGrid.innerHTML = '';
+        
+        if (!data.results || data.results.length === 0) {
+            // Create "No Results Found" message
+            const noResultsDiv = document.createElement('div');
+            noResultsDiv.className = 'no-results-message';
+            noResultsDiv.innerHTML = `
+                <div class="no-results-content">
+                    <i class="fas fa-search" style="font-size: 48px; color: var(--primary-color); margin-bottom: 20px;"></i>
+                    <h3>Hasil gambar tidak ditemukan</h3>
+                    <p>Tidak ada gambar yang memiliki kemiripan di atas 50%</p>
+                </div>
+            `;
+            resultsGrid.appendChild(noResultsDiv);
+        } else {
+            // Create result cards for matching images
             data.results.forEach((result, index) => {
                 const resultCard = document.createElement('div');
                 resultCard.className = 'result-card';
+                resultCard.dataset.image = result.image.split('/').pop();
                 resultCard.innerHTML = `
                     <img src="${result.image}" alt="Similar image ${index + 1}">
+                    <div class="fabric-info">
+                        <div class="fabric-name">${result.fabric_name}</div>
+                        <div class="fabric-region">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${result.region}
+                        </div>
+                    </div>
                     <div class="similarity-label">
-                        ${(result.similarity * 100).toFixed(1)} <i class="fas fa-percentage"></i>&nbsp;mirip
+                        ${(result.similarity * 100).toFixed(2)} <i class="fas fa-percentage"></i>&nbsp;mirip
                     </div>
                 `;
                 resultsGrid.appendChild(resultCard);
             });
-            
-            // Update URL without page reload
-            const newUrl = new URL(window.location.pathname, window.location.origin);
-            newUrl.searchParams.set('count', selectedCount);
-            newUrl.searchParams.set('query_image', queryImageName);
-            window.history.pushState({}, '', newUrl.toString());
-            
-            // Reset opacity
-            document.getElementById('resultsGrid').style.opacity = '1';
-            
-        } catch (error) {
-            console.error('Error fetching results:', error);
-            // Reset opacity on error
-            document.getElementById('resultsGrid').style.opacity = '1';
-            alert('Terjadi kesalahan saat memuat hasil');
         }
+        
+        const newUrl = new URL(window.location.pathname, window.location.origin);
+        newUrl.searchParams.set('count', selectedCount);
+        newUrl.searchParams.set('query_image', queryImageName);
+        window.history.pushState({}, '', newUrl.toString());
+        
+    } catch (error) {
+        console.error('Error fetching results:', error);
+        alert('Terjadi kesalahan saat memuat hasil');
+    } finally {
+        resultsGrid.style.opacity = '1';
     }
+}
     
     // Add event listeners to radio buttons
     document.querySelectorAll('input[name="count"]').forEach(radio => {

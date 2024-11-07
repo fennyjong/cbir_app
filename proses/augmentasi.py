@@ -10,7 +10,7 @@ seq = iaa.Sequential([
     iaa.TranslateY(percent=(-0.2, 0.2)),  # Pergeseran vertikal acak hingga 20%
 ])
 
-def augment_image(file_path, output_folder, num_augmentations=10):
+def augment_image(file_path, output_folder, num_augmentations=5):
     img = cv2.imread(file_path)
 
     if img is None:
