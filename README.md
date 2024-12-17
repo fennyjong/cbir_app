@@ -3,7 +3,7 @@
 
 ## Deskripsi Proyek
 
-Proyek ini bertujuan untuk mengembangkan sistem temu kembali (retrieval) kain Songket Indonesia menggunakan teknologi Convolutional Neural Network (CNN) dan Cosine Similarity. Sistem ini dirancang untuk membantu pengguna mengenali dan mencari kembali berbagai jenis kain Songket berdasarkan ciri visual, serta mendukung pelestarian budaya Indonesia dengan teknologi modern.
+Proyek ini bertujuan untuk mengembangkan sistem temu kembali (retrieval) kain Songket Indonesia menggunakan teknologi Convolutional Neural Network (CNN) dan Cosine Similarity. Sistem ini dirancang untuk membantu pengguna mengenali dan mencari gambar serupa dari berbagai jenis kain Songket berdasarkan ciri visual serta mendukung pelestarian budaya Indonesia dengan teknologi modern.
 
 ## 🌟 Fitur Utama
 
