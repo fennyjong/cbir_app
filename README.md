@@ -34,7 +34,7 @@ git clone https://github.com/fennyjong/cbir_app.git
 cd cbir_app
 ```
 
-### 2. Buat Virtual Environment (Opsional tapi Disarankan)
+### 2. Buat Virtual Environment (Opsional)
 ```bash
 python -m venv venv
 source venv/bin/activate  # Untuk Linux/Mac
@@ -61,7 +61,7 @@ python app.py
 Dataset yang digunakan dalam proyek ini dapat diakses melalui tautan berikut: [[Link Download Dataset Kain Songket](https://kirimin.link/QfehrNC0)]
 
 ## Rujukan Notebook Evaluasi
-Untuk melihat pengaturan file gambar, proses evaluasi kinerja sistem, termasuk perhitungan metrik presisi, recall, dan mAP, silakan akses tautan berikut: [Link Jupyter Notebook Evaluasi]
+Untuk melihat pengaturan file gambar seperti (Scrapping gambar, Resize seluruh gambar dalam folder tertentu , Proses Augmentasi Gambar dalam folder tertentu dan Pembuatan Label Ground Truth bedasarkan folder gambar uji) proses evaluasi kinerja sistem termasuk perhitungan metrik presisi, recall, dan mAP, silakan akses tautan berikut: [[Link Jupyter Notebook Evaluasi]](https://drive.google.com/file/d/1H2QF3WV7GhEZDC_w1UGNUijnLkD-cK2O/view?usp=sharing)
 
 ## Metode yang Digunakan
 - **Convolutional Neural Network (CNN)**: Untuk ekstraksi fitur visual dari gambar
