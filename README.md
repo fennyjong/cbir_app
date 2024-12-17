@@ -18,9 +18,7 @@ Proyek ini bertujuan untuk mengembangkan sistem temu kembali (retrieval) kain So
 - 🕑 **Riwayat Pencarian**: Pantau aktivitas pencarian pengguna untuk analisis dan pengelolaan data.
 
 ## 🚀 Manfaat Utama
-- **Preservasi Budaya**: Mendukung upaya pelestarian kain Songket Indonesia.
-- **Efisiensi Pencarian**: Mempermudah identifikasi kain Songket melalui teknologi AI.
-- **Peningkatan Akurasi**: Memanfaatkan CNN untuk ekstraksi fitur visual yang lebih detail.
+Untuk mempermudah akses informasi dan memperkenalkan kain songket sebagai warisan budaya Indonesia, sekaligus mendukung pemberdayaan industri kerajinan songket. Dengan meningkatkan pemasaran dan memperluas pasar, sistem ini dapat memperkenalkan kain songket kepada generasi muda dan wisatawan, memperkuat ekonomi kreatif, meningkatkan pengetahuan budaya dan mendukung pengembangan pariwisata di Indonesia.
 
 ## Prasyarat
 - Python 3.8+
