@@ -1,6 +1,6 @@
 langkah-langkah untuk menjalankan aplikasi Flask dalam mengirimkan gambar ke database
 
-1. Sesuaikan nama folder 
+1. Tambahkan folder dan Sesuaikan nama folder 
 
 2. Ubah URL database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@host:port/database_name'
