@@ -44,27 +44,3 @@ def upload_all_images_rollback():
 
 if __name__ == "__main__":
     app.run(port=5001, debug=True)  # Menjalankan aplikasi Flask di port 5001
-
-    """
-    Endpoint ini digunakan untuk mengupload semua gambar dari folder 'uploads' ke database.
-    
-    1. Menentukan jalur ke folder rollback dan memeriksa keberadaannya.
-    2. Mengambil daftar file gambar dari folder tersebut.
-    3. Mengupload setiap gambar ke dalam database sebagai entri baru di SongketDataset.
-    4. Mengembalikan respons JSON yang mencakup jumlah file yang berhasil diupload atau pesan kesalahan jika terjadi masalah.
-
-    Contoh permintaan POST:
-    POST: http://localhost:5001/upload_all_images_rollback 
-
-    Contoh respons sukses:
-    {
-        "success": true,
-        "uploaded_files": 560 (jumlah gambar)
-    }
-
-    Jika folder 'uploads' tidak ditemukan, akan mengembalikan:
-    {
-        "success": false,
-        "message": "Rollback folder not found."
-    }
-    """

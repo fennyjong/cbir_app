@@ -1,6 +1,7 @@
 langkah-langkah untuk menjalankan aplikasi Flask dalam mengirimkan gambar ke database
 
-1. Tambahkan folder dan Sesuaikan nama folder 
+1. Tambah folder baru dan Sesuaikan nama folder 
+ rollback_folder = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'New folder') #ubah 'New Folder' dengan nama yang sesuai
 
 2. Ubah URL database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://username:password@host:port/database_name'
@@ -11,7 +12,7 @@ new_dataset = SongketDataset(image_filename=filename, fabric_name="Songket Subah
 4. Jalankan di terminal
 python commit.py
 
-5. Kirim Permintaan POST ke API:
+5. Kirim Permintaan POST ke API di Postman:
 pilih metode POST 
 http://localhost:5001/upload_all_images_rollback
 klik send

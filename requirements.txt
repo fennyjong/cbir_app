@@ -10,16 +10,3 @@ tensorflow
 imgaug
 h5py 
 scikit-learn
-
-# Flask: Framework web 
-# Flask-SQLAlchemy: Akses database
-# Flask-Migrate: mengelola migrasi database
-# psycopg2-binary: Koneksi ke PostgreSQL
-# flask_bcrypt: Hashing password
-# flask_uploads: Kelola file upload
-# Pillow:  Memungkinkan pemrosesan gambar seperti pembacaan, penyimpanan, dan modifikasi gambar (resize, crop, dll.).
-# numpy: Operasi angka dan array
-# tensorflow: pengenalan gambar, suara, dll
-# imgaug: Memungkinkan modifikasi gambar dengan cara yang beragam (rotasi, flipping, zooming) untuk meningkatkan variasi data dalam pelatihan model pembelajaran mesin.
-# h5py : Sering digunakan untuk menyimpan model dan data besar dalam format HDF5
-# scikit-learn : Pustaka untuk pembelajaran mesin di Python.
