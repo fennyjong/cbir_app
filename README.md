@@ -101,8 +101,8 @@ Untuk melihat pengaturan file gambar seperti (Scrapping gambar, Resize seluruh g
 - **Convolutional Neural Network (CNN)**: Untuk ekstraksi fitur visual dari gambar
 - **Cosine Similarity**: Untuk menghitung tingkat kemiripan antara gambar yang diunggah dengan dataset
 
-## Rujukan Penggunaan
-Untuk mempelajari lebih lanjut cara kerja sistem, silakan merujuk pada dokumentasi di [[tautan dokumentasi](https://drive.google.com/file/d/16j-wzHSc_HFhpeagpHrDPMwJrpEaVhkj/view?usp=drive_link)].
+## Rujukan Penggunaan (Manual Book)
+Untuk mempelajari lebih lanjut cara kerja sistem silakan merujuk pada dokumentasi manual book di [[tautan dokumentasi](https://drive.google.com/file/d/16j-wzHSc_HFhpeagpHrDPMwJrpEaVhkj/view?usp=drive_link)].
 
 ## Batasan dan Catatan
 - Akurasi sistem bergantung pada kualitas dan variasi dataset
