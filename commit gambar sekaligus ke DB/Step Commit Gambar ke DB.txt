@@ -24,6 +24,6 @@ klik send
 }
 
 7. Cek database di PostgreSQL
-SELECT * FROM songket_dataset Where fabric_name="Songket Subahnale"; #ubah fabric_name yang sesuai
+SELECT * FROM songket_dataset WHERE fabric_name="Songket Subahnale"; #ubah fabric_name yang sesuai
 
 
