@@ -34,8 +34,8 @@ Sebelum menjalankan aplikasi, pastikan database telah dikonfigurasi dengan benar
    # Import dataset SQL
    psql -U your_username -d your_database_name < dataset_songket.sql
    ```
-   Atau menggunakan pgAdmin4:
-   - Buka pgAdmin4
+   Atau menggunakan pgAdmin:
+   - Buka pgAdmin
    - Buat database baru
    - Klik kanan pada database
    - Pilih Restore
