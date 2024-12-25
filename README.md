@@ -38,9 +38,9 @@ Sebelum menjalankan aplikasi, pastikan database telah dikonfigurasi dengan benar
    - Buka pgAdmin4
    - Buat database baru
    - Klik kanan pada database
-   - Pilih "Restore"
+   - Pilih Restore
    - Pilih file dataset_songket.sql
-   - Klik "Restore"
+   - Klik Restore
 
 2. **Konfigurasi config.py**:
    ```python
