@@ -108,7 +108,7 @@ Untuk mempelajari lebih lanjut cara kerja sistem silakan merujuk pada dokumentas
 - Akurasi sistem bergantung pada kualitas dan variasi dataset
 - Disarankan menggunakan gambar dengan resolusi tinggi untuk hasil terbaik
 - Pastikan pencahayaan dan sudut gambar yang baik saat mengambil foto kain
-- Saat ini, akurasi mAP program mencapai 92 persen yang menunjukkan performa sistem dalam mengenali kain songket sudah sangat baik.
+- Saat ini, akurasi mAP program mencapai 92℅ yang menunjukkan performa sistem dalam mengenali kain songket sudah sangat baik.
   
 ## Kontributor
 - **Fenny Jong (535210001)** - Universitas Tarumanagara
