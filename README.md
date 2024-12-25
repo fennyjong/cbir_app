@@ -20,9 +20,32 @@ Proyek ini bertujuan untuk mengembangkan sistem temu kembali (retrieval) kain So
 ## 🚀 Manfaat Utama
 Untuk mempermudah akses informasi dan memperkenalkan kain songket sebagai warisan budaya Indonesia, sekaligus mendukung pemberdayaan industri kerajinan songket. Dengan meningkatkan pemasaran dan memperluas pasar, sistem ini dapat memperkenalkan kain songket kepada generasi muda dan wisatawan, memperkuat ekonomi kreatif, meningkatkan pengetahuan budaya dan mendukung pengembangan pariwisata di Indonesia.
 
-## Prasyarat
+## Tech Stack
+- PostgreSQL
+- Flask
 - Python 3.8+
 - GPU (disarankan untuk pelatihan model)
+
+## Konfigurasi Database
+1. **Restore Database**:
+   ```bash
+   # Import dataset SQL
+   psql -U your_username -d your_database_name < dataset_songket.sql
+   ```
+   Atau menggunakan pgAdmin4:
+   - Buka pgAdmin4
+   - Buat database baru
+   - Klik kanan pada database
+   - Pilih "Restore"
+   - Pilih file dataset_songket.sql
+   - Klik "Restore"
+
+2. **Konfigurasi config.py**:
+   ```python
+   # config.py
+  
+   # Ubah SQLAlchemy Database URL
+   SQLALCHEMY_DATABASE_URI = f'postgresql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
 
 ## Instalasi Program
 
