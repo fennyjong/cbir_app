@@ -1,5 +1,4 @@
-# Perancangan Sistem Temu Kembali Kain Songket Indonesia
-## Menggunakan Convolutional Neural Network dan Cosine Similarity
+# Perancangan Sistem Temu Kembali Kain Songket Indonesia Menggunakan Convolutional Neural Network dan Cosine Similarity
 
 ## Deskripsi Proyek
 
