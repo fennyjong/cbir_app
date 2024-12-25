@@ -84,7 +84,7 @@ python app.py
 
 3. **Penggunaan Dasar**:
    - Untuk mencari kain songket: 
-     - Klik tombol "Upload"
+     - Klik tombol Upload
      - Pilih gambar kain songket
      - Sistem akan menampilkan hasil pencarian yang mirip
    - Untuk admin:
