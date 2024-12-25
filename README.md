@@ -42,7 +42,7 @@ Sebelum menjalankan aplikasi, pastikan database telah dikonfigurasi dengan benar
    - Pilih file dataset_songket.sql
    - Klik Restore
 
-2. **Konfigurasi config.py**:
+2. **Konfigurasi file config.py**:
    ```python
    # config.py
   
