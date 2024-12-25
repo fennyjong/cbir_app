@@ -20,13 +20,15 @@ Proyek ini bertujuan untuk mengembangkan sistem temu kembali (retrieval) kain So
 ## 🚀 Manfaat Utama
 Untuk mempermudah akses informasi dan memperkenalkan kain songket sebagai warisan budaya Indonesia, sekaligus mendukung pemberdayaan industri kerajinan songket. Dengan meningkatkan pemasaran dan memperluas pasar, sistem ini dapat memperkenalkan kain songket kepada generasi muda dan wisatawan, memperkuat ekonomi kreatif, meningkatkan pengetahuan budaya dan mendukung pengembangan pariwisata di Indonesia.
 
-## Tech Stack
+## 💻 Tech Stack
 - PostgreSQL
 - Flask
 - Python 3.8+
 - GPU (disarankan untuk pelatihan model)
 
-## Konfigurasi Database
+## 🛠️ Panduan Pengaturan dan Penggunaan
+### 1️⃣ Konfigurasi Database
+Sebelum menjalankan aplikasi, pastikan database telah dikonfigurasi dengan benar:
 1. **Restore Database**:
    ```bash
    # Import dataset SQL
@@ -45,17 +47,18 @@ Untuk mempermudah akses informasi dan memperkenalkan kain songket sebagai warisa
    # config.py
   
    # Ubah SQLAlchemy Database URL
-   SQLALCHEMY_DATABASE_URI = f'postgresql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+   SQLALCHEMY_DATABASE_URI = postgresql://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+   SECRET_KEY = 'your-secret-key-here' # Ganti dengan secret key Anda
 
-## Instalasi Program
-
-### 1. Clone Repository
+### 2️⃣ Instalasi Program
+Setelah database dikonfigurasi, ikuti langkah-langkah berikut:
+### 1. **Clone Repository**
 ```bash
 git clone https://github.com/fennyjong/cbir_app.git
 cd cbir_app
 ```
 
-### 2. Buat Virtual Environment (Opsional)
+### 2. **Buat Virtual Environment (Opsional)**
 ```bash
 python -m venv venv
 source venv/bin/activate  # Untuk Linux/Mac
@@ -68,15 +71,26 @@ venv\Scripts\activate  # Untuk Windows
 pip install -r requirements.txt
 ```
 
-## Cara Penggunaan
-1. Jalankan aplikasi:
+### 3️⃣ Cara Penggunaan
+Setelah instalasi selesai, ikuti langkah-langkah berikut untuk menjalankan aplikasi:
+1.  **Jalankan Aplikasi**:
 ```bash
 python app.py
 ```
+2. **Akses Aplikasi**:
+   - Buka browser
+   - Kunjungi `http://localhost:5000`
+   - Login sebagai admin atau pengguna sesuai kebutuhan
 
-2. Akses antarmuka pengguna melalui browser di `http://localhost:5000`
-
-3. Unggah gambar kain Songket untuk memulai pencarian
+3. **Penggunaan Dasar**:
+   - Untuk mencari kain songket: 
+     - Klik tombol "Upload"
+     - Pilih gambar kain songket
+     - Sistem akan menampilkan hasil pencarian yang mirip
+   - Untuk admin:
+     - Akses panel admin untuk mengelola dataset
+     - Pantau riwayat pencarian
+     - Lakukan pelatihan ulang model jika diperlukan
 
 ## Referensi Dataset
 Dataset yang digunakan dalam proyek ini dapat diakses melalui tautan berikut: [[Link Download Dataset Kain Songket](https://kirimin.link/QfehrNC0)]
