@@ -17,13 +17,13 @@ pilih metode POST
 http://localhost:5001/upload_all_images_rollback
 klik send
 
-6. Respon Berhasil:
+6. Contoh Respon Berhasil:
 {
     "success": true,
     "uploaded_files": 560
 }
 
-7. Cek database
-SELECT * FROM songket_dataset Where fabric_name="Songket Subahnale";
+7. Cek database di PostgreSQL
+SELECT * FROM songket_dataset Where fabric_name="Songket Subahnale"; #ubah fabric_name yang sesuai
 
 
