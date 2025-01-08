@@ -9,9 +9,15 @@ Proyek ini bertujuan untuk mengembangkan sistem temu kembali (retrieval) kain So
 ### 👤 Pengguna
 - 🔍 **Pencarian Serupa**: Cari kain Songket berdasarkan kemiripan visual menggunakan **Cosine Similarity** yang ditampilkan dalam persentase.
 - 📤 **Unggah Gambar**: Temukan kain hanya dengan mengunggah foto.
+- 🖼️ **Deskripsi dan Filosofi Kain**: Setiap kain yang ditampilkan akan dilengkapi deskripsi seperti nama motif kain, asal daerah dan makna budaya yang terkandung di dalamnya.
 - 🖥️ **Antarmuka Ramah Pengguna**: Tampilan sederhana dan intuitif untuk mempermudah penggunaan.
 
 ### 🔑 Admin
+🔒 **Login Admin**:
+- **Username**: `admin`  
+- **Password**: `admin`
+  
+💡 **Fitur Utama Panel Admin**: 
 - 🗂️ **Kelola Dataset**: Tambah, hapus, atau perbarui koleksi dataset gambar kain Songket.
 - 🧠 **Latih Ulang Model**: Pelatihan model **CNN** dengan dataset baru untuk meningkatkan akurasi.
 - 🕑 **Riwayat Pencarian**: Pantau aktivitas pencarian pengguna untuk analisis dan pengelolaan data.
