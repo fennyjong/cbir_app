@@ -28,7 +28,7 @@ Untuk mempermudah akses informasi dan memperkenalkan kain songket sebagai warisa
 ## 💻 Tech Stack
 - PostgreSQL
 - Flask
-- Python 3.8+
+- Python 3.10.0
 - Postman
 - GPU (disarankan untuk pelatihan model)
 
