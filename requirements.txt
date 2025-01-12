@@ -5,8 +5,10 @@ psycopg2-binary
 flask_bcrypt
 flask_uploads
 Pillow 
-numpy 
+numpy==1.26.0
 tensorflow
 imgaug
 h5py 
 scikit-learn
+flask-login
+tqdm
